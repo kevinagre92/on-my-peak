@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260516-scroll1">
+  <link rel="stylesheet" href="css/style.css?v=20260516-shop1">
 </head>
 <body>
 
@@ -42,16 +42,12 @@
     </a>
     <div class="nav__actions">
       <a href="#waitlist" class="nav__cta" data-i18n="cta">Reserva tu Drop</a>
-      <div class="language-switcher">
-        <button class="language-switcher__toggle" type="button" id="languageToggle" aria-label="Cambiar idioma" aria-expanded="false">
-          <span id="languageFlag">🇪🇸</span>
-        </button>
-        <div class="language-switcher__menu" id="languageMenu">
-          <button type="button" data-lang="es">🇪🇸 Español</button>
-          <button type="button" data-lang="en">🇬🇧 English</button>
-          <button type="button" data-lang="pt">🇵🇹 Português</button>
-        </div>
-      </div>
+      <button class="cart-toggle" type="button" id="cartToggle" aria-label="Abrir carrito" aria-expanded="false">
+        <svg class="cart-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2ZM7.2 14.6h7.45c.75 0 1.4-.41 1.74-1.03L20 7H6.42l-.94-2H2v2h2.22l3.6 7.59-1.35 2.45C5.74 18.37 6.69 20 8.2 20H20v-2H8.2l1.1-2h7.45c.75 0 1.4-.41 1.74-1.03L22 9H8.12l-.92-2Z"/>
+        </svg>
+        <span class="cart-toggle__count" id="cartCount">0</span>
+      </button>
     </div>
   </nav>
 
@@ -239,8 +235,8 @@
           </article>
 
           <article class="product-card">
-            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-31.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/post OMP2-31.jpg" alt="DROP 01/XX — atleta exterior" loading="lazy">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post-omp-jump.jpeg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post-omp-jump.jpeg" alt="DROP 01/XX — atleta saltando en competición" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
@@ -256,7 +252,16 @@
       <div class="next-drop__visual reveal reveal-delay-1">
         <img src="assets/next-drop.jpg" alt="DROP 02/XX — próximo lanzamiento OMP" loading="lazy">
       </div>
-      <a class="calendar-btn reveal reveal-delay-2" id="calendarButton" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Next%20Drop%20OMP&dates=20260529%2F20260530&details=Next%20Drop%20OMP%20-%20DROP%2002%2FXX&ctz=Atlantic%2FCanary" target="_blank" rel="noopener" data-i18n="calendarButton">
+      <div class="drop-countdown reveal reveal-delay-2" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
+        <span class="drop-countdown__label">DROP 02/XX EN</span>
+        <div class="drop-countdown__grid">
+          <span><strong id="countDays">00</strong><small>Días</small></span>
+          <span><strong id="countHours">00</strong><small>Horas</small></span>
+          <span><strong id="countMinutes">00</strong><small>Min</small></span>
+          <span><strong id="countSeconds">00</strong><small>Seg</small></span>
+        </div>
+      </div>
+      <a class="calendar-btn reveal reveal-delay-2" id="calendarButton" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Next%20Drop%20OMP&dates=20260529T200000%2F20260529T210000&details=Next%20Drop%20OMP%20-%20DROP%2002%2FXX&ctz=Atlantic%2FCanary" target="_blank" rel="noopener" data-i18n="calendarButton">
         MARCAR EN TU CALENDARIO
       </a>
     </div>
@@ -265,7 +270,7 @@
   <!-- Waitlist -->
   <section class="section waitlist" id="waitlist">
     <div class="container">
-      <p class="section-label reveal" data-i18n="waitlistLabel">Lista de espera</p>
+      <p class="section-label reveal" data-i18n="waitlistLabel">Consigue consigue tu Peak</p>
       <h2 class="section-title reveal reveal-delay-1">NO ONE IS COMING</h2>
       <p class="section-subtitle reveal reveal-delay-2" style="text-align:center; margin: 0 auto;" data-i18n="waitlistSubtitle">
         Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.
@@ -313,7 +318,12 @@
           </select>
         </label>
 
-        <button class="waitlist__submit" type="submit" data-i18n="submitOrder">Pedir mi camiseta</button>
+        <label class="waitlist__field waitlist__field--full">
+          <span data-i18n="discountLabel">Código de descuento</span>
+          <input class="waitlist__input" type="text" id="discountCode" name="discount" placeholder="Opcional" autocomplete="off" aria-label="Código de descuento">
+        </label>
+
+        <button class="waitlist__submit" type="submit" data-i18n="submitOrder">Añadir al carrito</button>
       </form>
 
       <div class="waitlist__success" id="waitlistSuccess">
@@ -351,6 +361,23 @@
     <button class="image-lightbox__nav image-lightbox__nav--next" type="button" aria-label="Imagen siguiente">›</button>
   </div>
 
-  <script src="js/script.js?v=20260516-scroll1"></script>
+  <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <div class="cart-drawer__head">
+        <h2 id="cartTitle">Carrito</h2>
+        <button class="cart-drawer__close" type="button" id="cartClose" aria-label="Cerrar carrito">×</button>
+      </div>
+      <div class="cart-drawer__items" id="cartItems"></div>
+      <div class="cart-drawer__empty" id="cartEmpty">Tu carrito está vacío.</div>
+      <div class="cart-drawer__totals" id="cartTotals">
+        <div><span>Subtotal</span><strong id="cartSubtotal">0,00 €</strong></div>
+        <div><span>IGIC 7%</span><strong id="cartTax">0,00 €</strong></div>
+        <div class="cart-drawer__total"><span>Total</span><strong id="cartTotal">0,00 €</strong></div>
+      </div>
+      <button class="cart-drawer__clear" type="button" id="cartClear">Vaciar carrito</button>
+    </div>
+  </div>
+
+  <script src="js/script.js?v=20260516-shop1"></script>
 </body>
 </html>

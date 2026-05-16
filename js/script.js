@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropText: 'Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.',
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
       lookbookLabel: 'NEXT DROP',
-      waitlistLabel: 'Lista de espera',
+      waitlistLabel: 'Consigue consigue tu Peak',
       waitlistSubtitle: 'Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.',
       nameLabel: 'Nombre completo',
       emailLabel: 'Correo',
@@ -26,8 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
       modelLabel: 'Modelo de pedido',
       colorLabel: 'Color',
       sizeLabel: 'Talla',
-      submitOrder: 'Pedir mi camiseta',
-      successTitle: 'Pedido recibido.',
+      discountLabel: 'Código de descuento',
+      submitOrder: 'Añadir al carrito',
+      successTitle: 'Añadido al carrito.',
       perk1: 'Acceso anticipado a drops',
       perk2: 'Contenido exclusivo',
       perk3: 'Ediciones limitadas',
@@ -54,8 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
       modelLabel: 'Order model',
       colorLabel: 'Color',
       sizeLabel: 'Size',
-      submitOrder: 'Reserve my piece',
-      successTitle: 'Order received.',
+      discountLabel: 'Discount code',
+      submitOrder: 'Add to cart',
+      successTitle: 'Added to cart.',
       perk1: 'Early access to drops',
       perk2: 'Exclusive content',
       perk3: 'Limited editions',
@@ -82,8 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
       modelLabel: 'Modelo do pedido',
       colorLabel: 'Cor',
       sizeLabel: 'Tamanho',
-      submitOrder: 'Reservar a minha peça',
-      successTitle: 'Pedido recebido.',
+      discountLabel: 'Código de desconto',
+      submitOrder: 'Adicionar ao carrinho',
+      successTitle: 'Adicionado ao carrinho.',
       perk1: 'Acesso antecipado aos drops',
       perk2: 'Conteúdo exclusivo',
       perk3: 'Edições limitadas',
@@ -107,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('omp_language', lang);
   }
 
-  const savedLanguage = localStorage.getItem('omp_language') || 'es';
+  const savedLanguage = languageToggle ? localStorage.getItem('omp_language') || 'es' : 'es';
   applyLanguage(savedLanguage);
 
   languageToggle?.addEventListener('click', (e) => {
@@ -335,11 +338,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const modelSelect = document.getElementById('orderModel');
   const colorSelect = document.getElementById('orderColor');
   const sizeSelect = document.getElementById('orderSize');
+  const discountInput = document.getElementById('discountCode');
+  const cartToggle = document.getElementById('cartToggle');
+  const cartCount = document.getElementById('cartCount');
+  const cartDrawer = document.getElementById('cartDrawer');
+  const cartClose = document.getElementById('cartClose');
+  const cartItems = document.getElementById('cartItems');
+  const cartEmpty = document.getElementById('cartEmpty');
+  const cartSubtotal = document.getElementById('cartSubtotal');
+  const cartTax = document.getElementById('cartTax');
+  const cartTotal = document.getElementById('cartTotal');
+  const cartClear = document.getElementById('cartClear');
+  const IGIC_RATE = 0.07;
 
   const colorsByModel = {
     Oversized: ['Jade', 'Azul zen', 'Blanco', 'Negro', 'Naranja', 'Ebano', 'Verde mist'],
     'Crop top': ['Blanco', 'Negro', 'Rosa', 'Turquesa'],
     Hoodie: ['Negra', 'Blanca', 'Ebano', 'Azul tormenta', 'Marino', 'Blanco vintage']
+  };
+
+  const pricesByModel = {
+    Oversized: 22,
+    'Crop top': 22,
+    Hoodie: 35
   };
 
   function updateColorOptions() {
@@ -354,6 +375,155 @@ document.addEventListener('DOMContentLoaded', () => {
     updateColorOptions();
     modelSelect.addEventListener('change', updateColorOptions);
   }
+
+  /* --- Next Drop Countdown --- */
+  const countdownTarget = new Date('2026-05-29T20:00:00+01:00').getTime();
+  const countdownParts = {
+    days: document.getElementById('countDays'),
+    hours: document.getElementById('countHours'),
+    minutes: document.getElementById('countMinutes'),
+    seconds: document.getElementById('countSeconds')
+  };
+
+  function padTime(value) {
+    return String(Math.max(0, value)).padStart(2, '0');
+  }
+
+  function updateCountdown() {
+    if (!countdownParts.days) return;
+
+    const distance = Math.max(0, countdownTarget - Date.now());
+    const days = Math.floor(distance / 86400000);
+    const hours = Math.floor((distance % 86400000) / 3600000);
+    const minutes = Math.floor((distance % 3600000) / 60000);
+    const seconds = Math.floor((distance % 60000) / 1000);
+
+    countdownParts.days.textContent = padTime(days);
+    countdownParts.hours.textContent = padTime(hours);
+    countdownParts.minutes.textContent = padTime(minutes);
+    countdownParts.seconds.textContent = padTime(seconds);
+  }
+
+  updateCountdown();
+  window.setInterval(updateCountdown, 1000);
+
+  /* --- Cart --- */
+  function readCart() {
+    return JSON.parse(localStorage.getItem('omp_cart') || '[]');
+  }
+
+  function writeCart(cart) {
+    localStorage.setItem('omp_cart', JSON.stringify(cart));
+  }
+
+  function formatCurrency(value) {
+    return new Intl.NumberFormat('es-ES', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(value);
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    }[char]));
+  }
+
+  function openCart() {
+    cartDrawer?.classList.add('active');
+    cartDrawer?.setAttribute('aria-hidden', 'false');
+    cartToggle?.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('lightbox-open');
+  }
+
+  function closeCart() {
+    cartDrawer?.classList.remove('active');
+    cartDrawer?.setAttribute('aria-hidden', 'true');
+    cartToggle?.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('lightbox-open');
+  }
+
+  function renderCart() {
+    const cart = readCart();
+    const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const tax = subtotal * IGIC_RATE;
+    const total = subtotal + tax;
+
+    if (cartCount) cartCount.textContent = itemCount;
+    if (cartSubtotal) cartSubtotal.textContent = formatCurrency(subtotal);
+    if (cartTax) cartTax.textContent = formatCurrency(tax);
+    if (cartTotal) cartTotal.textContent = formatCurrency(total);
+    cartEmpty?.classList.toggle('active', cart.length === 0);
+
+    if (!cartItems) return;
+    cartItems.innerHTML = cart.map((item, index) => `
+      <article class="cart-item">
+        <div class="cart-item__top">
+          <span class="cart-item__title">${escapeHtml(item.model)}</span>
+          <span class="cart-item__price">${formatCurrency(item.price * item.quantity)}</span>
+        </div>
+        <p class="cart-item__meta">${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
+        ${item.discount ? `<p class="cart-item__discount">Código: ${escapeHtml(item.discount)}</p>` : ''}
+        <div class="cart-item__bottom">
+          <span class="cart-item__meta">Precio unidad: ${formatCurrency(item.price)}</span>
+          <button class="cart-item__remove" type="button" data-remove-cart="${index}">Quitar</button>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function addToCart(order) {
+    const cart = readCart();
+    const existing = cart.find(item =>
+      item.model === order.model &&
+      item.color === order.color &&
+      item.size === order.size &&
+      item.discount === order.discount
+    );
+
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({
+        ...order,
+        quantity: 1,
+        price: pricesByModel[order.model] || 0
+      });
+    }
+
+    writeCart(cart);
+    renderCart();
+    openCart();
+  }
+
+  cartToggle?.addEventListener('click', openCart);
+  cartClose?.addEventListener('click', closeCart);
+  cartDrawer?.addEventListener('click', (e) => {
+    if (e.target === cartDrawer) closeCart();
+  });
+  cartItems?.addEventListener('click', (e) => {
+    const removeButton = e.target.closest('[data-remove-cart]');
+    if (!removeButton) return;
+    const cart = readCart();
+    cart.splice(Number(removeButton.dataset.removeCart), 1);
+    writeCart(cart);
+    renderCart();
+  });
+  cartClear?.addEventListener('click', () => {
+    writeCart([]);
+    renderCart();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && cartDrawer?.classList.contains('active')) {
+      closeCart();
+    }
+  });
+  renderCart();
 
   /* --- Live Instagram Feed --- */
   const instagramFeed = document.querySelector('[data-instagram-feed]');
@@ -408,6 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = document.getElementById('waitlistName').value.trim();
       const email = document.getElementById('waitlistEmail').value.trim();
       const phone = document.getElementById('waitlistPhone').value.trim();
+      const discount = discountInput?.value.trim().toUpperCase() || '';
       const order = {
         name,
         email,
@@ -415,19 +586,17 @@ document.addEventListener('DOMContentLoaded', () => {
         model: modelSelect.value,
         color: colorSelect.value,
         size: sizeSelect.value,
+        discount,
         createdAt: new Date().toISOString()
       };
 
       if (!name || !email || !phone || !order.model || !order.color || !order.size) return;
 
-      const orders = JSON.parse(localStorage.getItem('omp_orders') || '[]');
-      orders.push(order);
-      localStorage.setItem('omp_orders', JSON.stringify(orders));
+      addToCart(order);
 
       if (summary) {
-        summary.textContent = `${order.name} · ${order.phone} · ${order.email} · ${order.model} · ${order.color} · talla ${order.size}. Te contactaremos para cerrar el pedido.`;
+        summary.textContent = `${order.model} · ${order.color} · talla ${order.size} añadido al carrito. IGIC 7% calculado en el total.`;
       }
-      form.classList.add('hidden');
       success.classList.add('active');
     });
   }
