@@ -18,8 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
       dropText: 'Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.',
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
       lookbookLabel: 'NEXT DROP',
-      waitlistLabel: 'Consigue consigue tu Peak',
+      waitlistLabel: 'Consigue tu Peak',
       waitlistSubtitle: 'Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.',
+      purchase1: 'Desde 22 €',
+      purchase2: 'Drop limitado',
+      purchase3: 'IGIC calculado en carrito',
       nameLabel: 'Nombre completo',
       emailLabel: 'Correo',
       phoneLabel: 'Teléfono',
@@ -32,8 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
       perk1: 'Acceso anticipado a drops',
       perk2: 'Contenido exclusivo',
       perk3: 'Ediciones limitadas',
+      viewInstagram: 'Ver Instagram',
       followMovement: 'SIGUE EL MOVIMIENTO',
-      calendarButton: 'MARCAR EN TU CALENDARIO'
+      calendarButton: 'MARCAR EN TU CALENDARIO',
+      footerFaq: 'Preguntas Frecuentes (FAQ)',
+      footerReturns: 'Política de Cambios y Devoluciones',
+      footerContact: 'Contacto / Atención al Cliente',
+      footerPrivacy: 'Política de Privacidad',
+      footerTerms: 'Términos y Condiciones',
+      footerReviews: 'Clientes Satisfechos',
+      footerRights: 'Todos los derechos reservados OMP.'
     },
     en: {
       flag: '🇬🇧',
@@ -49,6 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Waitlist',
       waitlistSubtitle: 'Reserve your DROP 01/XX piece.<br>Choose model, color and size.',
+      purchase1: 'From €22',
+      purchase2: 'Limited drop',
+      purchase3: 'IGIC calculated in cart',
       nameLabel: 'Full name',
       emailLabel: 'Email',
       phoneLabel: 'Phone',
@@ -61,8 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
       perk1: 'Early access to drops',
       perk2: 'Exclusive content',
       perk3: 'Limited editions',
+      viewInstagram: 'View Instagram',
       followMovement: 'FOLLOW THE MOVEMENT',
-      calendarButton: 'ADD TO YOUR CALENDAR'
+      calendarButton: 'ADD TO YOUR CALENDAR',
+      footerFaq: 'Frequently Asked Questions (FAQ)',
+      footerReturns: 'Exchanges and Returns Policy',
+      footerContact: 'Contact / Customer Support',
+      footerPrivacy: 'Privacy Policy',
+      footerTerms: 'Terms and Conditions',
+      footerReviews: 'Happy Customers',
+      footerRights: 'All rights reserved OMP.'
     },
     pt: {
       flag: '🇵🇹',
@@ -78,6 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Lista de espera',
       waitlistSubtitle: 'Reserva a tua peça do DROP 01/XX.<br>Escolhe modelo, cor e tamanho.',
+      purchase1: 'Desde 22 €',
+      purchase2: 'Drop limitado',
+      purchase3: 'IGIC calculado no carrinho',
       nameLabel: 'Nome completo',
       emailLabel: 'Email',
       phoneLabel: 'Telefone',
@@ -90,17 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
       perk1: 'Acesso antecipado aos drops',
       perk2: 'Conteúdo exclusivo',
       perk3: 'Edições limitadas',
+      viewInstagram: 'Ver Instagram',
       followMovement: 'SEGUE O MOVIMENTO',
-      calendarButton: 'MARCAR NO CALENDÁRIO'
+      calendarButton: 'MARCAR NO CALENDÁRIO',
+      footerFaq: 'Perguntas Frequentes (FAQ)',
+      footerReturns: 'Política de Trocas e Devoluções',
+      footerContact: 'Contacto / Apoio ao Cliente',
+      footerPrivacy: 'Política de Privacidade',
+      footerTerms: 'Termos e Condições',
+      footerReviews: 'Clientes Satisfeitos',
+      footerRights: 'Todos os direitos reservados OMP.'
     }
   };
 
   const languageSwitcher = document.querySelector('.language-switcher');
   const languageToggle = document.getElementById('languageToggle');
   const languageFlag = document.getElementById('languageFlag');
+  let currentLanguage = 'es';
 
   function applyLanguage(lang) {
     const dictionary = translations[lang] || translations.es;
+    currentLanguage = translations[lang] ? lang : 'es';
     document.documentElement.lang = lang;
     if (languageFlag) languageFlag.textContent = dictionary.flag;
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -110,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('omp_language', lang);
   }
 
-  const savedLanguage = languageToggle ? localStorage.getItem('omp_language') || 'es' : 'es';
+  const savedLanguage = localStorage.getItem('omp_language') || 'es';
   applyLanguage(savedLanguage);
 
   languageToggle?.addEventListener('click', (e) => {
@@ -130,6 +165,117 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', () => {
     languageSwitcher?.classList.remove('open');
     languageToggle?.setAttribute('aria-expanded', 'false');
+  });
+
+  /* --- Footer Info Pages --- */
+  const legalPages = {
+    es: {
+      faq: {
+        title: 'Preguntas Frecuentes',
+        body: '<h3>¿Cómo reservo mi prenda?</h3><p>Elige modelo, color y talla, añade la prenda al carrito y escríbenos por WhatsApp para cerrar disponibilidad y entrega.</p><h3>¿Cuándo sale el próximo drop?</h3><p>DROP 02/XX está marcado para el 29 de mayo a las 20:00, hora de Canarias.</p><h3>¿Hay muchas unidades?</h3><p>No. OMP trabaja por drops limitados para mantener intención, calidad y exclusividad.</p>'
+      },
+      returns: {
+        title: 'Cambios y Devoluciones',
+        body: '<p>Aceptamos cambios de talla o modelo si la prenda está sin usar, con etiquetas y en perfecto estado. El plazo recomendado es de 14 días desde la entrega.</p><p>Si hay defecto de fabricación, escríbenos con fotos y número de pedido para resolverlo cuanto antes.</p>'
+      },
+      contact: {
+        title: 'Contacto / Atención al Cliente',
+        body: '<p>Para pedidos, tallas, colores o cualquier duda, hablamos directo por WhatsApp.</p><p><a href="https://wa.me/34663232469" target="_blank" rel="noopener">Abrir WhatsApp: +34 663 232 469</a></p><p>Base: LPA, Canary Islands.</p>'
+      },
+      privacy: {
+        title: 'Política de Privacidad',
+        body: '<p>Usamos tus datos solo para gestionar tu pedido, contactar contigo y confirmar disponibilidad. No vendemos tus datos ni los cedemos para publicidad externa.</p><p>Puedes pedir acceso, corrección o eliminación escribiendo por WhatsApp.</p>'
+      },
+      terms: {
+        title: 'Términos y Condiciones',
+        body: '<p>Los productos se venden por disponibilidad de drop. Añadir al carrito no garantiza stock hasta que el pedido quede confirmado por OMP.</p><p>Los precios muestran subtotal y el carrito calcula el IGIC correspondiente.</p>'
+      },
+      reviews: {
+        title: 'Clientes Satisfechos',
+        body: '<p>Ropa creada para entrenar, moverse y aparecer cuando toca. La comunidad OMP empieza en los boxes, en la calle y en quienes no esperan permiso.</p><p>Pronto añadiremos reseñas reales de compradores del DROP 01/XX.</p>'
+      }
+    },
+    en: {
+      faq: {
+        title: 'Frequently Asked Questions',
+        body: '<h3>How do I reserve a piece?</h3><p>Choose model, color and size, add it to the cart and contact us on WhatsApp to confirm stock and delivery.</p><h3>When is the next drop?</h3><p>DROP 02/XX is scheduled for May 29 at 20:00, Canary Islands time.</p><h3>Are units limited?</h3><p>Yes. OMP works through limited drops to keep intention, quality and exclusivity.</p>'
+      },
+      returns: {
+        title: 'Exchanges and Returns',
+        body: '<p>We accept size or model exchanges if the piece is unused, tagged and in perfect condition. Recommended window: 14 days from delivery.</p><p>If there is a manufacturing issue, send photos and order details so we can solve it quickly.</p>'
+      },
+      contact: {
+        title: 'Contact / Customer Support',
+        body: '<p>For orders, sizing, colors or any question, talk to us directly on WhatsApp.</p><p><a href="https://wa.me/34663232469" target="_blank" rel="noopener">Open WhatsApp: +34 663 232 469</a></p><p>Based in LPA, Canary Islands.</p>'
+      },
+      privacy: {
+        title: 'Privacy Policy',
+        body: '<p>We use your data only to manage your order, contact you and confirm availability. We do not sell your data or share it for third-party advertising.</p><p>You can request access, correction or deletion through WhatsApp.</p>'
+      },
+      terms: {
+        title: 'Terms and Conditions',
+        body: '<p>Products are sold according to drop availability. Adding an item to the cart does not guarantee stock until OMP confirms the order.</p><p>The cart shows subtotal and calculates the applicable IGIC.</p>'
+      },
+      reviews: {
+        title: 'Happy Customers',
+        body: '<p>Clothing made to train, move and show up when it counts. The OMP community starts in the box, on the street and with those who do not wait for permission.</p><p>Real DROP 01/XX buyer reviews will be added soon.</p>'
+      }
+    },
+    pt: {
+      faq: {
+        title: 'Perguntas Frequentes',
+        body: '<h3>Como reservo a minha peça?</h3><p>Escolhe modelo, cor e tamanho, adiciona ao carrinho e fala connosco no WhatsApp para confirmar stock e entrega.</p><h3>Quando sai o próximo drop?</h3><p>DROP 02/XX está marcado para 29 de maio às 20:00, hora das Canárias.</p><h3>As unidades são limitadas?</h3><p>Sim. A OMP trabalha por drops limitados para manter intenção, qualidade e exclusividade.</p>'
+      },
+      returns: {
+        title: 'Trocas e Devoluções',
+        body: '<p>Aceitamos trocas de tamanho ou modelo se a peça estiver sem uso, com etiquetas e em perfeito estado. Prazo recomendado: 14 dias desde a entrega.</p><p>Se houver defeito de fabrico, envia fotos e dados do pedido para resolvermos rapidamente.</p>'
+      },
+      contact: {
+        title: 'Contacto / Apoio ao Cliente',
+        body: '<p>Para pedidos, tamanhos, cores ou qualquer dúvida, fala connosco diretamente no WhatsApp.</p><p><a href="https://wa.me/34663232469" target="_blank" rel="noopener">Abrir WhatsApp: +34 663 232 469</a></p><p>Base: LPA, Canary Islands.</p>'
+      },
+      privacy: {
+        title: 'Política de Privacidade',
+        body: '<p>Usamos os teus dados apenas para gerir o pedido, contactar-te e confirmar disponibilidade. Não vendemos os teus dados nem os cedemos para publicidade externa.</p><p>Podes pedir acesso, correção ou eliminação pelo WhatsApp.</p>'
+      },
+      terms: {
+        title: 'Termos e Condições',
+        body: '<p>Os produtos são vendidos conforme disponibilidade do drop. Adicionar ao carrinho não garante stock até confirmação da OMP.</p><p>O carrinho mostra subtotal e calcula o IGIC aplicável.</p>'
+      },
+      reviews: {
+        title: 'Clientes Satisfeitos',
+        body: '<p>Roupa criada para treinar, mover e aparecer quando conta. A comunidade OMP começa no box, na rua e em quem não espera autorização.</p><p>Em breve adicionaremos avaliações reais de compradores do DROP 01/XX.</p>'
+      }
+    }
+  };
+
+  const infoModal = document.getElementById('infoModal');
+  const infoModalTitle = document.getElementById('infoModalTitle');
+  const infoModalBody = document.getElementById('infoModalBody');
+  const infoModalClose = document.getElementById('infoModalClose');
+
+  function openInfoPage(pageKey) {
+    const page = legalPages[currentLanguage]?.[pageKey] || legalPages.es[pageKey];
+    if (!page || !infoModal || !infoModalTitle || !infoModalBody) return;
+    infoModalTitle.textContent = page.title;
+    infoModalBody.innerHTML = page.body;
+    infoModal.classList.add('active');
+    infoModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+  }
+
+  function closeInfoPage() {
+    infoModal?.classList.remove('active');
+    infoModal?.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+  }
+
+  document.querySelectorAll('[data-page]').forEach(button => {
+    button.addEventListener('click', () => openInfoPage(button.dataset.page));
+  });
+  infoModalClose?.addEventListener('click', closeInfoPage);
+  infoModal?.addEventListener('click', (e) => {
+    if (e.target === infoModal) closeInfoPage();
   });
 
   /* --- Custom Cursor --- */
@@ -349,6 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartTax = document.getElementById('cartTax');
   const cartTotal = document.getElementById('cartTotal');
   const cartClear = document.getElementById('cartClear');
+  const cartCheckout = document.getElementById('cartCheckout');
   const IGIC_RATE = 0.07;
 
   const colorsByModel = {
@@ -458,6 +605,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cartSubtotal) cartSubtotal.textContent = formatCurrency(subtotal);
     if (cartTax) cartTax.textContent = formatCurrency(tax);
     if (cartTotal) cartTotal.textContent = formatCurrency(total);
+    if (cartCheckout) {
+      const orderLines = cart.map(item => `${item.quantity} x ${item.model} ${item.color} talla ${item.size}${item.discount ? ` codigo ${item.discount}` : ''}`);
+      const messageText = cart.length
+        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nTotal con IGIC: ${formatCurrency(total)}`
+        : 'Hola OMP, quiero reservar mi Drop.';
+      cartCheckout.href = `https://wa.me/34663232469?text=${encodeURIComponent(messageText)}`;
+    }
     cartEmpty?.classList.toggle('active', cart.length === 0);
 
     if (!cartItems) return;
@@ -522,6 +676,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && cartDrawer?.classList.contains('active')) {
       closeCart();
     }
+    if (e.key === 'Escape' && infoModal?.classList.contains('active')) {
+      closeInfoPage();
+    }
   });
   renderCart();
 
@@ -557,7 +714,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/instagram', {
         headers: { Accept: 'application/json' }
       });
-      if (!response.ok) return;
+      if (!response.ok) {
+        instagramFeed.dataset.source = 'fallback';
+        return;
+      }
 
       const payload = await response.json();
       const posts = Array.isArray(payload.posts) ? payload.posts.slice(0, 9) : [];

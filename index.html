@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260516-shop1">
+  <link rel="stylesheet" href="css/style.css?v=20260516-shop2">
 </head>
 <body>
 
@@ -117,7 +117,7 @@
         <aside class="manifesto__instagram reveal reveal-delay-3" aria-label="Instagram preview de On My Peak">
           <div class="manifesto__instagram-head">
             <span>@onmypeak_</span>
-            <a href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">Ver Instagram</a>
+            <a href="https://instagram.com/onmypeak_" target="_blank" rel="noopener" data-i18n="viewInstagram">Ver Instagram</a>
           </div>
           <div class="instagram-preview__grid" id="instagramFeed" data-instagram-feed aria-live="polite">
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
@@ -270,11 +270,16 @@
   <!-- Waitlist -->
   <section class="section waitlist" id="waitlist">
     <div class="container">
-      <p class="section-label reveal" data-i18n="waitlistLabel">Consigue consigue tu Peak</p>
+      <p class="section-label reveal" data-i18n="waitlistLabel">Consigue tu Peak</p>
       <h2 class="section-title reveal reveal-delay-1">NO ONE IS COMING</h2>
       <p class="section-subtitle reveal reveal-delay-2" style="text-align:center; margin: 0 auto;" data-i18n="waitlistSubtitle">
         Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.
       </p>
+      <div class="purchase-strip reveal reveal-delay-2" aria-label="Ventajas del pedido">
+        <span data-i18n="purchase1">Desde 22 €</span>
+        <span data-i18n="purchase2">Drop limitado</span>
+        <span data-i18n="purchase3">IGIC calculado en carrito</span>
+      </div>
 
       <form class="waitlist__form reveal reveal-delay-3" id="waitlistForm">
         <label class="waitlist__field">
@@ -349,9 +354,30 @@
 
   <!-- Footer -->
   <footer class="footer">
-    <p class="footer__logo">O N  M Y  P E A K</p>
-    <p class="footer__origin">LPA based</p>
-    <p class="footer__copy">© 2026 On My Peak ®. Nothing given. Everything earned.</p>
+    <div class="footer__inner">
+      <nav class="footer__links" aria-label="Información de tienda">
+        <button type="button" data-page="faq" data-i18n="footerFaq">Preguntas Frecuentes (FAQ)</button>
+        <button type="button" data-page="returns" data-i18n="footerReturns">Política de Cambios y Devoluciones</button>
+        <button type="button" data-page="contact" data-i18n="footerContact">Contacto / Atención al Cliente</button>
+        <button type="button" data-page="privacy" data-i18n="footerPrivacy">Política de Privacidad</button>
+        <button type="button" data-page="terms" data-i18n="footerTerms">Términos y Condiciones</button>
+        <button type="button" data-page="reviews" data-i18n="footerReviews">Clientes Satisfechos</button>
+      </nav>
+
+      <div class="footer__bar">
+        <p class="footer__copy">© 2026 ON MY PEAK. <span data-i18n="footerRights">Todos los derechos reservados OMP.</span></p>
+        <div class="language-switcher">
+          <button class="language-switcher__toggle" type="button" id="languageToggle" aria-label="Cambiar idioma" aria-expanded="false">
+            <span id="languageFlag">🇪🇸</span>
+          </button>
+          <div class="language-switcher__menu" id="languageMenu">
+            <button type="button" data-lang="es">🇪🇸 Español</button>
+            <button type="button" data-lang="en">🇬🇧 English</button>
+            <button type="button" data-lang="pt">🇵🇹 Português</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </footer>
 
   <div class="image-lightbox" id="imageLightbox" aria-hidden="true">
@@ -374,10 +400,20 @@
         <div><span>IGIC 7%</span><strong id="cartTax">0,00 €</strong></div>
         <div class="cart-drawer__total"><span>Total</span><strong id="cartTotal">0,00 €</strong></div>
       </div>
+      <a class="cart-drawer__checkout" id="cartCheckout" href="https://wa.me/34663232469" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
       <button class="cart-drawer__clear" type="button" id="cartClear">Vaciar carrito</button>
     </div>
   </div>
 
-  <script src="js/script.js?v=20260516-shop1"></script>
+  <div class="info-modal" id="infoModal" aria-hidden="true">
+    <div class="info-modal__panel" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+      <button class="info-modal__close" type="button" id="infoModalClose" aria-label="Cerrar">×</button>
+      <p class="section-label" id="infoModalLabel">OMP</p>
+      <h2 class="info-modal__title" id="infoModalTitle">Información</h2>
+      <div class="info-modal__body" id="infoModalBody"></div>
+    </div>
+  </div>
+
+  <script src="js/script.js?v=20260516-shop2"></script>
 </body>
 </html>
