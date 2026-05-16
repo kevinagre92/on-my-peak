@@ -482,6 +482,8 @@ ul { list-style: none; }
 }
 
 .hero__scroll span {
+  display: block;
+  padding-left: 0.3em;
   font-family: var(--font-mono);
   font-size: 0.55rem;
   letter-spacing: 0.3em;
@@ -1401,11 +1403,6 @@ ul { list-style: none; }
     bottom: calc(1.2rem + env(safe-area-inset-bottom));
     width: max-content;
     text-align: center;
-  }
-
-  .hero__scroll span {
-    display: block;
-    padding-left: 0.3em;
   }
 
   .hero__overlay {
