@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260516-shop2">
+  <link rel="stylesheet" href="css/style.css?v=20260516-shop3">
 </head>
 <body>
 
@@ -42,6 +42,16 @@
     </a>
     <div class="nav__actions">
       <a href="#waitlist" class="nav__cta" data-i18n="cta">Reserva tu Drop</a>
+      <div class="language-switcher">
+        <button class="language-switcher__toggle" type="button" id="languageToggle" aria-label="Cambiar idioma" aria-expanded="false">
+          <span id="languageFlag">🇪🇸</span>
+        </button>
+        <div class="language-switcher__menu" id="languageMenu">
+          <button type="button" data-lang="es">🇪🇸 Español</button>
+          <button type="button" data-lang="en">🇬🇧 English</button>
+          <button type="button" data-lang="pt">🇵🇹 Português</button>
+        </div>
+      </div>
       <button class="cart-toggle" type="button" id="cartToggle" aria-label="Abrir carrito" aria-expanded="false">
         <svg class="cart-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2ZM7.2 14.6h7.45c.75 0 1.4-.41 1.74-1.03L20 7H6.42l-.94-2H2v2h2.22l3.6 7.59-1.35 2.45C5.74 18.37 6.69 20 8.2 20H20v-2H8.2l1.1-2h7.45c.75 0 1.4-.41 1.74-1.03L22 9H8.12l-.92-2Z"/>
@@ -366,16 +376,6 @@
 
       <div class="footer__bar">
         <p class="footer__copy">© 2026 ON MY PEAK. <span data-i18n="footerRights">Todos los derechos reservados OMP.</span></p>
-        <div class="language-switcher">
-          <button class="language-switcher__toggle" type="button" id="languageToggle" aria-label="Cambiar idioma" aria-expanded="false">
-            <span id="languageFlag">🇪🇸</span>
-          </button>
-          <div class="language-switcher__menu" id="languageMenu">
-            <button type="button" data-lang="es">🇪🇸 Español</button>
-            <button type="button" data-lang="en">🇬🇧 English</button>
-            <button type="button" data-lang="pt">🇵🇹 Português</button>
-          </div>
-        </div>
       </div>
     </div>
   </footer>
@@ -414,6 +414,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260516-shop2"></script>
+  <script src="js/script.js?v=20260516-shop3"></script>
 </body>
 </html>
