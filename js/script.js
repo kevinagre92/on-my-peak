@@ -355,6 +355,53 @@ document.addEventListener('DOMContentLoaded', () => {
     modelSelect.addEventListener('change', updateColorOptions);
   }
 
+  /* --- Live Instagram Feed --- */
+  const instagramFeed = document.querySelector('[data-instagram-feed]');
+
+  function createInstagramItem(post) {
+    const link = document.createElement('a');
+    link.className = 'instagram-preview__item';
+    link.href = post.permalink || 'https://instagram.com/onmypeak_';
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.setAttribute('aria-label', post.caption ? `Abrir post de Instagram: ${post.caption}` : 'Abrir post de Instagram de On My Peak');
+
+    if (post.media_type === 'VIDEO') {
+      link.classList.add('instagram-preview__item--video');
+    }
+
+    const img = document.createElement('img');
+    img.src = post.thumbnail_url || post.media_url;
+    img.alt = post.caption || 'Post reciente de On My Peak';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    link.appendChild(img);
+    return link;
+  }
+
+  async function hydrateInstagramFeed() {
+    if (!instagramFeed) return;
+
+    try {
+      const response = await fetch('/api/instagram', {
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) return;
+
+      const payload = await response.json();
+      const posts = Array.isArray(payload.posts) ? payload.posts.slice(0, 9) : [];
+      if (posts.length < 1) return;
+
+      instagramFeed.replaceChildren(...posts.map(createInstagramItem));
+      instagramFeed.dataset.source = 'instagram';
+    } catch (error) {
+      instagramFeed.dataset.source = 'fallback';
+    }
+  }
+
+  hydrateInstagramFeed();
+
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
