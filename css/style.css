@@ -1396,6 +1396,18 @@ ul { list-style: none; }
     object-fit: cover;
   }
 
+  .hero__scroll {
+    left: 50vw;
+    bottom: calc(1.2rem + env(safe-area-inset-bottom));
+    width: max-content;
+    text-align: center;
+  }
+
+  .hero__scroll span {
+    display: block;
+    padding-left: 0.3em;
+  }
+
   .hero__overlay {
     background: linear-gradient(
       180deg,
