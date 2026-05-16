@@ -1594,7 +1594,7 @@ ul { list-style: none; }
 
 /* --- Instagram Section --- */
 .instagram {
-  padding: 3rem 0;
+  padding: 2.6rem var(--container-pad);
   text-align: center;
   border-top: 1px solid var(--glass-border);
 }
@@ -1602,6 +1602,7 @@ ul { list-style: none; }
 .instagram__link {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.8rem;
   font-family: var(--font-display);
   font-size: 0.8rem;
@@ -1613,6 +1614,16 @@ ul { list-style: none; }
 }
 
 .instagram__link:hover { color: var(--text-primary); }
+
+.instagram__handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.instagram__movement {
+  color: var(--text-primary);
+}
 
 .instagram__link svg {
   width: 20px; height: 20px;
@@ -1862,6 +1873,23 @@ ul { list-style: none; }
 
   .hero__logo { font-size: clamp(2rem, 12vw, 3.5rem); }
 
+  .hero__content {
+    width: 100%;
+    padding-inline: clamp(1rem, 5vw, 1.6rem);
+  }
+
+  .hero__claim {
+    max-width: 22rem;
+    margin-inline: auto;
+    line-height: 1.7;
+  }
+
+  .hero__btn,
+  .calendar-btn,
+  .waitlist__submit {
+    min-height: 48px;
+  }
+
   .manifesto__bg {
     display: block;
     opacity: 0.05;
@@ -1879,6 +1907,11 @@ ul { list-style: none; }
     justify-self: stretch;
     width: 100%;
     transform: none;
+  }
+
+  .instagram-preview__grid {
+    gap: 0.28rem;
+    padding: 0.28rem;
   }
 
 
@@ -1933,6 +1966,29 @@ ul { list-style: none; }
 
   .waitlist__perks { flex-direction: column; align-items: center; }
 
+  .instagram {
+    padding: 2rem var(--container-pad);
+  }
+
+  .instagram__link {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    font-size: clamp(0.72rem, 3.2vw, 0.86rem);
+    letter-spacing: 0.18em;
+    line-height: 1.35;
+  }
+
+  .instagram__handle {
+    color: var(--text-secondary);
+  }
+
+  .instagram__movement {
+    display: block;
+    font-size: clamp(0.8rem, 3.8vw, 1rem);
+    letter-spacing: 0.22em;
+  }
+
   .footer__links {
     gap: 0.65rem 1rem;
     padding: 1rem 0 1.35rem;
@@ -1960,6 +2016,19 @@ ul { list-style: none; }
   .cart-toggle__icon { width: 17px; height: 17px; }
   .whatsapp-float { width: 52px; height: 52px; }
   .whatsapp-float__icon { width: 30px; height: 30px; }
+  .hero__drop-mark {
+    margin-top: clamp(4.6rem, 13vh, 6rem);
+  }
+  .section-title {
+    font-size: clamp(1.75rem, 10vw, 2.75rem);
+  }
+  .waitlist__input {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  .drop-countdown__grid {
+    grid-template-columns: repeat(2, minmax(86px, 1fr));
+  }
   .footer__bar { flex-direction: column-reverse; }
   .footer__links button { flex-basis: 100%; }
   .footer__language { flex-basis: auto; }
