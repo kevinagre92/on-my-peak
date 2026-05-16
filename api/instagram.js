@@ -6,14 +6,21 @@ const DEFAULT_FIELDS = [
   'permalink',
   'thumbnail_url',
   'timestamp',
-  'username'
+  'username',
+  'children{media_type,media_url,thumbnail_url,permalink}'
 ].join(',');
 
 function buildInstagramUrl() {
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   if (!accessToken) return null;
 
-  const base = process.env.INSTAGRAM_API_BASE || 'https://graph.instagram.com';
+  if (process.env.INSTAGRAM_MEDIA_URL) {
+    const customUrl = new URL(process.env.INSTAGRAM_MEDIA_URL);
+    customUrl.searchParams.set('access_token', accessToken);
+    return customUrl;
+  }
+
+  const base = process.env.INSTAGRAM_API_BASE || 'https://graph.facebook.com';
   const version = process.env.INSTAGRAM_GRAPH_VERSION || 'v21.0';
   const userId = process.env.INSTAGRAM_USER_ID || 'me';
   const url = new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`);
@@ -26,15 +33,19 @@ function buildInstagramUrl() {
 }
 
 function normalizePost(post) {
-  const imageUrl = post.media_type === 'VIDEO' ? post.thumbnail_url : post.media_url;
+  const firstCarouselItem = post.children?.data?.find(child => child.media_url || child.thumbnail_url);
+  const imageUrl =
+    post.media_type === 'VIDEO'
+      ? post.thumbnail_url || post.media_url
+      : post.media_url || firstCarouselItem?.media_url || firstCarouselItem?.thumbnail_url;
 
   return {
     id: post.id,
     caption: post.caption || '',
-    media_type: post.media_type,
+    media_type: post.media_type || firstCarouselItem?.media_type || 'IMAGE',
     media_url: imageUrl || post.media_url || '',
     thumbnail_url: post.thumbnail_url || '',
-    permalink: post.permalink || 'https://instagram.com/onmypeak_',
+    permalink: post.permalink || firstCarouselItem?.permalink || 'https://instagram.com/onmypeak_',
     timestamp: post.timestamp || '',
     username: post.username || 'onmypeak_'
   };
@@ -51,6 +62,8 @@ module.exports = async function handler(request, response) {
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return response.status(503).json({
       error: 'Instagram feed is not configured',
+      configured: false,
+      requiredEnv: ['INSTAGRAM_ACCESS_TOKEN', 'INSTAGRAM_USER_ID'],
       posts: []
     });
   }
@@ -65,6 +78,7 @@ module.exports = async function handler(request, response) {
       return response.status(instagramResponse.status).json({
         error: 'Instagram API request failed',
         details: payload?.error?.message || 'Unknown Instagram API error',
+        configured: true,
         posts: []
       });
     }
@@ -75,11 +89,16 @@ module.exports = async function handler(request, response) {
       .slice(0, 9);
 
     response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=3600');
-    return response.status(200).json({ posts });
+    return response.status(200).json({
+      configured: true,
+      source: 'instagram',
+      posts
+    });
   } catch (error) {
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return response.status(500).json({
       error: 'Instagram feed unavailable',
+      configured: true,
       posts: []
     });
   }
