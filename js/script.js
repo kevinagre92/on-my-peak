@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const translations = {
     es: {
       flag: '🇪🇸',
-      cta: 'Reserva tu Drop',
+      navCta: 'Consigue tu Drop',
+      heroCta: 'Consíguelo ya',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifiesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -45,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     en: {
       flag: '🇬🇧',
-      cta: 'Reserve your Drop',
+      navCta: 'Get your Drop',
+      heroCta: 'Get it now',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -82,7 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     pt: {
       flag: '🇵🇹',
-      cta: 'Reserva o teu Drop',
+      navCta: 'Garante o teu Drop',
+      heroCta: 'Garante já',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -377,6 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    document.documentElement.style.setProperty('--scroll-progress', Math.min(1, scrollY / maxScroll));
     if (scrollY > 80) {
       nav.classList.add('nav--scrolled');
     } else {
@@ -441,7 +446,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --- Scroll Reveal (Intersection Observer) --- */
-  const revealElements = document.querySelectorAll('.reveal');
+  const liteRevealElements = document.querySelectorAll('.product-card, .instagram-preview__item, .footer__links button, .waitlist__field, .waitlist__perk');
+  liteRevealElements.forEach((el, index) => {
+    el.classList.add('reveal-lite');
+    el.style.setProperty('--reveal-order', index % 8);
+  });
+
+  const revealElements = document.querySelectorAll('.reveal, .reveal-lite');
 
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -451,8 +462,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -40px 0px'
+    threshold: 0.08,
+    rootMargin: '0px 0px -8% 0px'
   });
 
   revealElements.forEach(el => revealObserver.observe(el));
