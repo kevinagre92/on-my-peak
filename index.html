@@ -16,14 +16,20 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20260516-form2">
 </head>
 <body>
 
   <!-- Grain Overlay -->
   <div class="grain" aria-hidden="true"></div>
+
+  <a class="whatsapp-float" href="https://wa.me/34663232469" target="_blank" rel="noopener" aria-label="Hablar por WhatsApp">
+    <svg class="whatsapp-float__icon" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16.02 3.2c-7.02 0-12.72 5.7-12.72 12.72 0 2.24.59 4.42 1.7 6.34L3.2 28.8l6.68-1.75a12.7 12.7 0 0 0 6.14 1.56c7.02 0 12.72-5.7 12.72-12.72S23.04 3.2 16.02 3.2Zm0 23.28c-1.92 0-3.79-.52-5.42-1.51l-.39-.23-3.96 1.04 1.06-3.86-.25-.4a10.52 10.52 0 0 1-1.63-5.61c0-5.84 4.75-10.59 10.59-10.59s10.59 4.75 10.59 10.59-4.75 10.57-10.59 10.57Zm5.8-7.92c-.32-.16-1.89-.93-2.18-1.04-.29-.11-.5-.16-.71.16-.21.32-.82 1.04-1 1.25-.18.21-.37.24-.69.08-.32-.16-1.35-.5-2.57-1.58-.95-.85-1.59-1.89-1.78-2.21-.18-.32-.02-.49.14-.65.14-.14.32-.37.48-.55.16-.18.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.71-1.71-.98-2.34-.26-.61-.52-.53-.71-.54h-.61c-.21 0-.56.08-.85.4-.29.32-1.11 1.09-1.11 2.65s1.14 3.07 1.3 3.28c.16.21 2.25 3.44 5.45 4.82.76.33 1.35.52 1.82.67.76.24 1.46.21 2.01.13.61-.09 1.89-.77 2.16-1.51.27-.74.27-1.38.19-1.51-.08-.13-.29-.21-.61-.37Z"/>
+    </svg>
+  </a>
 
   <!-- Custom Cursor -->
   <div class="cursor" aria-hidden="true"></div>
@@ -34,20 +40,40 @@
     <a href="#" class="nav__logo">
       <span>(</span>OMP<span>)</span>
     </a>
-    <a href="#waitlist" class="nav__cta">Join the Waitlist</a>
+    <div class="nav__actions">
+      <a href="#waitlist" class="nav__cta" data-i18n="cta">Reserva tu Drop</a>
+      <div class="language-switcher">
+        <button class="language-switcher__toggle" type="button" id="languageToggle" aria-label="Cambiar idioma" aria-expanded="false">
+          <span id="languageFlag">🇪🇸</span>
+        </button>
+        <div class="language-switcher__menu" id="languageMenu">
+          <button type="button" data-lang="es">🇪🇸 Español</button>
+          <button type="button" data-lang="en">🇬🇧 English</button>
+          <button type="button" data-lang="pt">🇵🇹 Português</button>
+        </div>
+      </div>
+    </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero" id="hero">
-    <div class="hero__bg"></div>
+    <div class="hero__bg">
+      <video class="hero__video" autoplay muted loop playsinline poster="post OMP1-04.jpg">
+        <source src="assets/hero-background.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="hero__overlay"></div>
     <div class="hero__content">
-      <p class="hero__badge">Drop 01/XX — Limited Edition</p>
       <h1 class="hero__logo">
-        OM<span class="paren">(</span><span class="fucking"> fucking </span><span class="paren">)</span>P
+        OM<span class="paren">(</span><span class="fucking" data-typewriter-words="fucking,next,gymnastic,fleje">fucking</span><span class="paren">)</span>P
       </h1>
-      <p class="hero__claim">Nothing given. Everything earned.</p>
-      <a href="#waitlist" class="hero__btn">Join the Waitlist</a>
+      <p class="hero__claim" data-i18n="heroClaim">Nothing given. Everything earned.</p>
+      <div class="hero__drop-mark" aria-label="Drop 01/XX live">
+        <span class="hero__drop-title">DROP</span>
+        <span class="hero__drop-code">01/XX</span>
+        <span class="hero__drop-live">live</span>
+      </div>
+      <a href="#waitlist" class="hero__btn" data-i18n="cta">Reserva tu Drop</a>
     </div>
     <div class="hero__scroll">
       <span>Scroll</span>
@@ -79,16 +105,36 @@
   <section class="section manifesto" id="manifesto">
     <div class="manifesto__bg"></div>
     <div class="container">
-      <div class="manifesto__content">
-        <p class="section-label reveal">Manifiesto</p>
-        <h2 class="section-title reveal reveal-delay-1">THIS IS NOT<br>FOR EVERYONE</h2>
-        <p class="manifesto__text reveal reveal-delay-2">
-          No hacemos ropa para que te veas bien. Hacemos <strong>armaduras</strong> para los que se presentan cada día sin excusas. Para los que nadie esperaba. Para los que <strong>siguen aquí</strong> cuando todos se han ido.
-        </p>
-        <p class="manifesto__text reveal reveal-delay-3">
-          Si necesitas que alguien te motive, esto no es para ti. Si ya estás dentro, <strong>lo sabes</strong>.
-        </p>
-        <p class="manifesto__origin reveal reveal-delay-4">LPA — Canary Islands</p>
+      <div class="manifesto__layout">
+        <div class="manifesto__content">
+          <p class="section-label reveal" data-i18n="manifestoLabel">Manifiesto</p>
+          <h2 class="section-title reveal reveal-delay-1" data-i18n="manifestoTitle">THIS IS NOT<br>FOR EVERYONE</h2>
+          <p class="manifesto__text reveal reveal-delay-2" data-i18n="manifestoText1">
+            No hacemos ropa para que te veas bien. Hacemos <strong>armaduras</strong> para los que se presentan cada día sin excusas. Para los que nadie esperaba. Para los que <strong>siguen aquí</strong> cuando todos se han ido.
+          </p>
+          <p class="manifesto__text reveal reveal-delay-3" data-i18n="manifestoText2">
+            Si necesitas que alguien te motive, esto no es para ti. Si ya estás dentro, <strong>lo sabes</strong>.
+          </p>
+          <p class="manifesto__origin reveal reveal-delay-4">LPA — Canary Islands</p>
+        </div>
+
+        <aside class="manifesto__instagram reveal reveal-delay-3" aria-label="Instagram preview de On My Peak">
+          <div class="manifesto__instagram-head">
+            <span>@onmypeak_</span>
+            <a href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">Ver Instagram</a>
+          </div>
+          <a class="instagram-preview__grid" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener" aria-label="Abrir Instagram de On My Peak">
+            <img src="post OMP1-31.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-30.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-29.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-28.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-27.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-26.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-25.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-24.jpg" alt="Post reciente de On My Peak" loading="lazy">
+            <img src="post OMP1-23.jpg" alt="Post reciente de On My Peak" loading="lazy">
+          </a>
+        </aside>
       </div>
     </div>
   </section>
@@ -96,197 +142,171 @@
   <!-- Drop 01/XX -->
   <section class="section drop" id="drop">
     <div class="container">
-      <p class="section-label reveal">Colección</p>
+      <p class="section-label reveal" data-i18n="collectionLabel">Colección</p>
       <div class="drop__header">
-        <h2 class="section-title reveal reveal-delay-1" style="margin-bottom:0">DROP 01/XX</h2>
-        <span class="drop__badge reveal reveal-delay-2">Soon</span>
+        <h2 class="drop__title reveal reveal-delay-1">
+          <span class="drop__title-main">DROP</span>
+          <span class="drop__title-code">01/XX</span>
+          <span class="drop__title-live">live</span>
+        </h2>
       </div>
-      <p class="section-subtitle reveal reveal-delay-2">
-        Primer drop. Edición limitada. Una vez se agoten, no vuelven. Sin previo aviso. Sin segunda oportunidad.
+      <p class="section-subtitle reveal reveal-delay-2" data-i18n="dropText">
+        Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.
       </p>
+      <p class="drop__hint reveal reveal-delay-2" data-i18n="dropHint"><span>←→</span> Desliza lateralmente para ver más</p>
 
-      <div class="drop__grid">
-        <!-- Product 1: Black -->
-        <article class="product-card reveal reveal-delay-1">
-          <span class="product-card__status product-card__status--soon">Soon</span>
-          <img class="product-card__img" src="post OMP1-09.jpg" alt="Camiseta OMP Negra — Drop 01" loading="lazy">
-          <div class="product-card__info">
-            <span class="product-card__name">OMP Tee</span>
-            <span class="product-card__color">
-              <span class="product-card__swatch" style="background:#1a1a1a"></span>
-              Black
-            </span>
-          </div>
-        </article>
+      <div class="drop__scroll-wrap reveal reveal-delay-3" aria-label="Galería horizontal DROP 01/XX">
+        <div class="drop__grid">
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-03.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-03.jpg" alt="DROP 01/XX — camiseta blanca espalda" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
 
-        <!-- Product 2: Lava -->
-        <article class="product-card reveal reveal-delay-2">
-          <span class="product-card__status product-card__status--soon">Soon</span>
-          <img class="product-card__img" src="post OMP1-16.jpg" alt="Camiseta OMP Lava — Drop 01" loading="lazy">
-          <div class="product-card__info">
-            <span class="product-card__name">OMP Tee</span>
-            <span class="product-card__color">
-              <span class="product-card__swatch" style="background:#E8531E"></span>
-              Lava
-            </span>
-          </div>
-        </article>
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-05.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-05.jpg" alt="DROP 01/XX — camiseta negra espalda" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
 
-        <!-- Product 3: Jade -->
-        <article class="product-card reveal reveal-delay-3">
-          <span class="product-card__status product-card__status--soon">Soon</span>
-          <img class="product-card__img" src="post OMP1-24.jpg" alt="Camiseta OMP Jade — Drop 01" loading="lazy">
-          <div class="product-card__info">
-            <span class="product-card__name">OMP Tee</span>
-            <span class="product-card__color">
-              <span class="product-card__swatch" style="background:#2A9D8F"></span>
-              Jade
-            </span>
-          </div>
-        </article>
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-04.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-04.jpg" alt="DROP 01/XX — atletas con prendas OMP" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-07.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-07.jpg" alt="DROP 01/XX — hoodie OMP" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-11.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-11.jpg" alt="DROP 01/XX — hoodie azul" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-14.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-14.jpg" alt="DROP 01/XX — camiseta gris espalda" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-28.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-28.jpg" alt="DROP 01/XX — entrenamiento wall ball" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-29.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-29.jpg" alt="DROP 01/XX — atletas en pista" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-30.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-30.jpg" alt="DROP 01/XX — crop top espalda" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+
+          <article class="product-card">
+            <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-31.jpg" aria-label="Abrir imagen DROP 01/XX">
+              <img class="product-card__img" src="assets/collection/post OMP2-31.jpg" alt="DROP 01/XX — atleta exterior" loading="lazy">
+            </button>
+            <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
+          </article>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Lookbook -->
+  <!-- Next Drop -->
   <section class="section lookbook" id="lookbook">
     <div class="container">
-      <p class="section-label reveal">Lookbook</p>
-      <h2 class="section-title reveal reveal-delay-1">WHAT IS YOUR<br>NEXT PEAK?</h2>
-      <div class="lookbook__grid">
-        <div class="lookbook__item reveal">
-          <img src="post OMP1-27.jpg" alt="OMP lifestyle — hombre con Weimaraner" loading="lazy">
-          <div class="lookbook__item-overlay"><span class="lookbook__item-text">Prove It</span></div>
-        </div>
-        <div class="lookbook__item reveal reveal-delay-1">
-          <img src="post OMP1-05.jpg" alt="OMP lifestyle — atleta deadlift" loading="lazy">
-          <div class="lookbook__item-overlay"><span class="lookbook__item-text">Nothing Changed</span></div>
-        </div>
-        <div class="lookbook__item reveal reveal-delay-2">
-          <img src="post OMP1-31.jpg" alt="OMP lifestyle — mujer con caniche" loading="lazy">
-          <div class="lookbook__item-overlay"><span class="lookbook__item-text">Still Here</span></div>
-        </div>
-        <div class="lookbook__item reveal reveal-delay-3">
-          <img src="post OMP1-19.jpg" alt="OMP detalle — camiseta negra close-up" loading="lazy">
-          <div class="lookbook__item-overlay"><span class="lookbook__item-text">No One Is Coming</span></div>
-        </div>
-        <div class="lookbook__item reveal reveal-delay-4">
-          <img src="post OMP1-08.jpg" alt="OMP producto — DROP 01 detalle" loading="lazy">
-          <div class="lookbook__item-overlay"><span class="lookbook__item-text">You Keep Talking</span></div>
-        </div>
+      <p class="section-label reveal" data-i18n="lookbookLabel">NEXT DROP</p>
+      <div class="next-drop__visual reveal reveal-delay-1">
+        <img src="assets/next-drop.jpg" alt="DROP 02/XX — próximo lanzamiento OMP" loading="lazy">
       </div>
-    </div>
-  </section>
-
-  <!-- Gallery -->
-  <section class="gallery" id="gallery">
-    <div class="gallery__header">
-      <p class="section-label reveal">Editorial</p>
-      <h2 class="gallery__title reveal reveal-delay-1">DROP<br><em>01/XX</em></h2>
-      <p class="gallery__drag reveal reveal-delay-2">
-        <span class="gallery__drag-icon">←→</span> Drag to explore
-      </p>
-    </div>
-
-    <div class="gallery__track-wrap" id="galleryWrap">
-      <div class="gallery__track" id="galleryTrack">
-
-        <div class="gallery__item gallery__item--tall">
-          <img src="post OMP1-02.jpg" alt="OMP Editorial 01" loading="lazy">
-          <div class="gallery__item-caption"><span>001</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--wide">
-          <img src="post OMP1-10.jpg" alt="OMP Editorial 02" loading="lazy">
-          <div class="gallery__item-caption"><span>002</span></div>
-          <div class="gallery__item-label">Nothing Given</div>
-        </div>
-
-        <div class="gallery__item gallery__item--square">
-          <img src="post OMP1-13.jpg" alt="OMP Editorial 03" loading="lazy">
-          <div class="gallery__item-caption"><span>003</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--tall">
-          <img src="post OMP1-06.jpg" alt="OMP Editorial 04" loading="lazy">
-          <div class="gallery__item-caption"><span>004</span></div>
-          <div class="gallery__item-label">Everything Earned</div>
-        </div>
-
-        <div class="gallery__item gallery__item--square">
-          <img src="post OMP1-20.jpg" alt="OMP Editorial 05" loading="lazy">
-          <div class="gallery__item-caption"><span>005</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--wide">
-          <img src="post OMP1-11.jpg" alt="OMP Editorial 06" loading="lazy">
-          <div class="gallery__item-caption"><span>006</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--tall">
-          <img src="post OMP1-17.jpg" alt="OMP Editorial 07" loading="lazy">
-          <div class="gallery__item-caption"><span>007</span></div>
-          <div class="gallery__item-label">Still Here</div>
-        </div>
-
-        <div class="gallery__item gallery__item--square">
-          <img src="post OMP1-22.jpg" alt="OMP Editorial 08" loading="lazy">
-          <div class="gallery__item-caption"><span>008</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--wide">
-          <img src="post OMP1-15.jpg" alt="OMP Editorial 09" loading="lazy">
-          <div class="gallery__item-caption"><span>009</span></div>
-          <div class="gallery__item-label">Prove It</div>
-        </div>
-
-        <div class="gallery__item gallery__item--tall">
-          <img src="post OMP1-03.jpg" alt="OMP Editorial 10" loading="lazy">
-          <div class="gallery__item-caption"><span>010</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--square">
-          <img src="post OMP1-25.jpg" alt="OMP Editorial 11" loading="lazy">
-          <div class="gallery__item-caption"><span>011</span></div>
-        </div>
-
-        <div class="gallery__item gallery__item--wide">
-          <img src="post OMP1-29.jpg" alt="OMP Editorial 12" loading="lazy">
-          <div class="gallery__item-caption"><span>012</span></div>
-          <div class="gallery__item-label">No One Is Coming</div>
-        </div>
-
-      </div>
-    </div>
-
-    <div class="gallery__progress">
-      <div class="gallery__progress-bar" id="galleryProgress"></div>
+      <a class="calendar-btn reveal reveal-delay-2" id="calendarButton" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Next%20Drop%20OMP&dates=20260529%2F20260530&details=Next%20Drop%20OMP%20-%20DROP%2002%2FXX&ctz=Atlantic%2FCanary" target="_blank" rel="noopener" data-i18n="calendarButton">
+        MARCAR EN TU CALENDARIO
+      </a>
     </div>
   </section>
 
   <!-- Waitlist -->
   <section class="section waitlist" id="waitlist">
     <div class="container">
-      <p class="section-label reveal">Lista de espera</p>
+      <p class="section-label reveal" data-i18n="waitlistLabel">Lista de espera</p>
       <h2 class="section-title reveal reveal-delay-1">NO ONE IS COMING</h2>
-      <p class="section-subtitle reveal reveal-delay-2" style="text-align:center; margin: 0 auto;">
-        Solo tú decides estar aquí. Apúntate y sé de los primeros en acceder al DROP 01/XX.
+      <p class="section-subtitle reveal reveal-delay-2" style="text-align:center; margin: 0 auto;" data-i18n="waitlistSubtitle">
+        Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.
       </p>
 
       <form class="waitlist__form reveal reveal-delay-3" id="waitlistForm">
-        <input class="waitlist__input" type="email" id="waitlistEmail" placeholder="tu@email.com" required autocomplete="email" aria-label="Email para lista de espera">
-        <button class="waitlist__submit" type="submit">Entrar</button>
+        <label class="waitlist__field">
+          <span data-i18n="nameLabel">Nombre completo</span>
+          <input class="waitlist__input" type="text" id="waitlistName" name="name" placeholder="Nombre y apellidos" required autocomplete="name" aria-label="Nombre completo para pedido">
+        </label>
+
+        <label class="waitlist__field">
+          <span data-i18n="emailLabel">Correo</span>
+          <input class="waitlist__input" type="email" id="waitlistEmail" name="email" placeholder="tu@email.com" required autocomplete="email" aria-label="Email para pedido">
+        </label>
+
+        <label class="waitlist__field">
+          <span data-i18n="phoneLabel">Teléfono</span>
+          <input class="waitlist__input" type="tel" id="waitlistPhone" name="phone" placeholder="+34 600 000 000" required autocomplete="tel" aria-label="Teléfono para pedido">
+        </label>
+
+        <label class="waitlist__field">
+          <span data-i18n="modelLabel">Modelo de pedido</span>
+          <select class="waitlist__input waitlist__select" id="orderModel" name="model" required>
+            <option value="Oversized">Oversized</option>
+            <option value="Crop top">Crop top</option>
+            <option value="Hoodie">Hoodie</option>
+          </select>
+        </label>
+
+        <label class="waitlist__field">
+          <span data-i18n="colorLabel">Color</span>
+          <select class="waitlist__input waitlist__select" id="orderColor" name="color" required></select>
+        </label>
+
+        <label class="waitlist__field">
+          <span data-i18n="sizeLabel">Talla</span>
+          <select class="waitlist__input waitlist__select" id="orderSize" name="size" required>
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </label>
+
+        <button class="waitlist__submit" type="submit" data-i18n="submitOrder">Pedir mi camiseta</button>
       </form>
 
       <div class="waitlist__success" id="waitlistSuccess">
-        <p class="waitlist__success-title">You're in.</p>
-        <p class="waitlist__success-sub">Stay ready. Don't sleep on it.</p>
+        <p class="waitlist__success-title" data-i18n="successTitle">Pedido recibido.</p>
+        <p class="waitlist__success-sub" id="waitlistSummary">Stay ready. Don't sleep on it.</p>
       </div>
 
       <div class="waitlist__perks reveal reveal-delay-4">
-        <span class="waitlist__perk">Acceso anticipado a drops</span>
-        <span class="waitlist__perk">Contenido exclusivo</span>
-        <span class="waitlist__perk">Ediciones limitadas</span>
+        <span class="waitlist__perk" data-i18n="perk1">Acceso anticipado a drops</span>
+        <span class="waitlist__perk" data-i18n="perk2">Contenido exclusivo</span>
+        <span class="waitlist__perk" data-i18n="perk3">Ediciones limitadas</span>
       </div>
     </div>
   </section>
@@ -295,7 +315,7 @@
   <section class="instagram" id="instagram">
     <a href="https://instagram.com/onmypeak_" target="_blank" rel="noopener" class="instagram__link">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      @onmypeak_ — Follow the Movement
+      @onmypeak_ — <span data-i18n="followMovement">SIGUE EL MOVIMIENTO</span>
     </a>
   </section>
 
@@ -306,6 +326,13 @@
     <p class="footer__copy">© 2026 On My Peak ®. Nothing given. Everything earned.</p>
   </footer>
 
-  <script src="js/script.js"></script>
+  <div class="image-lightbox" id="imageLightbox" aria-hidden="true">
+    <button class="image-lightbox__close" type="button" aria-label="Cerrar imagen">×</button>
+    <button class="image-lightbox__nav image-lightbox__nav--prev" type="button" aria-label="Imagen anterior">‹</button>
+    <img class="image-lightbox__img" src="" alt="">
+    <button class="image-lightbox__nav image-lightbox__nav--next" type="button" aria-label="Imagen siguiente">›</button>
+  </div>
+
+  <script src="js/script.js?v=20260516-form2"></script>
 </body>
 </html>
