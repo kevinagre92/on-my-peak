@@ -1376,6 +1376,11 @@ ul { list-style: none; }
   line-height: 1.55;
 }
 
+.cart-item__discount--valid,
+.cart-drawer__discount-row strong {
+  color: var(--accent-lava);
+}
+
 .cart-item__price,
 .cart-drawer__totals strong {
   font-family: var(--font-logo);
@@ -1415,6 +1420,14 @@ ul { list-style: none; }
 
 .cart-drawer__empty.active {
   display: block;
+}
+
+.cart-drawer__discount-row {
+  display: none !important;
+}
+
+.cart-drawer__discount-row.active {
+  display: flex !important;
 }
 
 .cart-drawer__totals {

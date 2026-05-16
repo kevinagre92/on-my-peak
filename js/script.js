@@ -494,6 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartItems = document.getElementById('cartItems');
   const cartEmpty = document.getElementById('cartEmpty');
   const cartSubtotal = document.getElementById('cartSubtotal');
+  const cartDiscountRow = document.getElementById('cartDiscountRow');
+  const cartDiscount = document.getElementById('cartDiscount');
   const cartTax = document.getElementById('cartTax');
   const cartTotal = document.getElementById('cartTotal');
   const cartClear = document.getElementById('cartClear');
@@ -511,6 +513,9 @@ document.addEventListener('DOMContentLoaded', () => {
     'Crop top': 22,
     Hoodie: 35
   };
+
+  const discountCodes = new Set(['JOELO10', 'CABELLO10', 'KEVINAGRE10']);
+  const DISCOUNT_RATE = 0.10;
 
   function updateColorOptions() {
     if (!modelSelect || !colorSelect) return;
@@ -582,6 +587,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }[char]));
   }
 
+  function getDiscountRate(code) {
+    return discountCodes.has(String(code || '').trim().toUpperCase()) ? DISCOUNT_RATE : 0;
+  }
+
+  function getLineSubtotal(item) {
+    return item.price * item.quantity;
+  }
+
+  function getLineDiscount(item) {
+    return getLineSubtotal(item) * getDiscountRate(item.discount);
+  }
+
   function openCart() {
     cartDrawer?.classList.add('active');
     cartDrawer?.setAttribute('aria-hidden', 'false');
@@ -599,18 +616,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderCart() {
     const cart = readCart();
     const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const tax = subtotal * IGIC_RATE;
-    const total = subtotal + tax;
+    const subtotal = cart.reduce((sum, item) => sum + getLineSubtotal(item), 0);
+    const discountTotal = cart.reduce((sum, item) => sum + getLineDiscount(item), 0);
+    const taxableBase = Math.max(0, subtotal - discountTotal);
+    const tax = taxableBase * IGIC_RATE;
+    const total = taxableBase + tax;
 
     if (cartCount) cartCount.textContent = itemCount;
     if (cartSubtotal) cartSubtotal.textContent = formatCurrency(subtotal);
+    if (cartDiscount) cartDiscount.textContent = `-${formatCurrency(discountTotal)}`;
+    cartDiscountRow?.classList.toggle('active', discountTotal > 0);
     if (cartTax) cartTax.textContent = formatCurrency(tax);
     if (cartTotal) cartTotal.textContent = formatCurrency(total);
     if (cartCheckout) {
-      const orderLines = cart.map(item => `${item.quantity} x ${item.model} ${item.color} talla ${item.size}${item.discount ? ` codigo ${item.discount}` : ''}`);
+      const orderLines = cart.map(item => {
+        const validDiscount = getDiscountRate(item.discount) > 0;
+        return `${item.quantity} x ${item.model} ${item.color} talla ${item.size}${validDiscount ? ` codigo ${item.discount} (-10%)` : item.discount ? ` codigo ${item.discount} (sin descuento)` : ''}`;
+      });
       const messageText = cart.length
-        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nTotal con IGIC: ${formatCurrency(total)}`
+        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
         : 'Hola OMP, quiero reservar mi Drop.';
       cartCheckout.href = `https://wa.me/34663232469?text=${encodeURIComponent(messageText)}`;
     }
@@ -621,10 +645,10 @@ document.addEventListener('DOMContentLoaded', () => {
       <article class="cart-item">
         <div class="cart-item__top">
           <span class="cart-item__title">${escapeHtml(item.model)}</span>
-          <span class="cart-item__price">${formatCurrency(item.price * item.quantity)}</span>
+          <span class="cart-item__price">${formatCurrency(getLineSubtotal(item) - getLineDiscount(item))}</span>
         </div>
         <p class="cart-item__meta">${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
-        ${item.discount ? `<p class="cart-item__discount">Código: ${escapeHtml(item.discount)}</p>` : ''}
+        ${item.discount ? `<p class="cart-item__discount ${getDiscountRate(item.discount) ? 'cart-item__discount--valid' : ''}">Código: ${escapeHtml(item.discount)}${getDiscountRate(item.discount) ? ' · -10%' : ' · no aplicado'}</p>` : ''}
         <div class="cart-item__bottom">
           <span class="cart-item__meta">Precio unidad: ${formatCurrency(item.price)}</span>
           <button class="cart-item__remove" type="button" data-remove-cart="${index}">Quitar</button>
@@ -757,7 +781,8 @@ document.addEventListener('DOMContentLoaded', () => {
       addToCart(order);
 
       if (summary) {
-        summary.textContent = `${order.model} · ${order.color} · talla ${order.size} añadido al carrito. IGIC 7% calculado en el total.`;
+        const discountText = getDiscountRate(order.discount) ? ` Código ${order.discount} aplicado: -10%.` : order.discount ? ` Código ${order.discount} guardado, pendiente de validar.` : '';
+        summary.textContent = `${order.model} · ${order.color} · talla ${order.size} añadido al carrito.${discountText} IGIC 7% calculado en el total.`;
       }
       success.classList.add('active');
     });
