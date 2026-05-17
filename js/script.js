@@ -9,15 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     es: {
       flag: '🇪🇸',
       navCta: 'Consigue tu Drop',
-      heroCta: 'Consíguelo ya',
+      heroCta: 'consiguelo ya',
+      availableUntil: 'disponible hasta',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifiesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
       manifestoText1: 'No hacemos ropa para que te veas bien. Hacemos <strong>armaduras</strong> para los que se presentan cada día sin excusas. Para los que nadie esperaba. Para los que <strong>siguen aquí</strong> cuando todos se han ido.',
       manifestoText2: 'Si necesitas que alguien te motive, esto no es para ti. Si ya estás dentro, <strong>lo sabes</strong>.',
-      collectionLabel: 'Colección',
+      collectionLabel: 'Colección actual',
       dropText: 'Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.',
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
+      dropUrgency: 'Disponible hasta el 27/05/26',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Consigue tu Peak',
       waitlistSubtitle: 'Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.',
@@ -48,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇬🇧',
       navCta: 'Get your Drop',
       heroCta: 'Get it now',
+      availableUntil: 'available until',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -56,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Collection',
       dropText: 'Drop 1, our foundation, "No one is coming": nobody is coming to do it for you, you will have to earn it.',
       dropHint: '<span>←→</span> Scroll sideways to see more',
+      dropUrgency: 'Available until 27/05/26',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Waitlist',
       waitlistSubtitle: 'Reserve your DROP 01/XX piece.<br>Choose model, color and size.',
@@ -86,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇵🇹',
       navCta: 'Garante o teu Drop',
       heroCta: 'Garante já',
+      availableUntil: 'disponível até',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -94,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Coleção',
       dropText: 'Drop 1, a nossa base, "No one is coming": ninguém vai vir fazer isto por ti, vais ter de trabalhar por isso.',
       dropHint: '<span>←→</span> Desliza para o lado para ver mais',
+      dropUrgency: 'Disponível até 27/05/26',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Lista de espera',
       waitlistSubtitle: 'Reserva a tua peça do DROP 01/XX.<br>Escolhe modelo, cor e tamanho.',
@@ -161,6 +167,17 @@ document.addEventListener('DOMContentLoaded', () => {
     languageToggle?.setAttribute('aria-expanded', 'false');
   });
 
+  /* --- Logo Chomp --- */
+  const navLogo = document.querySelector('.nav__logo');
+  navLogo?.addEventListener('click', () => {
+    navLogo.classList.remove('nav__logo--chomp');
+    void navLogo.offsetWidth;
+    navLogo.classList.add('nav__logo--chomp');
+    window.setTimeout(() => {
+      navLogo.classList.remove('nav__logo--chomp');
+    }, 260);
+  });
+
   /* --- Footer Info Pages --- */
   const legalPages = {
     es: {
@@ -170,11 +187,11 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       returns: {
         title: 'Cambios y Devoluciones',
-        body: '<p>Aceptamos cambios de talla o modelo si la prenda está sin usar, con etiquetas y en perfecto estado. El plazo recomendado es de 14 días desde la entrega.</p><p>Si hay defecto de fabricación, escríbenos con fotos y número de pedido para resolverlo cuanto antes.</p>'
+        body: '<p>Aceptamos cambios de talla o modelo si la prenda está sin usar, con etiquetas y en perfecto estado. El plazo de devoluciones es de 14 días desde la entrega.</p><p>Si hay defecto de fabricación, escríbenos con fotos y número de pedido para resolverlo cuanto antes.</p>'
       },
       contact: {
         title: 'Contacto / Atención al Cliente',
-        body: '<p>Para pedidos, tallas, colores o cualquier duda, hablamos directo por WhatsApp.</p><p><a href="https://wa.me/34663232469" target="_blank" rel="noopener">Abrir WhatsApp: +34 663 232 469</a></p><p>Base: LPA, Canary Islands.</p>'
+        body: '<p>Para pedidos, tallas, colores o cualquier duda, hablamos directo por WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener">Abrir WhatsApp: +34 673 094 993</a></p><p>Base: LPA, Canary Islands.</p>'
       },
       privacy: {
         title: 'Política de Privacidad',
@@ -196,11 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       returns: {
         title: 'Exchanges and Returns',
-        body: '<p>We accept size or model exchanges if the piece is unused, tagged and in perfect condition. Recommended window: 14 days from delivery.</p><p>If there is a manufacturing issue, send photos and order details so we can solve it quickly.</p>'
+        body: '<p>We accept size or model exchanges if the piece is unused, tagged and in perfect condition. The return period is 14 days from delivery.</p><p>If there is a manufacturing issue, send photos and order details so we can solve it quickly.</p>'
       },
       contact: {
         title: 'Contact / Customer Support',
-        body: '<p>For orders, sizing, colors or any question, talk to us directly on WhatsApp.</p><p><a href="https://wa.me/34663232469" target="_blank" rel="noopener">Open WhatsApp: +34 663 232 469</a></p><p>Based in LPA, Canary Islands.</p>'
+        body: '<p>For orders, sizing, colors or any question, talk to us directly on WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener">Open WhatsApp: +34 673 094 993</a></p><p>Based in LPA, Canary Islands.</p>'
       },
       privacy: {
         title: 'Privacy Policy',
@@ -222,11 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       returns: {
         title: 'Trocas e Devoluções',
-        body: '<p>Aceitamos trocas de tamanho ou modelo se a peça estiver sem uso, com etiquetas e em perfeito estado. Prazo recomendado: 14 dias desde a entrega.</p><p>Se houver defeito de fabrico, envia fotos e dados do pedido para resolvermos rapidamente.</p>'
+        body: '<p>Aceitamos trocas de tamanho ou modelo se a peça estiver sem uso, com etiquetas e em perfeito estado. O prazo de devoluções é de 14 dias desde a entrega.</p><p>Se houver defeito de fabrico, envia fotos e dados do pedido para resolvermos rapidamente.</p>'
       },
       contact: {
         title: 'Contacto / Apoio ao Cliente',
-        body: '<p>Para pedidos, tamanhos, cores ou qualquer dúvida, fala connosco diretamente no WhatsApp.</p><p><a href="https://wa.me/34663232469" target="_blank" rel="noopener">Abrir WhatsApp: +34 663 232 469</a></p><p>Base: LPA, Canary Islands.</p>'
+        body: '<p>Para pedidos, tamanhos, cores ou qualquer dúvida, fala connosco diretamente no WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener">Abrir WhatsApp: +34 673 094 993</a></p><p>Base: LPA, Canary Islands.</p>'
       },
       privacy: {
         title: 'Política de Privacidade',
@@ -485,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const summary = document.getElementById('waitlistSummary');
   const modelSelect = document.getElementById('orderModel');
   const colorSelect = document.getElementById('orderColor');
+  const colorOptions = document.getElementById('colorOptions');
   const sizeSelect = document.getElementById('orderSize');
   const discountInput = document.getElementById('discountCode');
   const cartToggle = document.getElementById('cartToggle');
@@ -503,9 +521,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const IGIC_RATE = 0.07;
 
   const colorsByModel = {
-    Oversized: ['Jade', 'Azul zen', 'Blanco', 'Negro', 'Naranja', 'Ebano', 'Verde mist'],
-    'Crop top': ['Blanco', 'Negro', 'Rosa', 'Turquesa'],
-    Hoodie: ['Negra', 'Blanca', 'Ebano', 'Azul tormenta', 'Marino', 'Blanco vintage']
+    Oversized: [
+      { name: 'Jade', hex: '#007a70' },
+      { name: 'Azul zen', hex: '#6d91a8' },
+      { name: 'Blanco', hex: '#f4f1e8' },
+      { name: 'Negro', hex: '#101010' },
+      { name: 'Naranja', hex: '#e85f24' },
+      { name: 'Ebano', hex: '#303332' },
+      { name: 'Verde mist', hex: '#a8b7a2' }
+    ],
+    'Crop top': [
+      { name: 'Blanco', hex: '#f4f1e8' },
+      { name: 'Negro', hex: '#101010' },
+      { name: 'Rosa', hex: '#f0a7bb' },
+      { name: 'Turquesa', hex: '#00a7b8' }
+    ],
+    Hoodie: [
+      { name: 'Negra', hex: '#101010' },
+      { name: 'Blanca', hex: '#f4f1e8' },
+      { name: 'Ebano', hex: '#303332' },
+      { name: 'Azul tormenta', hex: '#607f98' },
+      { name: 'Marino', hex: '#17233f' },
+      { name: 'Blanco vintage', hex: '#e5ddc8' }
+    ]
   };
 
   const pricesByModel = {
@@ -521,9 +559,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modelSelect || !colorSelect) return;
     const colors = colorsByModel[modelSelect.value] || [];
     colorSelect.innerHTML = colors
-      .map(color => `<option value="${color}">${color}</option>`)
+      .map(color => `<option value="${color.name}">${color.name}</option>`)
       .join('');
+    renderColorButtons(colors);
   }
+
+  function renderColorButtons(colors) {
+    if (!colorOptions) return;
+    colorOptions.innerHTML = colors.map((color, index) => `
+      <button class="color-option${index === 0 ? ' active' : ''}" type="button" data-color="${escapeHtml(color.name)}" aria-label="Elegir color ${escapeHtml(color.name)}">
+        <span class="color-option__swatch" style="--swatch:${escapeHtml(color.hex)}"></span>
+        <span>${escapeHtml(color.name)}</span>
+      </button>
+    `).join('');
+  }
+
+  colorOptions?.addEventListener('click', (e) => {
+    const button = e.target.closest('[data-color]');
+    if (!button || !colorSelect) return;
+    colorSelect.value = button.dataset.color;
+    colorOptions.querySelectorAll('.color-option').forEach(option => {
+      option.classList.toggle('active', option === button);
+    });
+  });
+
+  colorSelect?.addEventListener('change', () => {
+    colorOptions?.querySelectorAll('.color-option').forEach(option => {
+      option.classList.toggle('active', option.dataset.color === colorSelect.value);
+    });
+  });
 
   if (modelSelect) {
     updateColorOptions();
@@ -560,6 +624,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateCountdown();
   window.setInterval(updateCountdown, 1000);
+
+  /* --- Drop 01 Deadline Countdown --- */
+  const dropDeadlineTarget = new Date('2026-05-27T23:59:59+01:00').getTime();
+  const dropDeadlineNodes = document.querySelectorAll('[data-drop-deadline-countdown]');
+
+  function updateDropDeadlineCountdown() {
+    if (!dropDeadlineNodes.length) return;
+    const distance = Math.max(0, dropDeadlineTarget - Date.now());
+    const days = Math.floor(distance / 86400000);
+    const hours = Math.floor((distance % 86400000) / 3600000);
+    const minutes = Math.floor((distance % 3600000) / 60000);
+    const label = `${padTime(days)}D ${padTime(hours)}H ${padTime(minutes)}M`;
+    dropDeadlineNodes.forEach(node => {
+      node.textContent = label;
+    });
+  }
+
+  updateDropDeadlineCountdown();
+  window.setInterval(updateDropDeadlineCountdown, 60000);
 
   /* --- Cart --- */
   function readCart() {
@@ -636,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const messageText = cart.length
         ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
         : 'Hola OMP, quiero reservar mi Drop.';
-      cartCheckout.href = `https://wa.me/34663232469?text=${encodeURIComponent(messageText)}`;
+      cartCheckout.href = `https://wa.me/34673094993?text=${encodeURIComponent(messageText)}`;
     }
     cartEmpty?.classList.toggle('active', cart.length === 0);
 
