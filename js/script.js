@@ -503,6 +503,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const modelSelect = document.getElementById('orderModel');
   const colorSelect = document.getElementById('orderColor');
   const colorOptions = document.getElementById('colorOptions');
+  const colorPickerToggle = document.getElementById('colorPickerToggle');
+  const selectedColorSwatch = document.getElementById('selectedColorSwatch');
+  const selectedColorLabel = document.getElementById('selectedColorLabel');
   const sizeSelect = document.getElementById('orderSize');
   const discountInput = document.getElementById('discountCode');
   const cartToggle = document.getElementById('cartToggle');
@@ -578,26 +581,49 @@ document.addEventListener('DOMContentLoaded', () => {
       .map(color => `<option value="${color.name}">${color.name}</option>`)
       .join('');
     renderColorButtons(colors);
+    syncSelectedColor(colors[0]?.name);
   }
 
   function showColorOptions() {
     colorOptions?.classList.add('color-options--visible');
+    colorPickerToggle?.setAttribute('aria-expanded', 'true');
   }
 
   function hideColorOptions() {
-    window.setTimeout(() => {
-      if (!colorOptions?.matches(':hover') && document.activeElement !== colorSelect) {
-        colorOptions?.classList.remove('color-options--visible');
-      }
-    }, 800);
+    colorOptions?.classList.remove('color-options--visible');
+    colorPickerToggle?.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleColorOptions() {
+    if (colorOptions?.classList.contains('color-options--visible')) {
+      hideColorOptions();
+    } else {
+      showColorOptions();
+    }
+  }
+
+  function syncSelectedColor(colorName = colorSelect?.value) {
+    if (!colorSelect || !colorName) return;
+    colorSelect.value = colorName;
+    const colors = colorsByModel[modelSelect?.value] || [];
+    const color = colors.find(item => item.name === colorName) || colors[0];
+    if (selectedColorSwatch && color) {
+      selectedColorSwatch.style.setProperty('--swatch', color.hex);
+    }
+    if (selectedColorLabel && color) {
+      selectedColorLabel.textContent = color.name;
+    }
+    colorOptions?.querySelectorAll('.color-option').forEach(option => {
+      option.classList.toggle('active', option.dataset.color === colorSelect.value);
+      option.setAttribute('aria-selected', option.dataset.color === colorSelect.value ? 'true' : 'false');
+    });
   }
 
   function renderColorButtons(colors) {
     if (!colorOptions) return;
     colorOptions.innerHTML = colors.map((color, index) => `
-      <button class="color-option${index === 0 ? ' active' : ''}" type="button" data-color="${escapeHtml(color.name)}" aria-label="Elegir color ${escapeHtml(color.name)}">
+      <button class="color-option${index === 0 ? ' active' : ''}" type="button" role="option" data-color="${escapeHtml(color.name)}" aria-label="Elegir color ${escapeHtml(color.name)}" aria-selected="${index === 0 ? 'true' : 'false'}" title="${escapeHtml(color.name)}">
         <span class="color-option__swatch" style="--swatch:${escapeHtml(color.hex)}"></span>
-        <span>${escapeHtml(color.name)}</span>
       </button>
     `).join('');
   }
@@ -605,24 +631,28 @@ document.addEventListener('DOMContentLoaded', () => {
   colorOptions?.addEventListener('click', (e) => {
     const button = e.target.closest('[data-color]');
     if (!button || !colorSelect) return;
-    colorSelect.value = button.dataset.color;
-    colorOptions.querySelectorAll('.color-option').forEach(option => {
-      option.classList.toggle('active', option === button);
-    });
-    colorOptions.classList.remove('color-options--visible');
+    syncSelectedColor(button.dataset.color);
+    hideColorOptions();
   });
 
   colorSelect?.addEventListener('change', () => {
-    colorOptions?.querySelectorAll('.color-option').forEach(option => {
-      option.classList.toggle('active', option.dataset.color === colorSelect.value);
-    });
-    colorOptions?.classList.remove('color-options--visible');
+    syncSelectedColor();
+    hideColorOptions();
   });
 
-  colorSelect?.addEventListener('focus', showColorOptions);
-  colorSelect?.addEventListener('pointerdown', showColorOptions);
-  colorSelect?.addEventListener('click', showColorOptions);
-  colorSelect?.addEventListener('blur', hideColorOptions);
+  colorPickerToggle?.addEventListener('click', toggleColorOptions);
+  colorPickerToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideColorOptions();
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showColorOptions();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if (!colorOptions?.classList.contains('color-options--visible')) return;
+    if (e.target.closest('#colorPickerToggle') || e.target.closest('#colorOptions')) return;
+    hideColorOptions();
+  });
 
   if (modelSelect) {
     updateColorOptions();

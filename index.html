@@ -309,8 +309,12 @@
 
         <label class="waitlist__field">
           <span data-i18n="colorLabel">Color</span>
-          <select class="waitlist__input waitlist__select" id="orderColor" name="color" required></select>
-          <div class="color-options" id="colorOptions" aria-label="Colores disponibles"></div>
+          <button class="waitlist__input color-picker" type="button" id="colorPickerToggle" aria-haspopup="listbox" aria-expanded="false">
+            <span class="color-picker__swatch" id="selectedColorSwatch"></span>
+            <span class="color-picker__label" id="selectedColorLabel">Color</span>
+          </button>
+          <select class="visually-hidden-select" id="orderColor" name="color" required aria-label="Color para pedido"></select>
+          <div class="color-options" id="colorOptions" role="listbox" aria-label="Colores disponibles"></div>
         </label>
 
         <label class="waitlist__field">
