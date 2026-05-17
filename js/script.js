@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇪🇸',
       navCta: 'Consigue tu Drop',
       heroCta: 'consiguelo ya',
-      availableUntil: 'disponible hasta',
+      availableUntil: 'disponible durante',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifiesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Colección actual',
       dropText: 'Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.',
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
-      dropUrgency: 'Disponible hasta el 27/05/26',
+      dropUrgency: 'Disponible durante',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Consigue tu Peak',
       waitlistSubtitle: 'Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.',
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇬🇧',
       navCta: 'Get your Drop',
       heroCta: 'Get it now',
-      availableUntil: 'available until',
+      availableUntil: 'available during',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Collection',
       dropText: 'Drop 1, our foundation, "No one is coming": nobody is coming to do it for you, you will have to earn it.',
       dropHint: '<span>←→</span> Scroll sideways to see more',
-      dropUrgency: 'Available until 27/05/26',
+      dropUrgency: 'Available during',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Waitlist',
       waitlistSubtitle: 'Reserve your DROP 01/XX piece.<br>Choose model, color and size.',
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇵🇹',
       navCta: 'Garante o teu Drop',
       heroCta: 'Garante já',
-      availableUntil: 'disponível até',
+      availableUntil: 'disponível durante',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Coleção',
       dropText: 'Drop 1, a nossa base, "No one is coming": ninguém vai vir fazer isto por ti, vais ter de trabalhar por isso.',
       dropHint: '<span>←→</span> Desliza para o lado para ver mais',
-      dropUrgency: 'Disponível até 27/05/26',
+      dropUrgency: 'Disponível durante',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Lista de espera',
       waitlistSubtitle: 'Reserva a tua peça do DROP 01/XX.<br>Escolhe modelo, cor e tamanho.',
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       terms: {
         title: 'Términos y Condiciones',
-        body: '<p>Los productos se venden por disponibilidad de drop. Añadir al carrito no garantiza stock hasta que el pedido quede confirmado por OMP.</p><p>Los precios muestran subtotal y el carrito calcula el IGIC correspondiente.</p>'
+        body: '<p>Los productos se venden por disponibilidad de drop. Añadir al carrito no garantiza stock hasta que el pedido quede confirmado por OMP.</p><p>Los precios se muestran en euros con IGIC incluido.</p>'
       },
       reviews: {
         title: 'Clientes Satisfechos',
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       terms: {
         title: 'Terms and Conditions',
-        body: '<p>Products are sold according to drop availability. Adding an item to the cart does not guarantee stock until OMP confirms the order.</p><p>The cart shows subtotal and calculates the applicable IGIC.</p>'
+        body: '<p>Products are sold according to drop availability. Adding an item to the cart does not guarantee stock until OMP confirms the order.</p><p>Prices are shown in euros with IGIC included.</p>'
       },
       reviews: {
         title: 'Happy Customers',
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       terms: {
         title: 'Termos e Condições',
-        body: '<p>Os produtos são vendidos conforme disponibilidade do drop. Adicionar ao carrinho não garante stock até confirmação da OMP.</p><p>O carrinho mostra subtotal e calcula o IGIC aplicável.</p>'
+        body: '<p>Os produtos são vendidos conforme disponibilidade do drop. Adicionar ao carrinho não garante stock até confirmação da OMP.</p><p>Os preços são apresentados em euros com IGIC incluído.</p>'
       },
       reviews: {
         title: 'Clientes Satisfeitos',
@@ -522,27 +522,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const colorsByModel = {
     Oversized: [
-      { name: 'Jade', hex: '#007a70' },
-      { name: 'Azul zen', hex: '#6d91a8' },
-      { name: 'Blanco', hex: '#f4f1e8' },
+      { name: 'Jade', hex: '#12b3a1' },
+      { name: 'Azul zen', hex: '#5c5ba1' },
+      { name: 'Blanco', hex: '#fafafa' },
       { name: 'Negro', hex: '#101010' },
-      { name: 'Naranja', hex: '#e85f24' },
-      { name: 'Ebano', hex: '#303332' },
-      { name: 'Verde mist', hex: '#a8b7a2' }
+      { name: 'Naranja', hex: '#f23624' },
+      { name: 'Ebano', hex: '#343c42' },
+      { name: 'Verde mist', hex: '#d7dfc9' }
     ],
     'Crop top': [
-      { name: 'Blanco', hex: '#f4f1e8' },
+      { name: 'Blanco', hex: '#fafafa' },
       { name: 'Negro', hex: '#101010' },
-      { name: 'Rosa', hex: '#f0a7bb' },
-      { name: 'Turquesa', hex: '#00a7b8' }
+      { name: 'Rosa', hex: '#f6539a' },
+      { name: 'Turquesa', hex: '#75adba' }
     ],
     Hoodie: [
       { name: 'Negra', hex: '#101010' },
-      { name: 'Blanca', hex: '#f4f1e8' },
-      { name: 'Ebano', hex: '#303332' },
-      { name: 'Azul tormenta', hex: '#607f98' },
-      { name: 'Marino', hex: '#17233f' },
-      { name: 'Blanco vintage', hex: '#e5ddc8' }
+      { name: 'Blanca', hex: '#fafafa' },
+      { name: 'Ebano', hex: '#aaa7a3' },
+      { name: 'Azul tormenta', hex: '#5f7482' },
+      { name: 'Marino', hex: '#012653' },
+      { name: 'Blanco vintage', hex: '#eee5e3' }
     ]
   };
 
@@ -564,6 +564,18 @@ document.addEventListener('DOMContentLoaded', () => {
     renderColorButtons(colors);
   }
 
+  function showColorOptions() {
+    colorOptions?.classList.add('color-options--visible');
+  }
+
+  function hideColorOptions() {
+    window.setTimeout(() => {
+      if (!colorOptions?.matches(':hover') && document.activeElement !== colorSelect) {
+        colorOptions?.classList.remove('color-options--visible');
+      }
+    }, 800);
+  }
+
   function renderColorButtons(colors) {
     if (!colorOptions) return;
     colorOptions.innerHTML = colors.map((color, index) => `
@@ -581,13 +593,20 @@ document.addEventListener('DOMContentLoaded', () => {
     colorOptions.querySelectorAll('.color-option').forEach(option => {
       option.classList.toggle('active', option === button);
     });
+    colorOptions.classList.remove('color-options--visible');
   });
 
   colorSelect?.addEventListener('change', () => {
     colorOptions?.querySelectorAll('.color-option').forEach(option => {
       option.classList.toggle('active', option.dataset.color === colorSelect.value);
     });
+    colorOptions?.classList.remove('color-options--visible');
   });
+
+  colorSelect?.addEventListener('focus', showColorOptions);
+  colorSelect?.addEventListener('pointerdown', showColorOptions);
+  colorSelect?.addEventListener('click', showColorOptions);
+  colorSelect?.addEventListener('blur', hideColorOptions);
 
   if (modelSelect) {
     updateColorOptions();
@@ -635,14 +654,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const days = Math.floor(distance / 86400000);
     const hours = Math.floor((distance % 86400000) / 3600000);
     const minutes = Math.floor((distance % 3600000) / 60000);
-    const label = `${padTime(days)}D ${padTime(hours)}H ${padTime(minutes)}M`;
+    const seconds = Math.floor((distance % 60000) / 1000);
+    const label = `${padTime(days)}D ${padTime(hours)}H ${padTime(minutes)}M ${padTime(seconds)}S`;
     dropDeadlineNodes.forEach(node => {
       node.textContent = label;
     });
   }
 
   updateDropDeadlineCountdown();
-  window.setInterval(updateDropDeadlineCountdown, 60000);
+  window.setInterval(updateDropDeadlineCountdown, 1000);
 
   /* --- Cart --- */
   function readCart() {
@@ -654,11 +674,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function formatCurrency(value) {
-    return new Intl.NumberFormat('es-ES', {
-      style: 'currency',
-      currency: 'EUR',
-      currencyDisplay: 'symbol'
+    const amount = new Intl.NumberFormat('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     }).format(value);
+    return `${amount} €`;
   }
 
   function escapeHtml(value) {
@@ -702,9 +722,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = cart.reduce((sum, item) => sum + getLineSubtotal(item), 0);
     const discountTotal = cart.reduce((sum, item) => sum + getLineDiscount(item), 0);
-    const taxableBase = Math.max(0, subtotal - discountTotal);
-    const tax = taxableBase * IGIC_RATE;
-    const total = taxableBase + tax;
+    const total = Math.max(0, subtotal - discountTotal);
+    const tax = total - (total / (1 + IGIC_RATE));
 
     if (cartCount) cartCount.textContent = itemCount;
     if (cartSubtotal) cartSubtotal.textContent = formatCurrency(subtotal);
@@ -718,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${item.quantity} x ${item.model} ${item.color} talla ${item.size} · ${formatCurrency(item.price)} c/u${validDiscount ? ` · codigo ${item.discount} (-10%)` : item.discount ? ` · codigo ${item.discount} (sin descuento)` : ''}`;
       });
       const messageText = cart.length
-        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
+        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC incluido 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
         : 'Hola OMP, quiero reservar mi Drop.';
       cartCheckout.href = `https://wa.me/34673094993?text=${encodeURIComponent(messageText)}`;
     }
@@ -866,7 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (summary) {
         const discountText = getDiscountRate(order.discount) ? ` Código ${order.discount} aplicado: -10%.` : order.discount ? ` Código ${order.discount} guardado, pendiente de validar.` : '';
-        summary.textContent = `${order.model} · ${order.color} · talla ${order.size} añadido al carrito.${discountText} IGIC 7% calculado en el total.`;
+        summary.textContent = `${order.model} · ${order.color} · talla ${order.size} añadido al carrito.${discountText} Precio con IGIC incluido.`;
       }
       success.classList.add('active');
     });

@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260517-urgency1">
+  <link rel="stylesheet" href="css/style.css?v=20260517-cart2">
 </head>
 <body>
 
@@ -43,7 +43,6 @@
     <div class="nav__actions">
       <a href="#waitlist" class="nav__cta">
         <span data-i18n="navCta">Consigue tu Drop</span>
-        <small data-drop-deadline-countdown>00D 00H 00M</small>
       </a>
       <button class="cart-toggle" type="button" id="cartToggle" aria-label="Abrir carrito" aria-expanded="false">
         <svg class="cart-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -74,7 +73,7 @@
       </div>
       <a href="#waitlist" class="hero__btn">
         <span data-i18n="heroCta">consiguelo ya</span>
-        <small><span data-i18n="availableUntil">disponible hasta</span> <span data-drop-deadline-countdown>00D 00H 00M</span></small>
+        <small><span data-i18n="availableUntil">disponible durante</span> <span data-drop-deadline-countdown>00D 00H 00M 00S</span></small>
       </a>
     </div>
     <div class="hero__scroll">
@@ -173,7 +172,7 @@
       <p class="section-subtitle reveal reveal-delay-2" data-i18n="dropText">
         Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.
       </p>
-      <p class="drop__urgency reveal reveal-delay-2"><span data-i18n="dropUrgency">Disponible hasta el 27/05/26</span> · <strong data-drop-deadline-countdown>00D 00H 00M</strong></p>
+      <p class="drop__urgency reveal reveal-delay-2"><span data-i18n="dropUrgency">Disponible durante</span> <strong data-drop-deadline-countdown>00D 00H 00M 00S</strong></p>
       <p class="drop__hint reveal reveal-delay-2" data-i18n="dropHint"><span>←→</span> Desliza lateralmente para ver más</p>
 
       <div class="drop__scroll-wrap reveal reveal-delay-3" aria-label="Galería horizontal DROP 01/XX">
@@ -404,7 +403,7 @@
       <div class="cart-drawer__totals" id="cartTotals">
         <div><span>Subtotal</span><strong id="cartSubtotal">0,00 €</strong></div>
         <div class="cart-drawer__discount-row" id="cartDiscountRow"><span>Descuento</span><strong id="cartDiscount">-0,00 €</strong></div>
-        <div><span>IGIC 7%</span><strong id="cartTax">0,00 €</strong></div>
+        <div><span>IGIC incluido 7%</span><strong id="cartTax">0,00 €</strong></div>
         <div class="cart-drawer__total"><span>Total</span><strong id="cartTotal">0,00 €</strong></div>
       </div>
       <a class="cart-drawer__checkout" id="cartCheckout" href="https://wa.me/34673094993" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
@@ -421,6 +420,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260517-urgency1"></script>
+  <script src="js/script.js?v=20260517-cart2"></script>
 </body>
 </html>

@@ -567,6 +567,7 @@ ul { list-style: none; }
   font-size: 0.52rem;
   letter-spacing: 0.16em;
   color: rgba(255,255,255,0.76);
+  white-space: nowrap;
 }
 
 .hero__btn:hover {
@@ -908,6 +909,8 @@ ul { list-style: none; }
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  flex-wrap: nowrap;
+  max-width: 100%;
   margin-top: 1rem;
   padding: 0.55rem 0.75rem;
   border: 1px solid rgba(232,83,30,0.34);
@@ -917,11 +920,13 @@ ul { list-style: none; }
   font-size: 0.6rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .drop__urgency strong {
   color: var(--accent-lava);
   font-weight: 400;
+  white-space: nowrap;
 }
 
 .drop__grid {
@@ -1269,10 +1274,18 @@ ul { list-style: none; }
 .waitlist__input:focus { border-color: var(--accent-lava); }
 
 .color-options {
-  display: grid;
+  display: none;
   grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
   gap: 0.45rem;
   margin-top: 0.35rem;
+}
+
+.color-options--visible {
+  display: grid;
+}
+
+.waitlist__field:focus-within .color-options {
+  display: grid;
 }
 
 .color-option {
@@ -1486,8 +1499,10 @@ ul { list-style: none; }
 
 .cart-item__price,
 .cart-drawer__totals strong {
-  font-family: var(--font-logo);
+  font-family: var(--font-body);
   font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .cart-item__remove,
@@ -2128,6 +2143,28 @@ ul { list-style: none; }
   .waitlist__input {
     min-height: 48px;
     font-size: 16px;
+  }
+  .hero__btn {
+    width: min(100%, 315px);
+    padding: 0.95rem 1rem;
+  }
+  .hero__btn small {
+    font-size: 0.46rem;
+    letter-spacing: 0.08em;
+  }
+  .drop__urgency {
+    width: 100%;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.52rem 0.46rem;
+    font-size: 0.42rem;
+    letter-spacing: 0.055em;
+  }
+  .drop__urgency strong {
+    font-size: 0.48rem;
+  }
+  .color-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .drop-countdown__grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
