@@ -563,11 +563,23 @@ ul { list-style: none; }
 }
 
 .hero__btn small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
   font-family: var(--font-mono);
   font-size: 0.52rem;
   letter-spacing: 0.16em;
   color: rgba(255,255,255,0.76);
   white-space: nowrap;
+}
+
+.hero__btn small strong {
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
 }
 
 .hero__btn:hover {
@@ -1543,9 +1555,13 @@ ul { list-style: none; }
 }
 
 .currency-symbol {
-  font-family: Arial, Helvetica, sans-serif;
+  display: inline-block;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-style: normal !important;
   font-weight: 600;
-  letter-spacing: 0;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  -webkit-text-stroke: 0 !important;
 }
 
 .cart-item__remove,

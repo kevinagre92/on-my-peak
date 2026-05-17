@@ -571,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(value);
-    return `${amount} <span class="currency-symbol" aria-label="euros">€</span>`;
+    return `<span class="currency-amount">${amount}</span> <span class="currency-symbol" aria-label="euros">&euro;</span>`;
   }
 
   function updateColorOptions() {
