@@ -393,19 +393,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Navbar Scroll --- */
   const nav = document.getElementById('nav');
-  let lastScroll = 0;
+  let scrollTicking = false;
 
-  window.addEventListener('scroll', () => {
+  function updateScrollState() {
     const scrollY = window.scrollY;
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     document.documentElement.style.setProperty('--scroll-progress', Math.min(1, scrollY / maxScroll));
     if (scrollY > 80) {
-      nav.classList.add('nav--scrolled');
+      nav?.classList.add('nav--scrolled');
     } else {
-      nav.classList.remove('nav--scrolled');
+      nav?.classList.remove('nav--scrolled');
     }
-    lastScroll = scrollY;
+    scrollTicking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    window.requestAnimationFrame(updateScrollState);
   }, { passive: true });
+  updateScrollState();
 
   /* --- Hero Load Animation --- */
   const hero = document.querySelector('.hero');
@@ -488,11 +495,17 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Parallax on Manifesto BG --- */
   const manifestoBg = document.querySelector('.manifesto__bg');
   if (manifestoBg && window.matchMedia('(pointer: fine)').matches) {
-    window.addEventListener('scroll', () => {
+    let manifestoTicking = false;
+    function updateManifestoParallax() {
       const rect = manifestoBg.parentElement.getBoundingClientRect();
-      const speed = 0.15;
-      const offset = rect.top * speed;
+      const offset = rect.top * 0.15;
       manifestoBg.style.transform = `translateY(calc(-50% + ${offset}px))`;
+      manifestoTicking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (manifestoTicking) return;
+      manifestoTicking = true;
+      window.requestAnimationFrame(updateManifestoParallax);
     }, { passive: true });
   }
 
@@ -823,6 +836,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     writeCart(cart);
     renderCart();
+    cartToggle?.classList.add('cart-toggle--pop');
+    window.setTimeout(() => cartToggle?.classList.remove('cart-toggle--pop'), 420);
     openCart();
   }
 
@@ -901,7 +916,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  hydrateInstagramFeed();
+  function scheduleInstagramFeed() {
+    if (!instagramFeed) return;
+
+    if ('IntersectionObserver' in window) {
+      const feedObserver = new IntersectionObserver((entries) => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        feedObserver.disconnect();
+        hydrateInstagramFeed();
+      }, { rootMargin: '650px 0px' });
+      feedObserver.observe(instagramFeed);
+      return;
+    }
+
+    const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 900));
+    idle(hydrateInstagramFeed);
+  }
+
+  scheduleInstagramFeed();
 
   if (form) {
     form.addEventListener('submit', (e) => {
