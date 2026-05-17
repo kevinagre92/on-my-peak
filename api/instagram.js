@@ -65,7 +65,7 @@ module.exports = async function handler(request, response) {
     return response.status(503).json({
       error: 'Instagram feed is not configured',
       configured: false,
-      requiredEnv: ['INSTAGRAM_ACCESS_TOKEN', 'INSTAGRAM_USER_ID'],
+      requiredEnv: ['INSTAGRAM_ACCESS_TOKEN', 'INSTAGRAM_PROVIDER=instagram'],
       posts: []
     });
   }
