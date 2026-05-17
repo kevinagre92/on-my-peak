@@ -555,6 +555,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const discountCodes = new Set(['JOELO10', 'CABELLO10', 'KEVINAGRE10']);
   const DISCOUNT_RATE = 0.10;
 
+  function formatCurrencyText(value) {
+    const amount = new Intl.NumberFormat('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+    return `${amount} €`;
+  }
+
+  function formatCurrencyHtml(value) {
+    const amount = new Intl.NumberFormat('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+    return `${amount} <span class="currency-symbol" aria-label="euros">€</span>`;
+  }
+
   function updateColorOptions() {
     if (!modelSelect || !colorSelect) return;
     const colors = colorsByModel[modelSelect.value] || [];
@@ -674,11 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function formatCurrency(value) {
-    const amount = new Intl.NumberFormat('es-ES', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
-    return `${amount} €`;
+    return formatCurrencyText(value);
   }
 
   function escapeHtml(value) {
@@ -726,11 +738,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tax = total - (total / (1 + IGIC_RATE));
 
     if (cartCount) cartCount.textContent = itemCount;
-    if (cartSubtotal) cartSubtotal.textContent = formatCurrency(subtotal);
-    if (cartDiscount) cartDiscount.textContent = `-${formatCurrency(discountTotal)}`;
+    if (cartSubtotal) cartSubtotal.innerHTML = formatCurrencyHtml(subtotal);
+    if (cartDiscount) cartDiscount.innerHTML = `-${formatCurrencyHtml(discountTotal)}`;
     cartDiscountRow?.classList.toggle('active', discountTotal > 0);
-    if (cartTax) cartTax.textContent = formatCurrency(tax);
-    if (cartTotal) cartTotal.textContent = formatCurrency(total);
+    if (cartTax) cartTax.innerHTML = formatCurrencyHtml(tax);
+    if (cartTotal) cartTotal.innerHTML = formatCurrencyHtml(total);
     if (cartCheckout) {
       const orderLines = cart.map(item => {
         const validDiscount = getDiscountRate(item.discount) > 0;
@@ -748,12 +760,12 @@ document.addEventListener('DOMContentLoaded', () => {
       <article class="cart-item">
         <div class="cart-item__top">
           <span class="cart-item__title">${escapeHtml(item.model)}</span>
-          <span class="cart-item__price">${formatCurrency(getLineSubtotal(item) - getLineDiscount(item))}</span>
+          <span class="cart-item__price">${formatCurrencyHtml(getLineSubtotal(item) - getLineDiscount(item))}</span>
         </div>
         <p class="cart-item__meta">${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
         ${item.discount ? `<p class="cart-item__discount ${getDiscountRate(item.discount) ? 'cart-item__discount--valid' : ''}">Código: ${escapeHtml(item.discount)}${getDiscountRate(item.discount) ? ' · -10%' : ' · no aplicado'}</p>` : ''}
         <div class="cart-item__bottom">
-          <span class="cart-item__meta">Precio unidad: ${formatCurrency(item.price)}</span>
+          <span class="cart-item__meta">Precio unidad: ${formatCurrencyHtml(item.price)}</span>
           <button class="cart-item__remove" type="button" data-remove-cart="${index}">Quitar</button>
         </div>
       </article>
@@ -885,7 +897,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (summary) {
         const discountText = getDiscountRate(order.discount) ? ` Código ${order.discount} aplicado: -10%.` : order.discount ? ` Código ${order.discount} guardado, pendiente de validar.` : '';
-        summary.textContent = `${order.model} · ${order.color} · talla ${order.size} añadido al carrito.${discountText} Precio con IGIC incluido.`;
+        summary.textContent = discountText.trim();
       }
       success.classList.add('active');
     });

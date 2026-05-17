@@ -20,7 +20,9 @@ function buildInstagramUrl() {
     return customUrl;
   }
 
-  const base = process.env.INSTAGRAM_API_BASE || 'https://graph.facebook.com';
+  const provider = (process.env.INSTAGRAM_PROVIDER || '').toLowerCase();
+  const useInstagramLogin = provider === 'instagram' || (!provider && !process.env.INSTAGRAM_USER_ID);
+  const base = process.env.INSTAGRAM_API_BASE || (useInstagramLogin ? 'https://graph.instagram.com' : 'https://graph.facebook.com');
   const version = process.env.INSTAGRAM_GRAPH_VERSION || 'v21.0';
   const userId = process.env.INSTAGRAM_USER_ID || 'me';
   const url = new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`);
