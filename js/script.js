@@ -656,7 +656,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function formatCurrency(value) {
     return new Intl.NumberFormat('es-ES', {
       style: 'currency',
-      currency: 'EUR'
+      currency: 'EUR',
+      currencyDisplay: 'symbol'
     }).format(value);
   }
 
@@ -714,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cartCheckout) {
       const orderLines = cart.map(item => {
         const validDiscount = getDiscountRate(item.discount) > 0;
-        return `${item.quantity} x ${item.model} ${item.color} talla ${item.size}${validDiscount ? ` codigo ${item.discount} (-10%)` : item.discount ? ` codigo ${item.discount} (sin descuento)` : ''}`;
+        return `${item.quantity} x ${item.model} ${item.color} talla ${item.size} · ${formatCurrency(item.price)} c/u${validDiscount ? ` · codigo ${item.discount} (-10%)` : item.discount ? ` · codigo ${item.discount} (sin descuento)` : ''}`;
       });
       const messageText = cart.length
         ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
