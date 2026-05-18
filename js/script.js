@@ -487,8 +487,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedColorLabel = document.getElementById('selectedColorLabel');
   const sizeSelect = document.getElementById('orderSize');
   const discountInput = document.getElementById('discountCode');
+  const discountApply = document.getElementById('discountApply');
+  const discountMessage = document.getElementById('discountMessage');
   const cartToggle = document.getElementById('cartToggle');
   const cartCount = document.getElementById('cartCount');
+  const cartNavTotal = document.getElementById('cartNavTotal');
   const cartDrawer = document.getElementById('cartDrawer');
   const cartClose = document.getElementById('cartClose');
   const cartItems = document.getElementById('cartItems');
@@ -610,8 +613,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modelSelect) return;
     if (!modelName) {
       modelSelect.value = '';
-      if (selectedModelLabel) selectedModelLabel.textContent = 'Elige modelo';
-      if (selectedModelMeta) selectedModelMeta.textContent = 'Oversized, Crop top o Hoodie';
+      if (selectedModelLabel) selectedModelLabel.textContent = 'Oversized · Crop top · Hoodie';
+      if (selectedModelMeta) selectedModelMeta.textContent = '';
       modelOptions?.querySelectorAll('.model-option').forEach(option => {
         option.classList.remove('active');
         option.setAttribute('aria-selected', 'false');
@@ -625,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedModelLabel.textContent = model.name;
     }
     if (selectedModelMeta) {
-      selectedModelMeta.innerHTML = `${formatCurrencyHtml(pricesByModel[modelName] || 0)} · ${escapeHtml(model?.meta || '')}`;
+      selectedModelMeta.textContent = '';
     }
     modelOptions?.querySelectorAll('.model-option').forEach(option => {
       option.classList.toggle('active', option.dataset.model === modelSelect.value);
@@ -824,6 +827,19 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('omp_cart', JSON.stringify(cart));
   }
 
+  function readCartDiscount() {
+    return localStorage.getItem('omp_discount') || '';
+  }
+
+  function writeCartDiscount(code) {
+    const normalized = String(code || '').trim().toUpperCase();
+    if (normalized) {
+      localStorage.setItem('omp_discount', normalized);
+    } else {
+      localStorage.removeItem('omp_discount');
+    }
+  }
+
   function formatCurrency(value) {
     return formatCurrencyText(value);
   }
@@ -847,7 +863,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getLineDiscount(item) {
-    return getLineSubtotal(item) * getDiscountRate(item.discount);
+    return getLineSubtotal(item) * getDiscountRate(readCartDiscount());
   }
 
   function openCart() {
@@ -871,8 +887,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const discountTotal = cart.reduce((sum, item) => sum + getLineDiscount(item), 0);
     const total = Math.max(0, subtotal - discountTotal);
     const tax = total - (total / (1 + IGIC_RATE));
+    const cartDiscountCode = readCartDiscount();
+    const hasValidCartDiscount = getDiscountRate(cartDiscountCode) > 0;
 
     if (cartCount) cartCount.textContent = itemCount;
+    if (cartNavTotal) cartNavTotal.innerHTML = formatCurrencyHtml(total);
     if (cartSubtotal) cartSubtotal.innerHTML = formatCurrencyHtml(subtotal);
     if (cartDiscount) cartDiscount.innerHTML = `-${formatCurrencyHtml(discountTotal)}`;
     cartDiscountRow?.classList.toggle('active', discountTotal > 0);
@@ -881,11 +900,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cartDrawerTotal) cartDrawerTotal.innerHTML = formatCurrencyHtml(total);
     if (cartCheckout) {
       const orderLines = cart.map(item => {
-        const validDiscount = getDiscountRate(item.discount) > 0;
-        return `${item.quantity} x ${item.model} ${item.color} talla ${item.size} · ${formatCurrency(item.price)} c/u${validDiscount ? ` · codigo ${item.discount} (-10%)` : item.discount ? ` · codigo ${item.discount} (sin descuento)` : ''}`;
+        return `${item.quantity} x ${item.model} ${item.color} talla ${item.size} · ${formatCurrency(item.price)} c/u`;
       });
       const messageText = cart.length
-        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC incluido 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
+        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC incluido 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
         : 'Hola OMP, quiero reservar mi Drop.';
       cartCheckout.href = `https://wa.me/34673094993?text=${encodeURIComponent(messageText)}`;
     }
@@ -899,7 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="cart-item__price">${formatCurrencyHtml(getLineSubtotal(item) - getLineDiscount(item))}</span>
         </div>
         <p class="cart-item__meta">${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
-        ${item.discount ? `<p class="cart-item__discount ${getDiscountRate(item.discount) ? 'cart-item__discount--valid' : ''}">Código: ${escapeHtml(item.discount)}${getDiscountRate(item.discount) ? ' · -10%' : ' · no aplicado'}</p>` : ''}
+        ${cartDiscountCode ? `<p class="cart-item__discount ${hasValidCartDiscount ? 'cart-item__discount--valid' : ''}">Código carrito: ${escapeHtml(cartDiscountCode)}${hasValidCartDiscount ? ' · -10%' : ' · no aplicado'}</p>` : ''}
         <div class="cart-item__bottom">
           <span class="cart-item__meta">Precio unidad: ${formatCurrencyHtml(item.price)}</span>
           ${renderQuantityStepper(index, item.quantity)}
@@ -935,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ${cart.map((item, index) => `
         <article class="waitlist-order-preview__item">
           <div>
-            <strong>${escapeHtml(item.model)}</strong>
+            <strong><i class="order-color-chip" style="--swatch:${escapeHtml(getCartItemColor(item))}"></i>${escapeHtml(item.model)}</strong>
             <span>${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · ${formatCurrencyHtml(item.price)}</span>
           </div>
           ${renderQuantityStepper(index, item.quantity)}
@@ -957,6 +975,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCart();
   }
 
+  function getCartItemColor(item) {
+    const colors = colorsByModel[item.model] || [];
+    return colors.find(color => color.name === item.color)?.hex || '#fafafa';
+  }
+
   function resetProductFields() {
     syncSelectedModel('');
     if (sizeSelect) sizeSelect.value = '';
@@ -969,8 +992,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const existing = cart.find(item =>
       item.model === order.model &&
       item.color === order.color &&
-      item.size === order.size &&
-      item.discount === order.discount
+      item.size === order.size
     );
 
     if (existing) {
@@ -1024,6 +1046,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   cartClear?.addEventListener('click', () => {
     writeCart([]);
+    writeCartDiscount('');
+    if (discountInput) discountInput.value = '';
+    if (discountMessage) discountMessage.textContent = '';
+    renderCart();
+  });
+  discountApply?.addEventListener('click', () => {
+    const code = discountInput?.value.trim().toUpperCase() || '';
+    writeCartDiscount(code);
+    if (discountMessage) {
+      discountMessage.textContent = !code
+        ? 'Código eliminado.'
+        : getDiscountRate(code)
+          ? `Código ${code} aplicado a todo el carrito.`
+          : `Código ${code} guardado, pendiente de validar.`;
+    }
     renderCart();
   });
   document.addEventListener('keydown', (e) => {
@@ -1125,7 +1162,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = document.getElementById('waitlistName').value.trim();
       const email = document.getElementById('waitlistEmail').value.trim();
       const phone = document.getElementById('waitlistPhone').value.trim();
-      const discount = discountInput?.value.trim().toUpperCase() || '';
       const order = {
         name,
         email,
@@ -1133,7 +1169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         model: modelSelect.value,
         color: colorSelect.value,
         size: sizeSelect.value,
-        discount,
         createdAt: new Date().toISOString()
       };
 
@@ -1143,12 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       resetProductFields();
 
       if (summary) {
-        const discountText = getDiscountRate(order.discount)
-          ? `Añadido: ${order.model} · ${order.color} · talla ${order.size}. Código ${order.discount} aplicado: -10%.`
-          : order.discount
-            ? `Añadido: ${order.model} · ${order.color} · talla ${order.size}. Código ${order.discount} guardado, pendiente de validar.`
-            : `Añadido: ${order.model} · ${order.color} · talla ${order.size}.`;
-        summary.textContent = discountText.trim();
+        summary.textContent = `Añadido: ${order.model} · ${order.color} · talla ${order.size}.`;
       }
       success.classList.add('active');
     });
