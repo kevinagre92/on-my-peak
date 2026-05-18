@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://on-my-peak-peach.vercel.app/sitemap.xml

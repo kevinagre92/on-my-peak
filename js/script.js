@@ -856,8 +856,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function hydrateInstagramFeed() {
     if (!instagramFeed) return;
+    if (instagramFeed.dataset.source === 'instagram' || instagramFeed.dataset.loading === 'true') return;
 
     try {
+      instagramFeed.dataset.loading = 'true';
       const response = await fetch('/api/instagram', {
         headers: { Accept: 'application/json' }
       });
@@ -874,11 +876,17 @@ document.addEventListener('DOMContentLoaded', () => {
       instagramFeed.dataset.source = 'instagram';
     } catch (error) {
       instagramFeed.dataset.source = 'fallback';
+    } finally {
+      delete instagramFeed.dataset.loading;
     }
   }
 
   function scheduleInstagramFeed() {
     if (!instagramFeed) return;
+    const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 900));
+
+    idle(() => hydrateInstagramFeed());
+    window.setTimeout(() => hydrateInstagramFeed(), 2500);
 
     if ('IntersectionObserver' in window) {
       const feedObserver = new IntersectionObserver((entries) => {
@@ -889,9 +897,6 @@ document.addEventListener('DOMContentLoaded', () => {
       feedObserver.observe(instagramFeed);
       return;
     }
-
-    const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 900));
-    idle(hydrateInstagramFeed);
   }
 
   scheduleInstagramFeed();

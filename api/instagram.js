@@ -79,7 +79,6 @@ module.exports = async function handler(request, response) {
     if (!instagramResponse.ok) {
       return response.status(instagramResponse.status).json({
         error: 'Instagram API request failed',
-        details: payload?.error?.message || 'Unknown Instagram API error',
         configured: true,
         posts: []
       });
