@@ -1281,7 +1281,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       instagramFeed.replaceChildren(...posts.map(createInstagramItem));
-      instagramFeed.dataset.source = 'instagram';
+      instagramFeed.dataset.source = payload.source === 'fallback' ? 'fallback' : 'instagram';
     } catch (error) {
       if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
         instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));

@@ -77,6 +77,20 @@ function normalizePost(post, index = 0) {
   };
 }
 
+function fallbackPosts() {
+  return FALLBACK_IMAGES.map((image, index) => ({
+    id: `fallback-${index + 1}`,
+    caption: 'Post reciente de On My Peak',
+    media_type: 'IMAGE',
+    media_url: image,
+    thumbnail_url: '',
+    fallback_image: image,
+    permalink: 'https://instagram.com/onmypeak_',
+    timestamp: '',
+    username: 'onmypeak_'
+  }));
+}
+
 module.exports = async function handler(request, response) {
   if (request.method !== 'GET') {
     response.setHeader('Allow', 'GET');
@@ -86,11 +100,12 @@ module.exports = async function handler(request, response) {
   const instagramUrl = buildInstagramUrl();
   if (!instagramUrl) {
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
-    return response.status(503).json({
+    return response.status(200).json({
       error: 'Instagram feed is not configured',
       configured: false,
       requiredEnv: ['INSTAGRAM_ACCESS_TOKEN', 'INSTAGRAM_PROVIDER=instagram'],
-      posts: []
+      source: 'fallback',
+      posts: fallbackPosts()
     });
   }
 
@@ -101,10 +116,12 @@ module.exports = async function handler(request, response) {
     const payload = await instagramResponse.json();
 
     if (!instagramResponse.ok) {
-      return response.status(instagramResponse.status).json({
+      response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      return response.status(200).json({
         error: 'Instagram API request failed',
         configured: true,
-        posts: []
+        source: 'fallback',
+        posts: fallbackPosts()
       });
     }
 
@@ -121,10 +138,11 @@ module.exports = async function handler(request, response) {
     });
   } catch (error) {
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
-    return response.status(500).json({
+    return response.status(200).json({
       error: 'Instagram feed unavailable',
       configured: true,
-      posts: []
+      source: 'fallback',
+      posts: fallbackPosts()
     });
   }
 };
