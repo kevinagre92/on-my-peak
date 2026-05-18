@@ -1507,7 +1507,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!entry.isIntersecting || entry.target.dataset.hintShown === 'true') return;
         entry.target.dataset.hintShown = 'true';
         entry.target.classList.add('show-hint');
-        window.setTimeout(() => entry.target.classList.remove('show-hint'), 2000);
+        window.setTimeout(() => entry.target.classList.remove('show-hint'), 3000);
       });
     }, { threshold: 0.55 });
 

@@ -11,15 +11,15 @@ const DEFAULT_FIELDS = [
 ].join(',');
 
 const FALLBACK_IMAGES = [
-  '/assets/instagram/post-omp1-31.jpg',
-  '/assets/instagram/post-omp1-30.jpg',
-  '/assets/instagram/post-omp1-29.jpg',
-  '/assets/instagram/post-omp1-28.jpg',
-  '/assets/instagram/post-omp1-27.jpg',
-  '/assets/instagram/post-omp1-26.jpg',
-  '/assets/instagram/post-omp1-25.jpg',
-  '/assets/instagram/post-omp1-24.jpg',
-  '/assets/instagram/post-omp1-23.jpg'
+  '/assets/collection/thumbs/post-omp2-04.jpg',
+  '/assets/collection/thumbs/post-omp2-03.jpg',
+  '/assets/collection/thumbs/post-omp2-30.jpg',
+  '/assets/collection/thumbs/post-omp2-29.jpg',
+  '/assets/collection/thumbs/post-omp2-07.jpg',
+  '/assets/collection/thumbs/post-omp2-05.jpg',
+  '/assets/collection/thumbs/post-omp2-28.jpg',
+  '/assets/collection/thumbs/post-omp2-11.jpg',
+  '/assets/collection/thumbs/post-omp2-14.jpg'
 ];
 
 const ALLOWED_API_HOSTS = new Set([
