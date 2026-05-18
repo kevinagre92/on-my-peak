@@ -475,6 +475,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const success = document.getElementById('waitlistSuccess');
   const summary = document.getElementById('waitlistSummary');
   const modelSelect = document.getElementById('orderModel');
+  const modelOptions = document.getElementById('modelOptions');
+  const modelPickerToggle = document.getElementById('modelPickerToggle');
+  const selectedModelImage = document.getElementById('selectedModelImage');
+  const selectedModelLabel = document.getElementById('selectedModelLabel');
+  const selectedModelMeta = document.getElementById('selectedModelMeta');
   const colorSelect = document.getElementById('orderColor');
   const colorOptions = document.getElementById('colorOptions');
   const colorPickerToggle = document.getElementById('colorPickerToggle');
@@ -529,6 +534,24 @@ document.addEventListener('DOMContentLoaded', () => {
     Hoodie: 35
   };
 
+  const modelCards = {
+    Oversized: {
+      name: 'Oversized',
+      image: 'assets/products/oversized.jpg',
+      meta: 'Corte amplio · Drop 01/XX'
+    },
+    'Crop top': {
+      name: 'Crop top',
+      image: 'assets/products/crop-top.jpg',
+      meta: 'Fit corto · Drop 01/XX'
+    },
+    Hoodie: {
+      name: 'Hoodie',
+      image: 'assets/products/hoodie.jpg',
+      meta: 'Capucha premium · Drop 01/XX'
+    }
+  };
+
   const discountCodes = new Set(['JOELO10', 'CABELLO10', 'KEVINAGRE10']);
   const DISCOUNT_RATE = 0.10;
 
@@ -556,6 +579,63 @@ document.addEventListener('DOMContentLoaded', () => {
       .join('');
     renderColorButtons(colors);
     syncSelectedColor(colors[0]?.name);
+  }
+
+  function showModelOptions() {
+    modelOptions?.classList.add('model-options--visible');
+    modelPickerToggle?.setAttribute('aria-expanded', 'true');
+  }
+
+  function hideModelOptions() {
+    modelOptions?.classList.remove('model-options--visible');
+    modelPickerToggle?.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleModelOptions() {
+    if (modelOptions?.classList.contains('model-options--visible')) {
+      hideModelOptions();
+    } else {
+      showModelOptions();
+    }
+  }
+
+  function syncSelectedModel(modelName = modelSelect?.value) {
+    if (!modelSelect || !modelName) return;
+    modelSelect.value = modelName;
+    const model = modelCards[modelName];
+    if (selectedModelImage && model) {
+      selectedModelImage.src = model.image;
+    }
+    if (selectedModelLabel && model) {
+      selectedModelLabel.textContent = model.name;
+    }
+    if (selectedModelMeta) {
+      selectedModelMeta.innerHTML = `${formatCurrencyHtml(pricesByModel[modelName] || 0)} · ${escapeHtml(model?.meta || '')}`;
+    }
+    modelOptions?.querySelectorAll('.model-option').forEach(option => {
+      option.classList.toggle('active', option.dataset.model === modelSelect.value);
+      option.setAttribute('aria-selected', option.dataset.model === modelSelect.value ? 'true' : 'false');
+    });
+    updateColorOptions();
+  }
+
+  function renderModelButtons() {
+    if (!modelOptions) return;
+    const models = Object.keys(modelCards);
+    modelOptions.innerHTML = models.map((modelName, index) => {
+      const model = modelCards[modelName];
+      const price = formatCurrencyHtml(pricesByModel[modelName] || 0);
+      return `
+        <button class="model-option${index === 0 ? ' active' : ''}" type="button" role="option" data-model="${escapeHtml(modelName)}" aria-label="Elegir modelo ${escapeHtml(model.name)}" aria-selected="${index === 0 ? 'true' : 'false'}">
+          <span class="model-option__media"><img src="${escapeHtml(model.image)}" alt="${escapeHtml(model.name)}" loading="lazy" decoding="async"></span>
+          <span class="model-option__copy">
+            <strong>${escapeHtml(model.name)}</strong>
+            <small>${escapeHtml(model.meta)}</small>
+            <em>${price}</em>
+          </span>
+        </button>
+      `;
+    }).join('');
   }
 
   function showColorOptions() {
@@ -598,9 +678,17 @@ document.addEventListener('DOMContentLoaded', () => {
     colorOptions.innerHTML = colors.map((color, index) => `
       <button class="color-option${index === 0 ? ' active' : ''}" type="button" role="option" data-color="${escapeHtml(color.name)}" aria-label="Elegir color ${escapeHtml(color.name)}" aria-selected="${index === 0 ? 'true' : 'false'}" title="${escapeHtml(color.name)}">
         <span class="color-option__swatch" style="--swatch:${escapeHtml(color.hex)}"></span>
+        <span class="color-option__name">${escapeHtml(color.name)}</span>
       </button>
     `).join('');
   }
+
+  modelOptions?.addEventListener('click', (e) => {
+    const button = e.target.closest('[data-model]');
+    if (!button || !modelSelect) return;
+    syncSelectedModel(button.dataset.model);
+    hideModelOptions();
+  });
 
   colorOptions?.addEventListener('click', (e) => {
     const button = e.target.closest('[data-color]');
@@ -622,15 +710,29 @@ document.addEventListener('DOMContentLoaded', () => {
       showColorOptions();
     }
   });
+  modelPickerToggle?.addEventListener('click', toggleModelOptions);
+  modelPickerToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideModelOptions();
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showModelOptions();
+    }
+  });
   document.addEventListener('click', (e) => {
+    if (modelOptions?.classList.contains('model-options--visible')) {
+      if (!e.target.closest('#modelPickerToggle') && !e.target.closest('#modelOptions')) {
+        hideModelOptions();
+      }
+    }
     if (!colorOptions?.classList.contains('color-options--visible')) return;
     if (e.target.closest('#colorPickerToggle') || e.target.closest('#colorOptions')) return;
     hideColorOptions();
   });
 
   if (modelSelect) {
-    updateColorOptions();
-    modelSelect.addEventListener('change', updateColorOptions);
+    renderModelButtons();
+    syncSelectedModel(modelSelect.value);
+    modelSelect.addEventListener('change', () => syncSelectedModel());
   }
 
   /* --- Next Drop Countdown --- */

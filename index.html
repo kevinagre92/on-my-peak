@@ -28,7 +28,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260518-insta-proxy1">
+  <link rel="stylesheet" href="css/style.css?v=20260518-product-picker1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -387,11 +387,21 @@
 
         <label class="waitlist__field">
           <span data-i18n="modelLabel">Modelo de pedido</span>
-          <select class="waitlist__input waitlist__select" id="orderModel" name="model" required>
+          <button class="waitlist__input model-picker" type="button" id="modelPickerToggle" aria-haspopup="listbox" aria-expanded="false">
+            <span class="model-picker__thumb" aria-hidden="true">
+              <img id="selectedModelImage" src="assets/products/oversized.jpg" alt="">
+            </span>
+            <span class="model-picker__text">
+              <strong id="selectedModelLabel">Oversized</strong>
+              <small id="selectedModelMeta">22,00 €</small>
+            </span>
+          </button>
+          <select class="visually-hidden-select" id="orderModel" name="model" required aria-label="Modelo de pedido">
             <option value="Oversized">Oversized</option>
             <option value="Crop top">Crop top</option>
             <option value="Hoodie">Hoodie</option>
           </select>
+          <div class="model-options" id="modelOptions" role="listbox" aria-label="Modelos disponibles"></div>
         </label>
 
         <label class="waitlist__field">
@@ -511,6 +521,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260518-insta-proxy1"></script>
+  <script src="js/script.js?v=20260518-product-picker1"></script>
 </body>
 </html>
