@@ -1097,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cartToast.classList.add('active');
     cartToastTimer = window.setTimeout(() => {
       cartToast.classList.remove('active');
-    }, 2200);
+    }, 2000);
   }
 
   function addToCart(order) {
@@ -1332,11 +1332,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       addToCart(order);
       resetProductFields();
-
-      if (summary) {
-        summary.textContent = `Añadido: ${order.model} · ${order.color} · talla ${order.size}.`;
-      }
-      success.classList.add('active');
     });
   }
 
