@@ -297,98 +297,59 @@ document.addEventListener('DOMContentLoaded', () => {
     let mx = 0, my = 0;
     let cx = 0, cy = 0;
     let clickTimer;
-    let touchClickTimer;
-    let touchHideTimer;
     const finePointer = window.matchMedia('(pointer: fine)').matches;
 
-    function placeCursor(x, y) {
-      mx = x;
-      my = y;
-      cursor.style.left = mx + 'px';
-      cursor.style.top = my + 'px';
-    }
+    if (!finePointer) {
+      cursor.remove();
+      cursorRing.remove();
+    } else {
+      function placeCursor(x, y) {
+        mx = x;
+        my = y;
+        cursor.style.left = mx + 'px';
+        cursor.style.top = my + 'px';
+      }
 
-    document.addEventListener('mousemove', (e) => {
-      if (!finePointer) return;
-      placeCursor(e.clientX, e.clientY);
-    });
-
-    document.addEventListener('pointerdown', (e) => {
-      if (finePointer || e.pointerType === 'mouse') return;
-      placeCursor(e.clientX, e.clientY);
-      window.clearTimeout(touchClickTimer);
-      window.clearTimeout(touchHideTimer);
-      cursor.classList.add('cursor--touch-visible', 'cursor--clicking');
-      touchClickTimer = window.setTimeout(() => {
-        cursor.classList.remove('cursor--clicking');
-      }, 170);
-      touchHideTimer = window.setTimeout(() => {
-        cursor.classList.remove('cursor--touch-visible', 'cursor--clicking');
-      }, 760);
-    }, { passive: true });
-
-    document.addEventListener('touchstart', (e) => {
-      if (finePointer || !e.touches.length) return;
-      const touch = e.touches[0];
-      placeCursor(touch.clientX, touch.clientY);
-      window.clearTimeout(touchClickTimer);
-      window.clearTimeout(touchHideTimer);
-      cursor.classList.add('cursor--touch-visible', 'cursor--clicking');
-      touchClickTimer = window.setTimeout(() => {
-        cursor.classList.remove('cursor--clicking');
-      }, 170);
-      touchHideTimer = window.setTimeout(() => {
-        cursor.classList.remove('cursor--touch-visible', 'cursor--clicking');
-      }, 760);
-    }, { passive: true });
-
-    document.addEventListener('pointermove', (e) => {
-      if (finePointer || e.pointerType === 'mouse') return;
-      mx = e.clientX;
-      my = e.clientY;
-      cursor.style.left = mx + 'px';
-      cursor.style.top = my + 'px';
-    }, { passive: true });
-
-    // Smooth ring follow
-    function animateCursor() {
-      cx += (mx - cx) * 0.12;
-      cy += (my - cy) * 0.12;
-      cursorRing.style.left = cx + 'px';
-      cursorRing.style.top = cy + 'px';
-      requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
-
-    // Hover states
-    const hoverElements = document.querySelectorAll('a, button, .product-card');
-    hoverElements.forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        if (!finePointer) return;
-        cursor.classList.add('cursor--hover');
-        cursorRing.classList.add('cursor-ring--hover');
+      document.addEventListener('mousemove', (e) => {
+        placeCursor(e.clientX, e.clientY);
       });
-      el.addEventListener('mouseleave', () => {
-        if (!finePointer) return;
-        cursor.classList.remove('cursor--hover');
-        cursorRing.classList.remove('cursor-ring--hover');
-      });
-    });
 
-    document.addEventListener('mousedown', () => {
-      if (!finePointer) return;
-      window.clearTimeout(clickTimer);
-      cursor.classList.add('cursor--clicking');
-      clickTimer = window.setTimeout(() => {
-        cursor.classList.remove('cursor--clicking');
-      }, 180);
-    });
-    document.addEventListener('mouseup', () => {
-      if (!finePointer) return;
-      clickTimer = window.setTimeout(() => {
-        cursor.classList.remove('cursor--clicking');
-      }, 80);
-    });
+      // Smooth ring follow
+      function animateCursor() {
+        cx += (mx - cx) * 0.12;
+        cy += (my - cy) * 0.12;
+        cursorRing.style.left = cx + 'px';
+        cursorRing.style.top = cy + 'px';
+        requestAnimationFrame(animateCursor);
+      }
+      animateCursor();
+
+      // Hover states
+      const hoverElements = document.querySelectorAll('a, button, .product-card');
+      hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          cursor.classList.add('cursor--hover');
+          cursorRing.classList.add('cursor-ring--hover');
+        });
+        el.addEventListener('mouseleave', () => {
+          cursor.classList.remove('cursor--hover');
+          cursorRing.classList.remove('cursor-ring--hover');
+        });
+      });
+
+      document.addEventListener('mousedown', () => {
+        window.clearTimeout(clickTimer);
+        cursor.classList.add('cursor--clicking');
+        clickTimer = window.setTimeout(() => {
+          cursor.classList.remove('cursor--clicking');
+        }, 180);
+      });
+      document.addEventListener('mouseup', () => {
+        clickTimer = window.setTimeout(() => {
+          cursor.classList.remove('cursor--clicking');
+        }, 80);
+      });
+    }
   }
 
   /* --- Navbar Scroll --- */

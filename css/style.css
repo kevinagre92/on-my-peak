@@ -119,14 +119,8 @@ ul { list-style: none; }
     opacity: 0.028;
   }
   .cursor {
-    display: flex;
-    width: 46px;
-    height: 30px;
-    font-size: 1.45rem;
-    opacity: 0;
+    display: none;
   }
-  .cursor--touch-visible { opacity: 1; }
-  .cursor--clicking { width: 22px; }
   .cursor-ring { display: none; }
   body { cursor: auto; }
   button, a { cursor: pointer; }
