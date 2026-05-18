@@ -6,9 +6,10 @@ const DEFAULT_FIELDS = [
   'permalink',
   'thumbnail_url',
   'timestamp',
-  'username',
-  'children{media_type,media_url,thumbnail_url,permalink}'
+  'username'
 ].join(',');
+
+const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbnail_url,permalink}`;
 
 const FALLBACK_IMAGES = [
   '/assets/collection/thumbs/post-omp2-04.jpg',
@@ -31,15 +32,15 @@ function isAllowedApiUrl(url) {
   return url.protocol === 'https:' && ALLOWED_API_HOSTS.has(url.hostname);
 }
 
-function buildInstagramUrl() {
+function buildInstagramUrlCandidates() {
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-  if (!accessToken) return null;
+  if (!accessToken) return [];
 
   if (process.env.INSTAGRAM_MEDIA_URL) {
     const customUrl = new URL(process.env.INSTAGRAM_MEDIA_URL);
-    if (!isAllowedApiUrl(customUrl)) return null;
+    if (!isAllowedApiUrl(customUrl)) return [];
     customUrl.searchParams.set('access_token', accessToken);
-    return customUrl;
+    return [customUrl];
   }
 
   const provider = (process.env.INSTAGRAM_PROVIDER || '').toLowerCase();
@@ -47,14 +48,30 @@ function buildInstagramUrl() {
   const base = process.env.INSTAGRAM_API_BASE || (useInstagramLogin ? 'https://graph.instagram.com' : 'https://graph.facebook.com');
   const version = process.env.INSTAGRAM_GRAPH_VERSION || 'v21.0';
   const userId = process.env.INSTAGRAM_USER_ID || 'me';
-  const url = new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`);
-  if (!isAllowedApiUrl(url)) return null;
+  const fields = process.env.INSTAGRAM_FIELDS || DEFAULT_FIELDS;
+  const limit = process.env.INSTAGRAM_LIMIT || '9';
+  const urls = [
+    new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`)
+  ];
 
-  url.searchParams.set('fields', process.env.INSTAGRAM_FIELDS || DEFAULT_FIELDS);
-  url.searchParams.set('limit', process.env.INSTAGRAM_LIMIT || '9');
-  url.searchParams.set('access_token', accessToken);
+  if (useInstagramLogin) {
+    urls.push(new URL(`${base.replace(/\/$/, '')}/${userId}/media`));
+  } else if (!process.env.INSTAGRAM_FIELDS) {
+    const extendedUrl = new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`);
+    extendedUrl.searchParams.set('fields', EXTENDED_FIELDS);
+    extendedUrl.searchParams.set('limit', limit);
+    extendedUrl.searchParams.set('access_token', accessToken);
+    urls.push(extendedUrl);
+  }
 
-  return url;
+  return urls
+    .filter(isAllowedApiUrl)
+    .map((url) => {
+      if (!url.searchParams.has('fields')) url.searchParams.set('fields', fields);
+      if (!url.searchParams.has('limit')) url.searchParams.set('limit', limit);
+      if (!url.searchParams.has('access_token')) url.searchParams.set('access_token', accessToken);
+      return url;
+    });
 }
 
 function normalizePost(post, index = 0) {
@@ -97,8 +114,8 @@ module.exports = async function handler(request, response) {
     return response.status(405).json({ error: 'Method not allowed' });
   }
 
-  const instagramUrl = buildInstagramUrl();
-  if (!instagramUrl) {
+  const instagramUrls = buildInstagramUrlCandidates();
+  if (!instagramUrls.length) {
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return response.status(200).json({
       error: 'Instagram feed is not configured',
@@ -110,12 +127,18 @@ module.exports = async function handler(request, response) {
   }
 
   try {
-    const instagramResponse = await fetch(instagramUrl, {
-      headers: { Accept: 'application/json' }
-    });
-    const payload = await instagramResponse.json();
+    let payload = null;
+    let instagramResponse = null;
 
-    if (!instagramResponse.ok) {
+    for (const instagramUrl of instagramUrls) {
+      instagramResponse = await fetch(instagramUrl, {
+        headers: { Accept: 'application/json' }
+      });
+      payload = await instagramResponse.json();
+      if (instagramResponse.ok) break;
+    }
+
+    if (!instagramResponse?.ok) {
       response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       return response.status(200).json({
         error: 'Instagram API request failed',

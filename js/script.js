@@ -1198,10 +1198,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Collection Quick Shop --- */
   const shopSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  const shopTags = Array.from(document.querySelectorAll('[data-shop-model][data-shop-color]'));
-
   function closeShopPanels() {
-    document.querySelectorAll('.product-card.shop-open').forEach(card => {
+    document.querySelectorAll('.product-card.shop-open, .image-lightbox__stage.shop-open').forEach(card => {
       card.classList.remove('shop-open');
       card.querySelectorAll('.shop-tag.is-active').forEach(tag => tag.classList.remove('is-active'));
       const panel = card.querySelector('.product-card__size-panel');
@@ -1213,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openShopPanel(tag) {
-    const card = tag.closest('.product-card');
+    const card = tag.closest('.product-card, .image-lightbox__stage');
     const panel = card?.querySelector('.product-card__size-panel');
     if (!card || !panel) return;
 
@@ -1234,12 +1232,13 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  shopTags.forEach(tag => {
-    tag.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
+    const tagButton = e.target.closest('[data-shop-model][data-shop-color]');
+    if (tagButton) {
       e.preventDefault();
       e.stopPropagation();
-      openShopPanel(tag);
-    });
+      openShopPanel(tagButton);
+    }
   });
 
   document.addEventListener('click', (e) => {
@@ -1247,7 +1246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sizeButton) {
       e.preventDefault();
       e.stopPropagation();
-      const card = sizeButton.closest('.product-card');
+      const card = sizeButton.closest('.product-card, .image-lightbox__stage');
       const tag = card?.querySelector('.shop-tag.is-active');
       if (!tag) return;
 
@@ -1271,6 +1270,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Live Instagram Feed --- */
   const instagramFeed = document.querySelector('[data-instagram-feed]');
+  const INSTAGRAM_CACHE_KEY = 'omp_instagram_posts_v1';
   const fallbackInstagramPosts = instagramFeed
     ? Array.from(instagramFeed.querySelectorAll('img')).slice(0, 9).map((img, index) => ({
         id: `fallback-${index}`,
@@ -1281,6 +1281,39 @@ document.addEventListener('DOMContentLoaded', () => {
         permalink: img.closest('a')?.href || 'https://instagram.com/onmypeak_'
       }))
     : [];
+
+  function readInstagramCache() {
+    try {
+      const cached = JSON.parse(window.localStorage?.getItem(INSTAGRAM_CACHE_KEY) || 'null');
+      return Array.isArray(cached?.posts) ? cached.posts.slice(0, 9) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeInstagramCache(posts) {
+    if (!Array.isArray(posts) || posts.length < 1) return;
+    try {
+      window.localStorage?.setItem(INSTAGRAM_CACHE_KEY, JSON.stringify({
+        savedAt: new Date().toISOString(),
+        posts: posts.slice(0, 9)
+      }));
+    } catch (error) {
+      // Storage can be unavailable in private browsing; the built-in fallback still covers the feed.
+    }
+  }
+
+  function renderInstagramPosts(posts, source = 'fallback') {
+    if (!instagramFeed || !Array.isArray(posts) || !posts.length) return false;
+    instagramFeed.replaceChildren(...posts.slice(0, 9).map(createInstagramItem));
+    instagramFeed.dataset.source = source;
+    return true;
+  }
+
+  function renderInstagramFallback() {
+    return renderInstagramPosts(readInstagramCache(), 'cached') ||
+      renderInstagramPosts(fallbackInstagramPosts, 'fallback');
+  }
 
   function proxiedInstagramImage(url) {
     if (!url || url.startsWith('/assets/') || url.startsWith('assets/')) return url;
@@ -1338,30 +1371,23 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { Accept: 'application/json' }
       });
       if (!response.ok) {
-        if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
-          instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));
-        }
-        instagramFeed.dataset.source = 'fallback';
+        renderInstagramFallback();
         return;
       }
 
       const payload = await response.json();
       const posts = Array.isArray(payload.posts) ? payload.posts.slice(0, 9) : [];
       if (posts.length < 1) {
-        if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
-          instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));
-        }
-        instagramFeed.dataset.source = 'fallback';
+        renderInstagramFallback();
         return;
       }
 
-      instagramFeed.replaceChildren(...posts.map(createInstagramItem));
-      instagramFeed.dataset.source = payload.source === 'fallback' ? 'fallback' : 'instagram';
-    } catch (error) {
-      if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
-        instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));
+      if (payload.source !== 'fallback') {
+        writeInstagramCache(posts);
       }
-      instagramFeed.dataset.source = 'fallback';
+      renderInstagramPosts(posts, payload.source === 'fallback' ? 'fallback' : 'instagram');
+    } catch (error) {
+      renderInstagramFallback();
     } finally {
       delete instagramFeed.dataset.loading;
     }
@@ -1438,7 +1464,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const lightbox = document.getElementById('imageLightbox');
+  const lightboxStage = lightbox?.querySelector('.image-lightbox__stage');
   const lightboxImg = lightbox?.querySelector('.image-lightbox__img');
+  const lightboxTags = lightbox?.querySelector('.image-lightbox__shop-tags');
+  const lightboxSizePanel = lightbox?.querySelector('.image-lightbox__size-panel');
   const lightboxClose = lightbox?.querySelector('.image-lightbox__close');
   const lightboxPrev = lightbox?.querySelector('.image-lightbox__nav--prev');
   const lightboxNext = lightbox?.querySelector('.image-lightbox__nav--next');
@@ -1452,6 +1481,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const img = button.querySelector('img');
     lightboxImg.src = button.dataset.lightboxSrc;
     lightboxImg.alt = img?.alt || 'Imagen DROP 01/XX';
+    closeShopPanels();
+    if (lightboxTags) {
+      const sourceTags = button.closest('.product-card')?.querySelectorAll('.shop-tag') || [];
+      lightboxTags.replaceChildren(...Array.from(sourceTags).map(tag => tag.cloneNode(true)));
+    }
+    if (lightboxSizePanel) {
+      lightboxSizePanel.innerHTML = '';
+      lightboxSizePanel.setAttribute('aria-hidden', 'true');
+    }
     lightbox.classList.add('active');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lightbox-open');
@@ -1463,13 +1501,35 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.setAttribute('aria-hidden', 'true');
     lightboxImg.src = '';
     lightboxImg.alt = '';
+    lightboxTags?.replaceChildren();
+    if (lightboxStage) lightboxStage.classList.remove('shop-open');
     document.body.classList.remove('lightbox-open');
   }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.shop-tag, .product-card__size-panel')) return;
+    const card = e.target.closest('.product-card');
+    const mediaButton = card?.querySelector('[data-lightbox-src]');
+    if (!mediaButton) return;
+    const index = lightboxItems.indexOf(mediaButton);
+    if (index < 0) return;
+    e.preventDefault();
+    showLightboxImage(index);
+  }, true);
 
   lightboxItems.forEach((button, index) => {
     button.addEventListener('click', () => {
       showLightboxImage(index);
     });
+  });
+
+  document.addEventListener('click', (e) => {
+    const mediaButton = e.target.closest('[data-lightbox-src]');
+    if (!mediaButton) return;
+    const index = lightboxItems.indexOf(mediaButton);
+    if (index < 0) return;
+    e.preventDefault();
+    showLightboxImage(index);
   });
 
   lightboxClose?.addEventListener('click', closeLightbox);
