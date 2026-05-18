@@ -1196,6 +1196,79 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   renderCart();
 
+  /* --- Collection Quick Shop --- */
+  const shopSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const shopTags = Array.from(document.querySelectorAll('[data-shop-model][data-shop-color]'));
+
+  function closeShopPanels() {
+    document.querySelectorAll('.product-card.shop-open').forEach(card => {
+      card.classList.remove('shop-open');
+      card.querySelectorAll('.shop-tag.is-active').forEach(tag => tag.classList.remove('is-active'));
+      const panel = card.querySelector('.product-card__size-panel');
+      if (panel) {
+        panel.innerHTML = '';
+        panel.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
+
+  function openShopPanel(tag) {
+    const card = tag.closest('.product-card');
+    const panel = card?.querySelector('.product-card__size-panel');
+    if (!card || !panel) return;
+
+    const wasOpen = card.classList.contains('shop-open') && tag.classList.contains('is-active');
+    closeShopPanels();
+    if (wasOpen) return;
+
+    const model = tag.dataset.shopModel || '';
+    const color = tag.dataset.shopColor || '';
+    card.classList.add('shop-open');
+    tag.classList.add('is-active');
+    panel.setAttribute('aria-hidden', 'false');
+    panel.innerHTML = `
+      <span class="product-card__size-title">${escapeHtml(model)} · ${escapeHtml(color)} · elige talla</span>
+      <div class="product-card__size-grid">
+        ${shopSizes.map(size => `<button type="button" data-shop-size="${size}">${size}</button>`).join('')}
+      </div>
+    `;
+  }
+
+  shopTags.forEach(tag => {
+    tag.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openShopPanel(tag);
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    const sizeButton = e.target.closest('[data-shop-size]');
+    if (sizeButton) {
+      e.preventDefault();
+      e.stopPropagation();
+      const card = sizeButton.closest('.product-card');
+      const tag = card?.querySelector('.shop-tag.is-active');
+      if (!tag) return;
+
+      addToCart({
+        name: '',
+        email: '',
+        phone: '',
+        model: tag.dataset.shopModel,
+        color: tag.dataset.shopColor,
+        size: sizeButton.dataset.shopSize,
+        createdAt: new Date().toISOString()
+      });
+      closeShopPanels();
+      return;
+    }
+
+    if (!e.target.closest('.product-card__size-panel') && !e.target.closest('.shop-tag')) {
+      closeShopPanels();
+    }
+  });
+
   /* --- Live Instagram Feed --- */
   const instagramFeed = document.querySelector('[data-instagram-feed]');
   const fallbackInstagramPosts = instagramFeed
@@ -1417,6 +1490,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowLeft') showLightboxImage(lightboxIndex - 1);
     if (e.key === 'ArrowRight') showLightboxImage(lightboxIndex + 1);
   });
+
+  /* --- Drop Calendar Flip Cards --- */
+  const flipCards = Array.from(document.querySelectorAll('[data-flip-card]'));
+  flipCards.forEach(card => {
+    const flipButton = card.querySelector('.drop-calendar__flip');
+    flipButton?.addEventListener('click', () => {
+      card.classList.toggle('is-flipped');
+      card.classList.remove('show-hint');
+    });
+  });
+
+  if (flipCards.length && 'IntersectionObserver' in window) {
+    const flipHintObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting || entry.target.dataset.hintShown === 'true') return;
+        entry.target.dataset.hintShown = 'true';
+        entry.target.classList.add('show-hint');
+        window.setTimeout(() => entry.target.classList.remove('show-hint'), 2000);
+      });
+    }, { threshold: 0.55 });
+
+    flipCards.forEach(card => flipHintObserver.observe(card));
+  }
 
   /* --- Smooth Scroll for anchor links --- */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {

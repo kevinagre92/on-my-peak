@@ -1118,15 +1118,19 @@ select:focus-visible {
 .product-card__media {
   display: block;
   width: 100%;
+  aspect-ratio: 4 / 5;
   border: 0;
   background: transparent;
   padding: 0;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .product-card__img {
+  display: block;
   width: 100%;
-  aspect-ratio: 4/5;
+  height: 100%;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   transform: scale(1.015);
   transition: filter 0.5s, transform 0.5s;
@@ -1184,6 +1188,112 @@ select:focus-visible {
 }
 
 .product-card__status--soon { color: var(--accent-lava); border-color: var(--accent-lava); }
+
+.product-card__shop-tags {
+  position: absolute;
+  inset: 0 0 4.4rem;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.shop-tag {
+  position: absolute;
+  left: var(--tag-x, 50%);
+  top: var(--tag-y, 50%);
+  display: inline-flex;
+  align-items: center;
+  max-width: min(78%, 270px);
+  min-height: 32px;
+  gap: 0.5rem;
+  padding: 0.26rem 0.68rem 0.26rem 0.3rem;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.94);
+  color: #080808;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.24);
+  font-family: var(--font-body);
+  font-size: clamp(0.62rem, 0.88vw, 0.74rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  pointer-events: auto;
+}
+
+.shop-tag:hover,
+.shop-tag.is-active {
+  background: #fff;
+  transform: translate(-50%, -50%) scale(1.04);
+  box-shadow: 0 16px 42px rgba(0,0,0,0.36);
+}
+
+.shop-tag__plus {
+  display: inline-grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  flex: 0 0 23px;
+  border-radius: 50%;
+  background: #fff;
+  color: #050505;
+  font-family: var(--font-logo);
+  font-size: 0.95rem;
+  line-height: 1;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+.product-card__size-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 5.4rem;
+  z-index: 7;
+  display: none;
+  width: min(calc(100% - 1.4rem), 340px);
+  padding: 0.62rem;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(6,6,6,0.86);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.42);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transform: translateX(-50%);
+}
+
+.product-card.shop-open .product-card__size-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.product-card__size-title {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.product-card__size-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.35rem;
+}
+
+.product-card__size-grid button {
+  min-height: 38px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-primary);
+  font-family: var(--font-logo);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.product-card__size-grid button:hover,
+.product-card__size-grid button:focus-visible {
+  border-color: var(--accent-lava);
+  background: var(--accent-lava);
+  color: #fff;
+}
 
 .image-lightbox {
   position: fixed;
@@ -1399,6 +1509,11 @@ select:focus-visible {
   box-shadow: 0 0 0 1px rgba(255,211,42,0.22), 0 24px 60px rgba(255,211,42,0.07);
 }
 
+.drop-calendar__card--three {
+  border-color: #37d5c5;
+  box-shadow: 0 0 0 1px rgba(55,213,197,0.22), 0 24px 60px rgba(55,213,197,0.06);
+}
+
 .drop-calendar__cover {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -1406,7 +1521,9 @@ select:focus-visible {
   background: #050505;
 }
 
-.drop-calendar__cover img {
+.drop-calendar__cover img,
+.drop-calendar__face img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1415,9 +1532,85 @@ select:focus-visible {
   transition: transform 0.5s ease, filter 0.5s ease;
 }
 
-.drop-calendar__card:hover img {
+.drop-calendar__card:hover .drop-calendar__cover img,
+.drop-calendar__card:hover .drop-calendar__face img {
   transform: scale(1.075);
   filter: saturate(1) contrast(1.08);
+}
+
+.drop-calendar__flip {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border: 0;
+  padding: 0;
+  background: #050505;
+  perspective: 1200px;
+  overflow: hidden;
+}
+
+.drop-calendar__flip-inner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-style: preserve-3d;
+  transition: transform 0.74s cubic-bezier(.2,.8,.2,1);
+}
+
+.drop-calendar__card.is-flipped .drop-calendar__flip-inner {
+  transform: rotateY(180deg);
+}
+
+.drop-calendar__face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: #050505;
+}
+
+.drop-calendar__face--back {
+  transform: rotateY(180deg);
+}
+
+.drop-calendar__hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100% - 2rem);
+  padding: 0.7rem 1rem;
+  border: 1px solid rgba(255,255,255,0.32);
+  background: rgba(255,255,255,0.92);
+  color: #050505;
+  font-family: var(--font-logo);
+  font-size: clamp(0.68rem, 1.4vw, 0.82rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) scale(0.96);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.drop-calendar__card.show-hint .drop-calendar__hint {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.drop-calendar__cover--empty {
+  display: block;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.08), transparent 34%),
+    radial-gradient(circle at 50% 50%, rgba(55,213,197,0.12), transparent 34%),
+    #030303;
 }
 
 .drop-calendar__card--two .drop-calendar__cover::after {
@@ -2837,7 +3030,26 @@ select:focus-visible {
   }
 
   .product-card__img {
-    aspect-ratio: 4 / 5.35;
+    aspect-ratio: 4 / 5;
+  }
+
+  .shop-tag {
+    max-width: 70%;
+    min-height: 30px;
+    gap: 0.36rem;
+    padding: 0.22rem 0.52rem 0.22rem 0.24rem;
+    font-size: 0.56rem;
+  }
+
+  .shop-tag__plus {
+    width: 21px;
+    height: 21px;
+    flex-basis: 21px;
+    font-size: 0.86rem;
+  }
+
+  .product-card__size-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .next-drop__visual {
