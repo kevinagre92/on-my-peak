@@ -832,6 +832,12 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Live Instagram Feed --- */
   const instagramFeed = document.querySelector('[data-instagram-feed]');
 
+  function instagramImageSource(post) {
+    const remoteImage = post.thumbnail_url || post.media_url;
+    if (!remoteImage) return post.fallback_image || '';
+    return `/api/instagram-image?url=${encodeURIComponent(remoteImage)}`;
+  }
+
   function createInstagramItem(post) {
     const link = document.createElement('a');
     link.className = 'instagram-preview__item';
@@ -845,10 +851,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const img = document.createElement('img');
-    img.src = post.thumbnail_url || post.media_url;
+    const fallbackImage = post.fallback_image || '';
+    img.src = instagramImageSource(post) || fallbackImage;
     img.alt = post.caption || 'Post reciente de On My Peak';
     img.loading = 'lazy';
     img.decoding = 'async';
+    img.referrerPolicy = 'no-referrer';
+    img.onerror = () => {
+      if (!fallbackImage || img.dataset.fallback === 'true') return;
+      img.dataset.fallback = 'true';
+      img.src = fallbackImage;
+    };
 
     link.appendChild(img);
     return link;

@@ -10,6 +10,18 @@ const DEFAULT_FIELDS = [
   'children{media_type,media_url,thumbnail_url,permalink}'
 ].join(',');
 
+const FALLBACK_IMAGES = [
+  '/assets/instagram/post-omp1-31.jpg',
+  '/assets/instagram/post-omp1-30.jpg',
+  '/assets/instagram/post-omp1-29.jpg',
+  '/assets/instagram/post-omp1-28.jpg',
+  '/assets/instagram/post-omp1-27.jpg',
+  '/assets/instagram/post-omp1-26.jpg',
+  '/assets/instagram/post-omp1-25.jpg',
+  '/assets/instagram/post-omp1-24.jpg',
+  '/assets/instagram/post-omp1-23.jpg'
+];
+
 function buildInstagramUrl() {
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   if (!accessToken) return null;
@@ -34,7 +46,7 @@ function buildInstagramUrl() {
   return url;
 }
 
-function normalizePost(post) {
+function normalizePost(post, index = 0) {
   const firstCarouselItem = post.children?.data?.find(child => child.media_url || child.thumbnail_url);
   const imageUrl =
     post.media_type === 'VIDEO'
@@ -47,6 +59,7 @@ function normalizePost(post) {
     media_type: post.media_type || firstCarouselItem?.media_type || 'IMAGE',
     media_url: imageUrl || post.media_url || '',
     thumbnail_url: post.thumbnail_url || '',
+    fallback_image: FALLBACK_IMAGES[index % FALLBACK_IMAGES.length],
     permalink: post.permalink || firstCarouselItem?.permalink || 'https://instagram.com/onmypeak_',
     timestamp: post.timestamp || '',
     username: post.username || 'onmypeak_'
