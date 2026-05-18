@@ -28,7 +28,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260518-product-picker1">
+  <link rel="stylesheet" href="css/style.css?v=20260518-cart-picker1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -388,15 +388,13 @@
         <label class="waitlist__field">
           <span data-i18n="modelLabel">Modelo de pedido</span>
           <button class="waitlist__input model-picker" type="button" id="modelPickerToggle" aria-haspopup="listbox" aria-expanded="false">
-            <span class="model-picker__thumb" aria-hidden="true">
-              <img id="selectedModelImage" src="assets/products/oversized.jpg" alt="">
-            </span>
             <span class="model-picker__text">
-              <strong id="selectedModelLabel">Oversized</strong>
-              <small id="selectedModelMeta">22,00 €</small>
+              <strong id="selectedModelLabel">Elige modelo</strong>
+              <small id="selectedModelMeta">Oversized, Crop top o Hoodie</small>
             </span>
           </button>
           <select class="visually-hidden-select" id="orderModel" name="model" required aria-label="Modelo de pedido">
+            <option value="" selected>Elige modelo</option>
             <option value="Oversized">Oversized</option>
             <option value="Crop top">Crop top</option>
             <option value="Hoodie">Hoodie</option>
@@ -408,7 +406,7 @@
           <span data-i18n="colorLabel">Color</span>
           <button class="waitlist__input color-picker" type="button" id="colorPickerToggle" aria-haspopup="listbox" aria-expanded="false">
             <span class="color-picker__swatch" id="selectedColorSwatch"></span>
-            <span class="color-picker__label" id="selectedColorLabel">Color</span>
+            <span class="color-picker__label" id="selectedColorLabel">Elige color</span>
           </button>
           <select class="visually-hidden-select" id="orderColor" name="color" required aria-label="Color para pedido"></select>
           <div class="color-options" id="colorOptions" role="listbox" aria-label="Colores disponibles"></div>
@@ -417,6 +415,7 @@
         <label class="waitlist__field">
           <span data-i18n="sizeLabel">Talla</span>
           <select class="waitlist__input waitlist__select" id="orderSize" name="size" required>
+            <option value="" selected>Selecciona talla</option>
             <option value="XS">XS</option>
             <option value="S">S</option>
             <option value="M">M</option>
@@ -432,6 +431,7 @@
         </label>
 
         <button class="waitlist__submit" type="submit" data-i18n="submitOrder">Añadir al carrito</button>
+        <div class="waitlist-order-preview" id="orderPreview" aria-live="polite"></div>
       </form>
 
       <div class="waitlist__success" id="waitlistSuccess">
@@ -494,9 +494,12 @@
   </div>
 
   <div class="cart-drawer" id="cartDrawer" aria-hidden="true">
-    <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-      <div class="cart-drawer__head">
-        <h2 id="cartTitle">Carrito</h2>
+      <div class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+        <div class="cart-drawer__head">
+        <div>
+          <h2 id="cartTitle">Carrito</h2>
+          <p class="cart-drawer__head-total">Total: <strong id="cartDrawerTotal">0,00 <span class="currency-symbol" aria-label="euros">&euro;</span></strong></p>
+        </div>
         <button class="cart-drawer__close" type="button" id="cartClose" aria-label="Cerrar carrito">×</button>
       </div>
       <div class="cart-drawer__items" id="cartItems"></div>
@@ -521,6 +524,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260518-product-picker1"></script>
+  <script src="js/script.js?v=20260518-cart-picker1"></script>
 </body>
 </html>

@@ -474,10 +474,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('waitlistForm');
   const success = document.getElementById('waitlistSuccess');
   const summary = document.getElementById('waitlistSummary');
+  const orderPreview = document.getElementById('orderPreview');
   const modelSelect = document.getElementById('orderModel');
   const modelOptions = document.getElementById('modelOptions');
   const modelPickerToggle = document.getElementById('modelPickerToggle');
-  const selectedModelImage = document.getElementById('selectedModelImage');
   const selectedModelLabel = document.getElementById('selectedModelLabel');
   const selectedModelMeta = document.getElementById('selectedModelMeta');
   const colorSelect = document.getElementById('orderColor');
@@ -498,6 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartDiscount = document.getElementById('cartDiscount');
   const cartTax = document.getElementById('cartTax');
   const cartTotal = document.getElementById('cartTotal');
+  const cartDrawerTotal = document.getElementById('cartDrawerTotal');
   const cartClear = document.getElementById('cartClear');
   const cartCheckout = document.getElementById('cartCheckout');
   const IGIC_RATE = 0.07;
@@ -574,6 +575,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateColorOptions() {
     if (!modelSelect || !colorSelect) return;
     const colors = colorsByModel[modelSelect.value] || [];
+    if (!modelSelect.value) {
+      colorSelect.innerHTML = '<option value="">Elige color</option>';
+      renderColorButtons([]);
+      syncSelectedColor('');
+      return;
+    }
     colorSelect.innerHTML = colors
       .map(color => `<option value="${color.name}">${color.name}</option>`)
       .join('');
@@ -600,12 +607,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function syncSelectedModel(modelName = modelSelect?.value) {
-    if (!modelSelect || !modelName) return;
+    if (!modelSelect) return;
+    if (!modelName) {
+      modelSelect.value = '';
+      if (selectedModelLabel) selectedModelLabel.textContent = 'Elige modelo';
+      if (selectedModelMeta) selectedModelMeta.textContent = 'Oversized, Crop top o Hoodie';
+      modelOptions?.querySelectorAll('.model-option').forEach(option => {
+        option.classList.remove('active');
+        option.setAttribute('aria-selected', 'false');
+      });
+      updateColorOptions();
+      return;
+    }
     modelSelect.value = modelName;
     const model = modelCards[modelName];
-    if (selectedModelImage && model) {
-      selectedModelImage.src = model.image;
-    }
     if (selectedModelLabel && model) {
       selectedModelLabel.textContent = model.name;
     }
@@ -657,7 +672,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function syncSelectedColor(colorName = colorSelect?.value) {
-    if (!colorSelect || !colorName) return;
+    if (!colorSelect) return;
+    if (!colorName) {
+      colorSelect.value = '';
+      if (selectedColorSwatch) selectedColorSwatch.style.setProperty('--swatch', 'transparent');
+      if (selectedColorLabel) selectedColorLabel.textContent = 'Elige color';
+      colorOptions?.querySelectorAll('.color-option').forEach(option => {
+        option.classList.remove('active');
+        option.setAttribute('aria-selected', 'false');
+      });
+      return;
+    }
     colorSelect.value = colorName;
     const colors = colorsByModel[modelSelect?.value] || [];
     const color = colors.find(item => item.name === colorName) || colors[0];
@@ -675,6 +700,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderColorButtons(colors) {
     if (!colorOptions) return;
+    if (!colors.length) {
+      colorOptions.innerHTML = '<p class="picker-empty">Elige primero un modelo.</p>';
+      return;
+    }
     colorOptions.innerHTML = colors.map((color, index) => `
       <button class="color-option${index === 0 ? ' active' : ''}" type="button" role="option" data-color="${escapeHtml(color.name)}" aria-label="Elegir color ${escapeHtml(color.name)}" aria-selected="${index === 0 ? 'true' : 'false'}" title="${escapeHtml(color.name)}">
         <span class="color-option__swatch" style="--swatch:${escapeHtml(color.hex)}"></span>
@@ -731,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (modelSelect) {
     renderModelButtons();
-    syncSelectedModel(modelSelect.value);
+    syncSelectedModel('');
     modelSelect.addEventListener('change', () => syncSelectedModel());
   }
 
@@ -814,7 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getLineSubtotal(item) {
-    return item.price * item.quantity;
+    return item.price * Number(item.quantity || 0);
   }
 
   function getLineDiscount(item) {
@@ -837,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderCart() {
     const cart = readCart();
-    const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const itemCount = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
     const subtotal = cart.reduce((sum, item) => sum + getLineSubtotal(item), 0);
     const discountTotal = cart.reduce((sum, item) => sum + getLineDiscount(item), 0);
     const total = Math.max(0, subtotal - discountTotal);
@@ -849,6 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cartDiscountRow?.classList.toggle('active', discountTotal > 0);
     if (cartTax) cartTax.innerHTML = formatCurrencyHtml(tax);
     if (cartTotal) cartTotal.innerHTML = formatCurrencyHtml(total);
+    if (cartDrawerTotal) cartDrawerTotal.innerHTML = formatCurrencyHtml(total);
     if (cartCheckout) {
       const orderLines = cart.map(item => {
         const validDiscount = getDiscountRate(item.discount) > 0;
@@ -872,10 +902,66 @@ document.addEventListener('DOMContentLoaded', () => {
         ${item.discount ? `<p class="cart-item__discount ${getDiscountRate(item.discount) ? 'cart-item__discount--valid' : ''}">Código: ${escapeHtml(item.discount)}${getDiscountRate(item.discount) ? ' · -10%' : ' · no aplicado'}</p>` : ''}
         <div class="cart-item__bottom">
           <span class="cart-item__meta">Precio unidad: ${formatCurrencyHtml(item.price)}</span>
-          <button class="cart-item__remove" type="button" data-remove-cart="${index}">Quitar</button>
+          ${renderQuantityStepper(index, item.quantity)}
         </div>
       </article>
     `).join('');
+    renderOrderPreview(cart, total);
+  }
+
+  function renderQuantityStepper(index, quantity) {
+    return `
+      <div class="quantity-stepper" data-cart-line="${index}">
+        <button type="button" data-cart-delta="-1" aria-label="Quitar una unidad">−</button>
+        <input type="number" min="0" step="1" value="${Number(quantity || 0)}" data-cart-quantity aria-label="Unidades">
+        <button type="button" data-cart-delta="1" aria-label="Añadir una unidad">+</button>
+      </div>
+    `;
+  }
+
+  function renderOrderPreview(cart, total) {
+    if (!orderPreview) return;
+    if (!cart.length) {
+      orderPreview.innerHTML = '';
+      orderPreview.classList.remove('active');
+      return;
+    }
+    orderPreview.classList.add('active');
+    orderPreview.innerHTML = `
+      <div class="waitlist-order-preview__head">
+        <span>Tu selección</span>
+        <strong>${formatCurrencyHtml(total)}</strong>
+      </div>
+      ${cart.map((item, index) => `
+        <article class="waitlist-order-preview__item">
+          <div>
+            <strong>${escapeHtml(item.model)}</strong>
+            <span>${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · ${formatCurrencyHtml(item.price)}</span>
+          </div>
+          ${renderQuantityStepper(index, item.quantity)}
+        </article>
+      `).join('')}
+    `;
+  }
+
+  function changeCartQuantity(index, nextQuantity) {
+    const cart = readCart();
+    if (!cart[index]) return;
+    const quantity = Math.max(0, Number(nextQuantity) || 0);
+    if (quantity <= 0) {
+      cart.splice(index, 1);
+    } else {
+      cart[index].quantity = quantity;
+    }
+    writeCart(cart);
+    renderCart();
+  }
+
+  function resetProductFields() {
+    syncSelectedModel('');
+    if (sizeSelect) sizeSelect.value = '';
+    hideModelOptions();
+    hideColorOptions();
   }
 
   function addToCart(order) {
@@ -901,7 +987,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCart();
     cartToggle?.classList.add('cart-toggle--pop');
     window.setTimeout(() => cartToggle?.classList.remove('cart-toggle--pop'), 420);
-    openCart();
   }
 
   cartToggle?.addEventListener('click', openCart);
@@ -910,12 +995,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === cartDrawer) closeCart();
   });
   cartItems?.addEventListener('click', (e) => {
-    const removeButton = e.target.closest('[data-remove-cart]');
-    if (!removeButton) return;
     const cart = readCart();
-    cart.splice(Number(removeButton.dataset.removeCart), 1);
-    writeCart(cart);
-    renderCart();
+    const control = e.target.closest('[data-cart-delta]');
+    if (!control) return;
+    const line = control.closest('[data-cart-line]');
+    const index = Number(line?.dataset.cartLine);
+    changeCartQuantity(index, Number(cart[index]?.quantity || 0) + Number(control.dataset.cartDelta));
+  });
+  cartItems?.addEventListener('change', (e) => {
+    const input = e.target.closest('[data-cart-quantity]');
+    if (!input) return;
+    const line = input.closest('[data-cart-line]');
+    changeCartQuantity(Number(line?.dataset.cartLine), input.value);
+  });
+  orderPreview?.addEventListener('click', (e) => {
+    const cart = readCart();
+    const control = e.target.closest('[data-cart-delta]');
+    if (!control) return;
+    const line = control.closest('[data-cart-line]');
+    const index = Number(line?.dataset.cartLine);
+    changeCartQuantity(index, Number(cart[index]?.quantity || 0) + Number(control.dataset.cartDelta));
+  });
+  orderPreview?.addEventListener('change', (e) => {
+    const input = e.target.closest('[data-cart-quantity]');
+    if (!input) return;
+    const line = input.closest('[data-cart-line]');
+    changeCartQuantity(Number(line?.dataset.cartLine), input.value);
   });
   cartClear?.addEventListener('click', () => {
     writeCart([]);
@@ -935,9 +1040,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const instagramFeed = document.querySelector('[data-instagram-feed]');
 
   function instagramImageSource(post) {
-    const remoteImage = post.thumbnail_url || post.media_url;
-    if (!remoteImage) return post.fallback_image || '';
-    return `/api/instagram-image?url=${encodeURIComponent(remoteImage)}`;
+    return post.fallback_image || post.thumbnail_url || post.media_url || '';
   }
 
   function createInstagramItem(post) {
@@ -1037,9 +1140,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!name || !email || !phone || !order.model || !order.color || !order.size) return;
 
       addToCart(order);
+      resetProductFields();
 
       if (summary) {
-        const discountText = getDiscountRate(order.discount) ? ` Código ${order.discount} aplicado: -10%.` : order.discount ? ` Código ${order.discount} guardado, pendiente de validar.` : '';
+        const discountText = getDiscountRate(order.discount)
+          ? `Añadido: ${order.model} · ${order.color} · talla ${order.size}. Código ${order.discount} aplicado: -10%.`
+          : order.discount
+            ? `Añadido: ${order.model} · ${order.color} · talla ${order.size}. Código ${order.discount} guardado, pendiente de validar.`
+            : `Añadido: ${order.model} · ${order.color} · talla ${order.size}.`;
         summary.textContent = discountText.trim();
       }
       success.classList.add('active');
