@@ -556,7 +556,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const discountCodes = new Set(['JOELO10', 'CABELLO10', 'KEVINAGRE10']);
+  const discountCodes = new Set([
+    'JOELO10',
+    'CABELLO10',
+    'LUCHINI10',
+    'KEVINAGRE10',
+    '92810',
+    'CLAUDIA10',
+    'QUEROLI10',
+    'GALVAN10',
+    'SALAN10'
+  ]);
   const DISCOUNT_RATE = 0.10;
 
   function formatCurrencyText(value) {
@@ -892,6 +902,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (cartCount) cartCount.textContent = itemCount;
     if (cartNavTotal) cartNavTotal.innerHTML = formatCurrencyHtml(total);
+    cartToggle?.classList.toggle('cart-toggle--has-items', itemCount > 0);
     if (cartSubtotal) cartSubtotal.innerHTML = formatCurrencyHtml(subtotal);
     if (cartDiscount) cartDiscount.innerHTML = `-${formatCurrencyHtml(discountTotal)}`;
     cartDiscountRow?.classList.toggle('active', discountTotal > 0);
@@ -1053,15 +1064,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   discountApply?.addEventListener('click', () => {
     const code = discountInput?.value.trim().toUpperCase() || '';
-    writeCartDiscount(code);
+    const valid = getDiscountRate(code) > 0;
+    writeCartDiscount(valid ? code : '');
+    discountInput?.classList.toggle('waitlist__input--error', Boolean(code && !valid));
     if (discountMessage) {
+      discountMessage.classList.toggle('discount-redeem__message--valid', valid);
+      discountMessage.classList.toggle('discount-redeem__message--invalid', Boolean(code && !valid));
       discountMessage.textContent = !code
-        ? 'Código eliminado.'
-        : getDiscountRate(code)
+        ? 'Introduce tu código para aplicarlo al carrito.'
+        : valid
           ? `Código ${code} aplicado a todo el carrito.`
-          : `Código ${code} guardado, pendiente de validar.`;
+          : 'Código no válido.';
     }
     renderCart();
+  });
+  discountInput?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    discountApply?.click();
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && cartDrawer?.classList.contains('active')) {

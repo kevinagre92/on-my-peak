@@ -280,6 +280,11 @@ ul { list-style: none; }
   transform: translateY(-1px);
 }
 
+.cart-toggle--has-items {
+  border-color: rgba(232,83,30,0.62);
+  background: rgba(232,83,30,0.12);
+}
+
 .cart-toggle__icon {
   width: 19px;
   height: 19px;
@@ -291,6 +296,11 @@ ul { list-style: none; }
   font-size: 0.58rem;
   letter-spacing: 0.08em;
   white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.cart-toggle--has-items .cart-toggle__total {
+  color: var(--accent-lava);
 }
 
 .cart-toggle__count {
@@ -1318,6 +1328,10 @@ ul { list-style: none; }
 .waitlist__input::placeholder { color: var(--text-muted); }
 .waitlist__input:focus { border-color: var(--accent-lava); }
 
+.waitlist__input--error {
+  border-color: rgba(255, 82, 82, 0.72) !important;
+}
+
 .visually-hidden-select {
   position: absolute;
   width: 1px;
@@ -1587,6 +1601,9 @@ ul { list-style: none; }
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
   align-items: end;
+  padding: 0.85rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
 }
 
 .discount-redeem__field {
@@ -1605,8 +1622,8 @@ ul { list-style: none; }
 .discount-redeem__button {
   min-height: 48px;
   padding: 0 1.15rem;
-  border: 1px solid var(--glass-border);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(232,83,30,0.45);
+  background: rgba(232,83,30,0.1);
   color: var(--text-primary);
   font-family: var(--font-mono);
   font-size: 0.58rem;
@@ -1616,6 +1633,7 @@ ul { list-style: none; }
 
 .discount-redeem__button:hover {
   border-color: var(--accent-lava);
+  background: rgba(232,83,30,0.18);
 }
 
 .discount-redeem__message {
@@ -1627,6 +1645,14 @@ ul { list-style: none; }
   letter-spacing: 0.1em;
   color: var(--accent-lava);
   text-transform: uppercase;
+}
+
+.discount-redeem__message--valid {
+  color: var(--accent-lava);
+}
+
+.discount-redeem__message--invalid {
+  color: #ff6767;
 }
 
 .waitlist-order-preview {
