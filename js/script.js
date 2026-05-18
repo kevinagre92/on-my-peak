@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     es: {
       faq: {
         title: 'Preguntas Frecuentes',
-        body: '<h3>¿Cómo reservo mi prenda?</h3><p>Elige modelo, color y talla, añade la prenda al carrito y escríbenos por WhatsApp para cerrar disponibilidad y entrega.</p><h3>¿Cuándo sale el próximo drop?</h3><p>DROP 02/XX está marcado para el 29 de mayo a las 20:00, hora de Canarias.</p><h3>¿Hay muchas unidades?</h3><p>No. OMP trabaja por drops limitados para mantener intención, calidad y exclusividad.</p>'
+        body: '<h3>¿Cómo reservo mi prenda?</h3><p>Elige modelo, color y talla, añade la prenda al carrito y escríbenos por WhatsApp para cerrar disponibilidad y entrega.</p><h3>¿Cuándo sale el próximo drop?</h3><p>DROP 02/XX está marcado para el 30 de mayo a las 12:00, hora de Canarias.</p><h3>¿Hay muchas unidades?</h3><p>No. OMP trabaja por drops limitados para mantener intención, calidad y exclusividad.</p>'
       },
       returns: {
         title: 'Cambios y Devoluciones',
@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
     en: {
       faq: {
         title: 'Frequently Asked Questions',
-        body: '<h3>How do I reserve a piece?</h3><p>Choose model, color and size, add it to the cart and contact us on WhatsApp to confirm stock and delivery.</p><h3>When is the next drop?</h3><p>DROP 02/XX is scheduled for May 29 at 20:00, Canary Islands time.</p><h3>Are units limited?</h3><p>Yes. OMP works through limited drops to keep intention, quality and exclusivity.</p>'
+        body: '<h3>How do I reserve a piece?</h3><p>Choose model, color and size, add it to the cart and contact us on WhatsApp to confirm stock and delivery.</p><h3>When is the next drop?</h3><p>DROP 02/XX is scheduled for May 30 at 12:00, Canary Islands time.</p><h3>Are units limited?</h3><p>Yes. OMP works through limited drops to keep intention, quality and exclusivity.</p>'
       },
       returns: {
         title: 'Exchanges and Returns',
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pt: {
       faq: {
         title: 'Perguntas Frequentes',
-        body: '<h3>Como reservo a minha peça?</h3><p>Escolhe modelo, cor e tamanho, adiciona ao carrinho e fala connosco no WhatsApp para confirmar stock e entrega.</p><h3>Quando sai o próximo drop?</h3><p>DROP 02/XX está marcado para 29 de maio às 20:00, hora das Canárias.</p><h3>As unidades são limitadas?</h3><p>Sim. A OMP trabalha por drops limitados para manter intenção, qualidade e exclusividade.</p>'
+        body: '<h3>Como reservo a minha peça?</h3><p>Escolhe modelo, cor e tamanho, adiciona ao carrinho e fala connosco no WhatsApp para confirmar stock e entrega.</p><h3>Quando sai o próximo drop?</h3><p>DROP 02/XX está marcado para 30 de maio às 12:00, hora das Canárias.</p><h3>As unidades são limitadas?</h3><p>Sim. A OMP trabalha por drops limitados para manter intenção, qualidade e exclusividade.</p>'
       },
       returns: {
         title: 'Trocas e Devoluções',
@@ -679,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const price = formatCurrencyHtml(pricesByModel[modelName] || 0);
       return `
         <button class="model-option${index === 0 ? ' active' : ''}" type="button" role="option" data-model="${escapeHtml(modelName)}" aria-label="Elegir modelo ${escapeHtml(model.name)}" aria-selected="${index === 0 ? 'true' : 'false'}">
-          <span class="model-option__media"><img src="${escapeHtml(model.image)}" alt="${escapeHtml(model.name)}" loading="lazy" decoding="async"></span>
+          <span class="model-option__media"><img src="${escapeHtml(model.image)}" width="1200" height="653" alt="${escapeHtml(model.name)}" loading="lazy" decoding="async"></span>
           <span class="model-option__copy">
             <strong>${escapeHtml(model.name)}</strong>
             <small>${escapeHtml(model.meta)}</small>

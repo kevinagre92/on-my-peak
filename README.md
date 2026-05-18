@@ -8,23 +8,23 @@ Este sitio presenta el primer drop de OMP con una estética premium, oscura y ed
 
 - Hero principal con claim de marca.
 - Manifiesto.
-- Sección de colección.
-- Lookbook.
-- Galería editorial disruptiva con fotos del producto.
-- Lista de espera.
+- Colección actual con carrusel lateral.
+- Calendario de drops.
+- Carrito con pedido por WhatsApp.
+- Feed de Instagram con fallback local.
 
 ## Despliegue
 
 Producción en Vercel:
 
-https://on-my-peak.vercel.app
+https://on-my-peak-peach.vercel.app
 
 ## Estructura
 
 - `index.html`: página principal.
 - `css/style.css`: estilos visuales y responsive.
 - `js/script.js`: interacciones, animaciones y galería.
-- `*.jpg`: imágenes del producto y material editorial.
+- `assets/`: imágenes, vídeo, poster, portadas de drops y calendario.
 
 ## Instagram en vivo
 

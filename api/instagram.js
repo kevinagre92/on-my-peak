@@ -22,12 +22,22 @@ const FALLBACK_IMAGES = [
   '/assets/instagram/post-omp1-23.jpg'
 ];
 
+const ALLOWED_API_HOSTS = new Set([
+  'graph.instagram.com',
+  'graph.facebook.com'
+]);
+
+function isAllowedApiUrl(url) {
+  return url.protocol === 'https:' && ALLOWED_API_HOSTS.has(url.hostname);
+}
+
 function buildInstagramUrl() {
   const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
   if (!accessToken) return null;
 
   if (process.env.INSTAGRAM_MEDIA_URL) {
     const customUrl = new URL(process.env.INSTAGRAM_MEDIA_URL);
+    if (!isAllowedApiUrl(customUrl)) return null;
     customUrl.searchParams.set('access_token', accessToken);
     return customUrl;
   }
@@ -38,6 +48,7 @@ function buildInstagramUrl() {
   const version = process.env.INSTAGRAM_GRAPH_VERSION || 'v21.0';
   const userId = process.env.INSTAGRAM_USER_ID || 'me';
   const url = new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`);
+  if (!isAllowedApiUrl(url)) return null;
 
   url.searchParams.set('fields', process.env.INSTAGRAM_FIELDS || DEFAULT_FIELDS);
   url.searchParams.set('limit', process.env.INSTAGRAM_LIMIT || '9');

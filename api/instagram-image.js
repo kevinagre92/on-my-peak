@@ -1,5 +1,6 @@
 const ALLOWED_HOST = /(^|\.)cdninstagram\.com$/i;
 const MAX_URL_LENGTH = 4096;
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 function getTargetUrl(request) {
   const host = request.headers.host || 'localhost';
@@ -42,11 +43,16 @@ module.exports = async function handler(request, response) {
     }
 
     const contentType = instagramResponse.headers.get('content-type') || '';
-    if (!contentType.toLowerCase().startsWith('image/')) {
+    const normalizedType = contentType.toLowerCase();
+    if (!normalizedType.startsWith('image/') || normalizedType.startsWith('image/svg')) {
       return response.status(415).end('Unsupported media type');
     }
 
     const imageBuffer = Buffer.from(await instagramResponse.arrayBuffer());
+    if (imageBuffer.length > MAX_IMAGE_BYTES) {
+      return response.status(413).end('Image too large');
+    }
+
     response.setHeader('Content-Type', contentType);
     response.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
     response.setHeader('X-Content-Type-Options', 'nosniff');

@@ -3,32 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>On My Peak ® | Ropa deportiva y drops limitados desde Canarias</title>
-  <meta name="description" content="On My Peak: ropa deportiva de edición limitada para entrenar sin excusas. DROP 01/XX disponible durante tiempo limitado. Nothing given. Everything earned.">
+  <title>On My Peak ® | OMP ropa deportiva, oversized tees y drops limitados</title>
+  <meta name="description" content="On My Peak (OMP): ropa deportiva de edición limitada para fitness, CrossFit e Hyrox. Camisetas oversized, crop tops y hoodies en drops limitados desde Canarias.">
   <meta name="theme-color" content="#0A0A0A">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <link rel="canonical" href="https://on-my-peak-peach.vercel.app/">
 
   <!-- Open Graph -->
   <meta property="og:site_name" content="On My Peak">
-  <meta property="og:title" content="On My Peak ®">
-  <meta property="og:description" content="Nothing given. Everything earned. Ropa deportiva de edición limitada desde Canarias.">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:title" content="On My Peak ® | OMP">
+  <meta property="og:description" content="Ropa deportiva de edición limitada para fitness, CrossFit e Hyrox. Nothing given. Everything earned.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://on-my-peak-peach.vercel.app/">
   <meta property="og:image" content="https://on-my-peak-peach.vercel.app/assets/optimized/og-image.jpg">
-  <meta property="og:image:alt" content="On My Peak DROP 01/XX">
+  <meta property="og:image:width" content="960">
+  <meta property="og:image:height" content="1200">
+  <meta property="og:image:alt" content="On My Peak DROP 01/XX ropa deportiva de edición limitada">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="On My Peak ®">
-  <meta name="twitter:description" content="Ropa deportiva de edición limitada para entrenar sin excusas.">
+  <meta name="twitter:title" content="On My Peak ® | OMP">
+  <meta name="twitter:description" content="Drops limitados de ropa deportiva para fitness, CrossFit e Hyrox.">
   <meta name="twitter:image" content="https://on-my-peak-peach.vercel.app/assets/optimized/og-image.jpg">
+  <meta name="twitter:image:alt" content="On My Peak DROP 01/XX">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260518-cart-toast1">
+  <link rel="stylesheet" href="css/style.css?v=20260518-audit1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -47,15 +51,40 @@
         "@id": "https://on-my-peak-peach.vercel.app/#website",
         "url": "https://on-my-peak-peach.vercel.app/",
         "name": "On My Peak",
+        "alternateName": "OMP",
         "publisher": { "@id": "https://on-my-peak-peach.vercel.app/#organization" },
         "inLanguage": "es"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://on-my-peak-peach.vercel.app/#breadcrumbs",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://on-my-peak-peach.vercel.app/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "DROP 01/XX",
+            "item": "https://on-my-peak-peach.vercel.app/#drop"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Consigue tu Peak",
+            "item": "https://on-my-peak-peach.vercel.app/#waitlist"
+          }
+        ]
       },
       {
         "@type": "Product",
         "@id": "https://on-my-peak-peach.vercel.app/#drop-01",
         "name": "DROP 01/XX",
         "brand": { "@id": "https://on-my-peak-peach.vercel.app/#organization" },
-        "description": "Ropa deportiva de edición limitada On My Peak: oversized, crop top y hoodie.",
+        "description": "Drop limitado de ropa deportiva On My Peak para fitness, CrossFit e Hyrox: camiseta oversized, crop top y hoodie.",
         "image": [
           "https://on-my-peak-peach.vercel.app/assets/collection/thumbs/post-omp2-03.jpg",
           "https://on-my-peak-peach.vercel.app/assets/collection/thumbs/post-omp2-05.jpg",
@@ -107,6 +136,7 @@
 <body>
 
   <!-- Grain Overlay -->
+  <a class="skip-link" href="#waitlist">Saltar a compra</a>
   <div class="grain" aria-hidden="true"></div>
 
   <a class="whatsapp-float" href="https://wa.me/34673094993" target="_blank" rel="noopener" aria-label="Hablar por WhatsApp">
@@ -120,7 +150,7 @@
   <div class="cursor-ring" aria-hidden="true"></div>
 
   <!-- Navigation -->
-  <nav class="nav" id="nav">
+  <nav class="nav" id="nav" aria-label="Navegación principal">
     <button class="nav__logo" id="navLogo" type="button" aria-haspopup="true" aria-expanded="false">
       <span class="nav__logo-paren">(</span><span class="nav__logo-text">OMP</span><span class="nav__logo-paren">)</span>
     </button>
@@ -221,31 +251,31 @@
           </div>
           <div class="instagram-preview__grid" id="instagramFeed" data-instagram-feed aria-live="polite">
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-31.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-31.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-30.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-30.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-29.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-29.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-28.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-28.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-27.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-27.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-26.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-26.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-25.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-25.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-24.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-24.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
             <a class="instagram-preview__item" href="https://instagram.com/onmypeak_" target="_blank" rel="noopener">
-              <img src="assets/instagram/post-omp1-23.jpg" alt="Post reciente de On My Peak" width="800" height="1000" loading="lazy" decoding="async">
+              <img src="assets/instagram/post-omp1-23.jpg" alt="Post reciente de On My Peak" width="416" height="520" loading="lazy" decoding="async">
             </a>
           </div>
         </aside>
@@ -274,70 +304,70 @@
         <div class="drop__grid">
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-03.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-03.jpg" alt="DROP 01/XX — camiseta blanca espalda" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-03.jpg" width="607" height="760" alt="DROP 01/XX — camiseta blanca espalda" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-05.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-05.jpg" alt="DROP 01/XX — camiseta negra espalda" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-05.jpg" width="607" height="760" alt="DROP 01/XX — camiseta negra espalda" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-04.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-04.jpg" alt="DROP 01/XX — atletas con prendas OMP" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-04.jpg" width="607" height="760" alt="DROP 01/XX — atletas con prendas OMP" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-07.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-07.jpg" alt="DROP 01/XX — hoodie OMP" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-07.jpg" width="607" height="760" alt="DROP 01/XX — hoodie OMP" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-11.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-11.jpg" alt="DROP 01/XX — hoodie azul" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-11.jpg" width="607" height="760" alt="DROP 01/XX — hoodie azul" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-14.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-14.jpg" alt="DROP 01/XX — camiseta gris espalda" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-14.jpg" width="607" height="760" alt="DROP 01/XX — camiseta gris espalda" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-28.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-28.jpg" alt="DROP 01/XX — entrenamiento wall ball" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-28.jpg" width="607" height="760" alt="DROP 01/XX — entrenamiento wall ball" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-29.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-29.jpg" alt="DROP 01/XX — atletas en pista" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-29.jpg" width="608" height="760" alt="DROP 01/XX — atletas en pista" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post OMP2-30.jpg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-30.jpg" alt="DROP 01/XX — crop top espalda" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp2-30.jpg" width="607" height="760" alt="DROP 01/XX — crop top espalda" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
 
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/post-omp-jump.jpeg" aria-label="Abrir imagen DROP 01/XX">
-              <img class="product-card__img" src="assets/collection/thumbs/post-omp-jump.jpg" alt="DROP 01/XX — atleta saltando en competición" loading="lazy">
+              <img class="product-card__img" src="assets/collection/thumbs/post-omp-jump.jpg" width="506" height="760" alt="DROP 01/XX — atleta saltando en competición" loading="lazy">
             </button>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
@@ -357,13 +387,13 @@
       <div class="drop-calendar__drops reveal reveal-delay-2" aria-label="Portadas de drops">
         <figure class="drop-calendar__card drop-calendar__card--one">
           <div class="drop-calendar__cover">
-            <img src="assets/drops/drop-01.jpg" alt="DROP 01/XX — No one is coming" loading="lazy" decoding="async">
+            <img src="assets/drops/drop-01.jpg" width="1119" height="1400" alt="DROP 01/XX — No one is coming" loading="lazy" decoding="async">
           </div>
           <figcaption>DROP 01/XX · 04 MAY - 26 MAY</figcaption>
         </figure>
         <figure class="drop-calendar__card drop-calendar__card--two">
           <div class="drop-calendar__cover">
-            <img src="assets/drops/drop-02.jpg" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
+            <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
             <div class="drop-calendar__next-action">
               <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
                 <span class="drop-countdown__label">DROP 02/XX EN</span>
@@ -402,7 +432,7 @@
     <div class="container">
       <p class="section-label reveal" data-i18n="waitlistLabel">Consigue tu Peak</p>
       <h2 class="section-title reveal reveal-delay-1">NO ONE IS COMING</h2>
-      <p class="section-subtitle reveal reveal-delay-2" style="text-align:center; margin: 0 auto;" data-i18n="waitlistSubtitle">
+      <p class="section-subtitle waitlist__subtitle reveal reveal-delay-2" data-i18n="waitlistSubtitle">
         Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.
       </p>
 
@@ -529,7 +559,7 @@
   <div class="image-lightbox" id="imageLightbox" aria-hidden="true">
     <button class="image-lightbox__close" type="button" aria-label="Cerrar imagen">×</button>
     <button class="image-lightbox__nav image-lightbox__nav--prev" type="button" aria-label="Imagen anterior">‹</button>
-    <img class="image-lightbox__img" src="" alt="">
+    <img class="image-lightbox__img" src="" width="607" height="760" alt="">
     <button class="image-lightbox__nav image-lightbox__nav--next" type="button" aria-label="Imagen siguiente">›</button>
   </div>
 
@@ -566,6 +596,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260518-cart-toast1"></script>
+  <script src="js/script.js?v=20260518-audit1" defer></script>
 </body>
 </html>

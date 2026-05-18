@@ -20,9 +20,9 @@
   --glass-border: rgba(255, 255, 255, 0.08);
 
   /* Fonts */
-  --font-display: 'Michroma', 'Space Grotesk', sans-serif;
-  --font-logo: 'Michroma', 'Space Grotesk', sans-serif;
-  --font-body: 'Michroma', 'Inter', sans-serif;
+  --font-display: 'Michroma', system-ui, sans-serif;
+  --font-logo: 'Michroma', system-ui, sans-serif;
+  --font-body: 'Michroma', system-ui, sans-serif;
   --font-mono: 'Michroma', 'Space Mono', monospace;
 
   /* Spacing */
@@ -58,6 +58,34 @@ a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 button { font-family: inherit; cursor: none; }
 ul { list-style: none; }
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 10001;
+  padding: 0.75rem 1rem;
+  background: var(--accent-lava);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-lava);
+  outline-offset: 4px;
+}
 
 .section,
 .instagram,
@@ -1553,6 +1581,11 @@ ul { list-style: none; }
   align-items: center;
 }
 
+.waitlist__subtitle {
+  text-align: center;
+  margin: 0 auto;
+}
+
 .waitlist__form {
   margin-top: 1.8rem;
   display: grid;
@@ -3009,5 +3042,16 @@ ul { list-style: none; }
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .grain,
+  .marquee__track,
+  .hero__logo .fucking::after,
+  .hero__scroll-line {
+    animation: none !important;
+  }
+
+  .hero__bg {
+    transform: none !important;
   }
 }
