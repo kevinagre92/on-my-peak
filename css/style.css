@@ -995,9 +995,7 @@ ul { list-style: none; }
 .product-card {
   flex: 0 0 clamp(260px, 31vw, 380px);
   scroll-snap-align: start;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.012)),
-    var(--bg-tertiary);
+  background: var(--bg-tertiary);
   border: 1px solid var(--glass-border);
   overflow: hidden;
   position: relative;
@@ -1016,30 +1014,6 @@ ul { list-style: none; }
   background: transparent;
   padding: 0;
   overflow: hidden;
-  position: relative;
-}
-
-.product-card__media::after {
-  content: 'VER';
-  position: absolute;
-  right: 0.9rem;
-  bottom: 0.9rem;
-  padding: 0.36rem 0.58rem;
-  border: 1px solid rgba(255,255,255,0.24);
-  background: rgba(10,10,10,0.52);
-  color: rgba(255,255,255,0.82);
-  font-family: var(--font-mono);
-  font-size: 0.48rem;
-  letter-spacing: 0.16em;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.25s, transform 0.25s;
-}
-
-.product-card:hover .product-card__media::after,
-.product-card__media:focus-visible::after {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .product-card__img {
