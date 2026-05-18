@@ -169,13 +169,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Logo Chomp --- */
   const navLogo = document.querySelector('.nav__logo');
-  navLogo?.addEventListener('click', () => {
+  const navMenu = document.getElementById('navMenu');
+
+  function closeNavMenu() {
+    navMenu?.classList.remove('active');
+    navMenu?.setAttribute('aria-hidden', 'true');
+    navLogo?.setAttribute('aria-expanded', 'false');
+  }
+
+  navLogo?.addEventListener('click', (e) => {
+    e.preventDefault();
     navLogo.classList.remove('nav__logo--chomp');
     void navLogo.offsetWidth;
     navLogo.classList.add('nav__logo--chomp');
+    if (navMenu) {
+      const isOpen = navMenu.classList.toggle('active');
+      navMenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      navLogo.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
     window.setTimeout(() => {
       navLogo.classList.remove('nav__logo--chomp');
     }, 260);
+  });
+
+  navMenu?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeNavMenu);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#navLogo') || e.target.closest('#navMenu')) return;
+    closeNavMenu();
   });
 
   /* --- Footer Info Pages --- */
@@ -504,6 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartDrawerTotal = document.getElementById('cartDrawerTotal');
   const cartClear = document.getElementById('cartClear');
   const cartCheckout = document.getElementById('cartCheckout');
+  const cartToast = document.getElementById('cartToast');
   const IGIC_RATE = 0.07;
 
   const colorsByModel = {
@@ -911,10 +935,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cartDrawerTotal) cartDrawerTotal.innerHTML = formatCurrencyHtml(total);
     if (cartCheckout) {
       const orderLines = cart.map(item => {
-        return `${item.quantity} x ${item.model} ${item.color} talla ${item.size} · ${formatCurrency(item.price)} c/u`;
+        return `Drop 01/XX - ${item.model} - ${item.color} - talla ${item.size} - ${formatCurrency(item.price)} x ${item.quantity}`;
       });
       const messageText = cart.length
-        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nSubtotal: ${formatCurrency(subtotal)}\nDescuento: -${formatCurrency(discountTotal)}\nIGIC incluido 7%: ${formatCurrency(tax)}\nTotal: ${formatCurrency(total)}`
+        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nTotal de la compra: ${formatCurrency(total)}`
         : 'Hola OMP, quiero reservar mi Drop.';
       cartCheckout.href = `https://wa.me/34673094993?text=${encodeURIComponent(messageText)}`;
     }
@@ -998,6 +1022,16 @@ document.addEventListener('DOMContentLoaded', () => {
     hideColorOptions();
   }
 
+  let cartToastTimer;
+  function showCartToast() {
+    if (!cartToast) return;
+    window.clearTimeout(cartToastTimer);
+    cartToast.classList.add('active');
+    cartToastTimer = window.setTimeout(() => {
+      cartToast.classList.remove('active');
+    }, 2200);
+  }
+
   function addToCart(order) {
     const cart = readCart();
     const existing = cart.find(item =>
@@ -1018,6 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     writeCart(cart);
     renderCart();
+    showCartToast();
     cartToggle?.classList.add('cart-toggle--pop');
     window.setTimeout(() => cartToggle?.classList.remove('cart-toggle--pop'), 420);
   }
