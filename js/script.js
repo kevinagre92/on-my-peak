@@ -802,7 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --- Next Drop Countdown --- */
-  const countdownTarget = new Date('2026-05-29T20:00:00+01:00').getTime();
+  const countdownTarget = new Date('2026-05-26T19:00:00+01:00').getTime();
   const countdownParts = {
     days: document.getElementById('countDays'),
     hours: document.getElementById('countHours'),
@@ -901,7 +901,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDropCalendar();
 
   /* --- Drop 01 Deadline Countdown --- */
-  const dropDeadlineTarget = new Date('2026-05-27T23:59:59+01:00').getTime();
+  const dropDeadlineTarget = new Date('2026-05-26T19:00:00+01:00').getTime();
   const dropDeadlineNodes = document.querySelectorAll('[data-drop-deadline-countdown]');
 
   function updateDropDeadlineCountdown() {
@@ -1198,9 +1198,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Live Instagram Feed --- */
   const instagramFeed = document.querySelector('[data-instagram-feed]');
+  const fallbackInstagramPosts = instagramFeed
+    ? Array.from(instagramFeed.querySelectorAll('img')).slice(0, 9).map((img, index) => ({
+        id: `fallback-${index}`,
+        caption: img.alt || 'Post reciente de On My Peak',
+        media_type: 'IMAGE',
+        media_url: '',
+        fallback_image: img.getAttribute('src') || '',
+        permalink: img.closest('a')?.href || 'https://instagram.com/onmypeak_'
+      }))
+    : [];
+
+  function proxiedInstagramImage(url) {
+    if (!url || url.startsWith('/assets/') || url.startsWith('assets/')) return url;
+    try {
+      const parsedUrl = new URL(url);
+      if (!/(^|\.)cdninstagram\.com$/i.test(parsedUrl.hostname)) return url;
+      return `/api/instagram-image?url=${encodeURIComponent(url)}`;
+    } catch (error) {
+      return url;
+    }
+  }
 
   function instagramImageSource(post) {
-    return post.fallback_image || post.thumbnail_url || post.media_url || '';
+    return proxiedInstagramImage(post.thumbnail_url || post.media_url || post.fallback_image || '');
   }
 
   function createInstagramItem(post) {
@@ -1242,17 +1263,29 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { Accept: 'application/json' }
       });
       if (!response.ok) {
+        if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
+          instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));
+        }
         instagramFeed.dataset.source = 'fallback';
         return;
       }
 
       const payload = await response.json();
       const posts = Array.isArray(payload.posts) ? payload.posts.slice(0, 9) : [];
-      if (posts.length < 1) return;
+      if (posts.length < 1) {
+        if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
+          instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));
+        }
+        instagramFeed.dataset.source = 'fallback';
+        return;
+      }
 
       instagramFeed.replaceChildren(...posts.map(createInstagramItem));
       instagramFeed.dataset.source = 'instagram';
     } catch (error) {
+      if (!instagramFeed.children.length && fallbackInstagramPosts.length) {
+        instagramFeed.replaceChildren(...fallbackInstagramPosts.map(createInstagramItem));
+      }
       instagramFeed.dataset.source = 'fallback';
     } finally {
       delete instagramFeed.dataset.loading;
