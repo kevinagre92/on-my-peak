@@ -832,6 +832,74 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCountdown();
   window.setInterval(updateCountdown, 1000);
 
+  /* --- Drop Calendar Month Navigation --- */
+  const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+  const calendarYearLabel = document.getElementById('calendarYearLabel');
+  const calendarDays = document.getElementById('dropCalendarDays');
+  const calendarPrev = document.querySelector('[data-calendar-prev]');
+  const calendarNext = document.querySelector('[data-calendar-next]');
+  const calendarMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  const dropRanges = [
+    { start: '2026-05-04', end: '2026-05-26', className: 'drop-day--one' },
+    { start: '2026-05-30', end: '2026-06-28', className: 'drop-day--two' }
+  ];
+  let visibleCalendarMonth = new Date(2026, 4, 1);
+
+  function formatDateId(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function getDropClass(dateId) {
+    const range = dropRanges.find(item => dateId >= item.start && dateId <= item.end);
+    if (!range) return '';
+    const edge = `${dateId === range.start ? ' drop-day--start' : ''}${dateId === range.end ? ' drop-day--end' : ''}`;
+    return `drop-day ${range.className}${edge}`;
+  }
+
+  function renderDropCalendar() {
+    if (!calendarDays || !calendarMonthLabel || !calendarYearLabel) return;
+    const year = visibleCalendarMonth.getFullYear();
+    const month = visibleCalendarMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const leadingDays = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells = [];
+
+    for (let i = 0; i < leadingDays; i += 1) {
+      cells.push('<span></span>');
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const date = new Date(year, month, day);
+      const dateId = formatDateId(date);
+      const className = getDropClass(dateId);
+      cells.push(`<time class="${className}" datetime="${dateId}">${day}</time>`);
+    }
+
+    while (cells.length % 7 !== 0) {
+      cells.push('<span></span>');
+    }
+
+    calendarMonthLabel.textContent = calendarMonths[month];
+    calendarYearLabel.textContent = year;
+    calendarDays.innerHTML = cells.join('');
+  }
+
+  calendarPrev?.addEventListener('click', () => {
+    visibleCalendarMonth = new Date(visibleCalendarMonth.getFullYear(), visibleCalendarMonth.getMonth() - 1, 1);
+    renderDropCalendar();
+  });
+
+  calendarNext?.addEventListener('click', () => {
+    visibleCalendarMonth = new Date(visibleCalendarMonth.getFullYear(), visibleCalendarMonth.getMonth() + 1, 1);
+    renderDropCalendar();
+  });
+
+  renderDropCalendar();
+
   /* --- Drop 01 Deadline Countdown --- */
   const dropDeadlineTarget = new Date('2026-05-27T23:59:59+01:00').getTime();
   const dropDeadlineNodes = document.querySelectorAll('[data-drop-deadline-countdown]');

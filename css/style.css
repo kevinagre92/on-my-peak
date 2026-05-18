@@ -1327,17 +1327,7 @@ ul { list-style: none; }
 }
 
 .drop-calendar__head {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(260px, 0.55fr);
-  gap: clamp(1.2rem, 4vw, 3rem);
-  align-items: end;
-}
-
-.drop-calendar__head p {
-  max-width: 420px;
-  color: var(--text-secondary);
-  font-size: clamp(0.9rem, 1.7vw, 1.2rem);
-  line-height: 1.7;
+  display: block;
 }
 
 .drop-calendar__drops {
@@ -1349,31 +1339,20 @@ ul { list-style: none; }
 
 .drop-calendar__card {
   position: relative;
-  min-height: clamp(360px, 52vw, 560px);
+  display: grid;
+  grid-template-rows: auto auto;
+  align-content: start;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.12);
   background: #050505;
-  isolation: isolate;
 }
 
 .drop-calendar__card img {
-  position: absolute;
-  inset: 0;
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
   filter: saturate(0.85) contrast(1.04);
-  transform: scale(1.01);
   transition: transform 0.5s ease, filter 0.5s ease;
-  z-index: -2;
-}
-
-.drop-calendar__card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 28%, rgba(0,0,0,0.84));
-  z-index: -1;
 }
 
 .drop-calendar__card:hover img {
@@ -1381,14 +1360,7 @@ ul { list-style: none; }
   filter: saturate(1) contrast(1.08);
 }
 
-.drop-calendar__card div {
-  position: absolute;
-  left: clamp(1rem, 3vw, 2rem);
-  right: clamp(1rem, 3vw, 2rem);
-  bottom: clamp(1rem, 3vw, 2rem);
-}
-
-.drop-calendar__card span,
+.drop-calendar__card figcaption,
 .drop-calendar__legend span {
   font-family: var(--font-mono);
   font-size: 0.58rem;
@@ -1397,26 +1369,18 @@ ul { list-style: none; }
   color: var(--text-muted);
 }
 
-.drop-calendar__card h3 {
-  margin-top: 0.45rem;
-  font-family: var(--font-logo);
-  font-size: clamp(1.6rem, 5vw, 3.8rem);
-  letter-spacing: 0.08em;
-}
-
-.drop-calendar__card p {
-  margin-top: 0.4rem;
-  max-width: 520px;
+.drop-calendar__card figcaption {
+  padding: 0.85rem 1rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
   color: var(--text-secondary);
-  line-height: 1.5;
+  text-align: center;
 }
 
-.drop-calendar__card--one h3 {
-  color: var(--text-primary);
-}
-
-.drop-calendar__card--two h3 {
-  color: #ffd32a;
+.drop-calendar__next-action {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  padding: 0 1rem 1.1rem;
 }
 
 .drop-calendar__legend {
@@ -1443,10 +1407,7 @@ ul { list-style: none; }
 .drop-calendar__dot--one { background: var(--accent-lava); }
 .drop-calendar__dot--two { background: #ffd32a; }
 
-.drop-calendar__months {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+.drop-calendar__month-shell {
   margin-top: 1rem;
 }
 
@@ -1460,9 +1421,32 @@ ul { list-style: none; }
 .drop-month header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  gap: 1rem;
   padding-bottom: 0.85rem;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.drop-month header div {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.drop-month__nav {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-primary);
+  font-family: var(--font-logo);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.drop-month__nav:hover {
+  border-color: var(--accent-lava);
+  background: rgba(232,83,30,0.12);
 }
 
 .drop-month header span {
@@ -2809,12 +2793,8 @@ ul { list-style: none; }
 
   .drop-calendar__head,
   .drop-calendar__drops,
-  .drop-calendar__months {
+  .drop-calendar__month-shell {
     grid-template-columns: 1fr;
-  }
-
-  .drop-calendar__card {
-    min-height: min(112vw, 520px);
   }
 
   .drop-month__weekdays span,
@@ -2902,10 +2882,6 @@ ul { list-style: none; }
   .nav-menu a {
     min-height: 44px;
     font-size: 0.58rem;
-  }
-  .drop-calendar__card div {
-    left: 1rem;
-    right: 1rem;
   }
   .drop-month {
     margin-inline: calc(var(--container-pad) * -0.3);

@@ -28,7 +28,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Michroma&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260518-calendar-menu1">
+  <link rel="stylesheet" href="css/style.css?v=20260518-calendar-single1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -125,9 +125,9 @@
       <span class="nav__logo-paren">(</span><span class="nav__logo-text">OMP</span><span class="nav__logo-paren">)</span>
     </a>
     <div class="nav-menu" id="navMenu" aria-hidden="true">
+      <a href="#hero">Home</a>
       <a href="#manifesto">Manifiesto</a>
       <a href="#drop">Drop Live</a>
-      <a href="#lookbook">Next Drop</a>
       <a href="#calendario">Calendario</a>
       <a href="#waitlist">Consigue tu Peak</a>
     </div>
@@ -346,54 +346,37 @@
     </div>
   </section>
 
-  <!-- Next Drop -->
-  <section class="section lookbook" id="lookbook">
-    <div class="container">
-      <p class="section-label reveal" data-i18n="lookbookLabel">NEXT DROP</p>
-      <div class="next-drop__visual reveal reveal-delay-1">
-        <img src="assets/optimized/next-drop.jpg" alt="DROP 02/XX — próximo lanzamiento OMP" loading="lazy">
-      </div>
-      <div class="drop-countdown reveal reveal-delay-2" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
-        <span class="drop-countdown__label">DROP 02/XX EN</span>
-        <div class="drop-countdown__grid">
-          <span><strong id="countDays">00</strong><small>Días</small></span>
-          <span><strong id="countHours">00</strong><small>Horas</small></span>
-          <span><strong id="countMinutes">00</strong><small>Min</small></span>
-          <span><strong id="countSeconds">00</strong><small>Seg</small></span>
-        </div>
-      </div>
-      <a class="calendar-btn reveal reveal-delay-2" id="calendarButton" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Next%20Drop%20OMP&dates=20260529T200000%2F20260529T210000&details=Next%20Drop%20OMP%20-%20DROP%2002%2FXX&ctz=Atlantic%2FCanary" target="_blank" rel="noopener" data-i18n="calendarButton">
-        MARCAR EN TU CALENDARIO
-      </a>
-    </div>
-  </section>
-
   <!-- Calendario -->
   <section class="section drop-calendar" id="calendario">
     <div class="container">
       <p class="section-label reveal">Calendario</p>
       <div class="drop-calendar__head reveal reveal-delay-1">
-        <h2 class="section-title">DROP<br>WINDOWS</h2>
-        <p>Dos ventanas. Dos estados. Entra cuando toca o espera al siguiente.</p>
+        <h2 class="section-title">DROP<br>CALENDAR</h2>
       </div>
 
       <div class="drop-calendar__drops reveal reveal-delay-2">
-        <article class="drop-calendar__card drop-calendar__card--one">
+        <figure class="drop-calendar__card drop-calendar__card--one">
           <img src="assets/drops/drop-01.jpg" alt="DROP 01/XX — No one is coming" loading="lazy" decoding="async">
-          <div>
-            <span>04 MAY - 26 MAY</span>
-            <h3>DROP 01/XX</h3>
-            <p>No one is coming</p>
-          </div>
-        </article>
-        <article class="drop-calendar__card drop-calendar__card--two">
+          <figcaption>DROP 01/XX · 04 MAY - 26 MAY</figcaption>
+        </figure>
+        <figure class="drop-calendar__card drop-calendar__card--two">
           <img src="assets/drops/drop-02.jpg" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
-          <div>
-            <span>30 MAY - 28 JUN</span>
-            <h3>DROP 02/XX</h3>
-            <p>No es de donde eres, es lo que llevas dentro</p>
+          <figcaption>DROP 02/XX · 30 MAY - 28 JUN</figcaption>
+          <div class="drop-calendar__next-action">
+            <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
+              <span class="drop-countdown__label">DROP 02/XX EN</span>
+              <div class="drop-countdown__grid">
+                <span><strong id="countDays">00</strong><small>Días</small></span>
+                <span><strong id="countHours">00</strong><small>Horas</small></span>
+                <span><strong id="countMinutes">00</strong><small>Min</small></span>
+                <span><strong id="countSeconds">00</strong><small>Seg</small></span>
+              </div>
+            </div>
+            <a class="calendar-btn" id="calendarButton" href="assets/calendar/next-drop-omp.ics" data-i18n="calendarButton">
+              MARCAR EN TU CALENDARIO
+            </a>
           </div>
-        </article>
+        </figure>
       </div>
 
       <div class="drop-calendar__legend reveal reveal-delay-2" aria-label="Leyenda de drops">
@@ -401,30 +384,15 @@
         <span><i class="drop-calendar__dot drop-calendar__dot--two"></i> Drop 02/XX</span>
       </div>
 
-      <div class="drop-calendar__months reveal reveal-delay-3" aria-label="Calendario de drops 2026">
+      <div class="drop-calendar__month-shell reveal reveal-delay-3" aria-label="Calendario de drops 2026">
         <article class="drop-month">
-          <header><span>Mayo</span><strong>2026</strong></header>
+          <header>
+            <button class="drop-month__nav" type="button" data-calendar-prev aria-label="Mes anterior">‹</button>
+            <div><span id="calendarMonthLabel">Mayo</span><strong id="calendarYearLabel">2026</strong></div>
+            <button class="drop-month__nav" type="button" data-calendar-next aria-label="Mes siguiente">›</button>
+          </header>
           <div class="drop-month__weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-          <div class="drop-month__days">
-            <span></span><span></span><span></span><span></span>
-            <time datetime="2026-05-01">1</time><time datetime="2026-05-02">2</time><time datetime="2026-05-03">3</time>
-            <time class="drop-day drop-day--one drop-day--start" datetime="2026-05-04">4</time><time class="drop-day drop-day--one" datetime="2026-05-05">5</time><time class="drop-day drop-day--one" datetime="2026-05-06">6</time><time class="drop-day drop-day--one" datetime="2026-05-07">7</time><time class="drop-day drop-day--one" datetime="2026-05-08">8</time><time class="drop-day drop-day--one" datetime="2026-05-09">9</time><time class="drop-day drop-day--one" datetime="2026-05-10">10</time>
-            <time class="drop-day drop-day--one" datetime="2026-05-11">11</time><time class="drop-day drop-day--one" datetime="2026-05-12">12</time><time class="drop-day drop-day--one" datetime="2026-05-13">13</time><time class="drop-day drop-day--one" datetime="2026-05-14">14</time><time class="drop-day drop-day--one" datetime="2026-05-15">15</time><time class="drop-day drop-day--one" datetime="2026-05-16">16</time><time class="drop-day drop-day--one" datetime="2026-05-17">17</time>
-            <time class="drop-day drop-day--one" datetime="2026-05-18">18</time><time class="drop-day drop-day--one" datetime="2026-05-19">19</time><time class="drop-day drop-day--one" datetime="2026-05-20">20</time><time class="drop-day drop-day--one" datetime="2026-05-21">21</time><time class="drop-day drop-day--one" datetime="2026-05-22">22</time><time class="drop-day drop-day--one" datetime="2026-05-23">23</time><time class="drop-day drop-day--one" datetime="2026-05-24">24</time>
-            <time class="drop-day drop-day--one" datetime="2026-05-25">25</time><time class="drop-day drop-day--one drop-day--end" datetime="2026-05-26">26</time><time datetime="2026-05-27">27</time><time datetime="2026-05-28">28</time><time datetime="2026-05-29">29</time><time class="drop-day drop-day--two drop-day--start" datetime="2026-05-30">30</time><time class="drop-day drop-day--two" datetime="2026-05-31">31</time>
-          </div>
-        </article>
-
-        <article class="drop-month">
-          <header><span>Junio</span><strong>2026</strong></header>
-          <div class="drop-month__weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-          <div class="drop-month__days">
-            <time class="drop-day drop-day--two" datetime="2026-06-01">1</time><time class="drop-day drop-day--two" datetime="2026-06-02">2</time><time class="drop-day drop-day--two" datetime="2026-06-03">3</time><time class="drop-day drop-day--two" datetime="2026-06-04">4</time><time class="drop-day drop-day--two" datetime="2026-06-05">5</time><time class="drop-day drop-day--two" datetime="2026-06-06">6</time><time class="drop-day drop-day--two" datetime="2026-06-07">7</time>
-            <time class="drop-day drop-day--two" datetime="2026-06-08">8</time><time class="drop-day drop-day--two" datetime="2026-06-09">9</time><time class="drop-day drop-day--two" datetime="2026-06-10">10</time><time class="drop-day drop-day--two" datetime="2026-06-11">11</time><time class="drop-day drop-day--two" datetime="2026-06-12">12</time><time class="drop-day drop-day--two" datetime="2026-06-13">13</time><time class="drop-day drop-day--two" datetime="2026-06-14">14</time>
-            <time class="drop-day drop-day--two" datetime="2026-06-15">15</time><time class="drop-day drop-day--two" datetime="2026-06-16">16</time><time class="drop-day drop-day--two" datetime="2026-06-17">17</time><time class="drop-day drop-day--two" datetime="2026-06-18">18</time><time class="drop-day drop-day--two" datetime="2026-06-19">19</time><time class="drop-day drop-day--two" datetime="2026-06-20">20</time><time class="drop-day drop-day--two" datetime="2026-06-21">21</time>
-            <time class="drop-day drop-day--two" datetime="2026-06-22">22</time><time class="drop-day drop-day--two" datetime="2026-06-23">23</time><time class="drop-day drop-day--two" datetime="2026-06-24">24</time><time class="drop-day drop-day--two" datetime="2026-06-25">25</time><time class="drop-day drop-day--two" datetime="2026-06-26">26</time><time class="drop-day drop-day--two" datetime="2026-06-27">27</time><time class="drop-day drop-day--two drop-day--end" datetime="2026-06-28">28</time>
-            <time datetime="2026-06-29">29</time><time datetime="2026-06-30">30</time><span></span><span></span><span></span><span></span><span></span>
-          </div>
+          <div class="drop-month__days" id="dropCalendarDays"></div>
         </article>
       </div>
     </div>
@@ -599,6 +567,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260518-calendar-menu1"></script>
+  <script src="js/script.js?v=20260518-calendar-single1"></script>
 </body>
 </html>
