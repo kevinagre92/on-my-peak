@@ -131,6 +131,11 @@ function redactInstagramUrl(url) {
   return safeUrl.toString();
 }
 
+function canShowDiagnostics(request) {
+  const debugKey = process.env.INSTAGRAM_DEBUG_KEY;
+  return Boolean(debugKey && request.query?.debug_key === debugKey);
+}
+
 module.exports = async function handler(request, response) {
   if (request.method !== 'GET') {
     response.setHeader('Allow', 'GET');
@@ -152,6 +157,7 @@ module.exports = async function handler(request, response) {
   try {
     let payload = null;
     let instagramResponse = null;
+    const showDiagnostics = canShowDiagnostics(request);
     const diagnostics = [];
 
     for (const instagramUrl of instagramUrls) {
@@ -177,7 +183,7 @@ module.exports = async function handler(request, response) {
     }
 
     if (!instagramResponse?.ok) {
-      if (request.query?.debug === '1') {
+      if (showDiagnostics) {
         for (const diagnosticUrl of buildInstagramDiagnosticUrls()) {
           const diagnosticResponse = await fetch(diagnosticUrl, {
             headers: { Accept: 'application/json' }
@@ -212,7 +218,7 @@ module.exports = async function handler(request, response) {
         error: 'Instagram API request failed',
         configured: true,
         source: 'fallback',
-        diagnostics: request.query?.debug === '1' ? diagnostics : undefined,
+        diagnostics: showDiagnostics ? diagnostics : undefined,
         posts: fallbackPosts()
       });
     }
@@ -234,7 +240,7 @@ module.exports = async function handler(request, response) {
       error: 'Instagram feed unavailable',
       configured: true,
       source: 'fallback',
-      diagnostics: request.query?.debug === '1'
+      diagnostics: canShowDiagnostics(request)
         ? [{ message: error.message, name: error.name }]
         : undefined,
       posts: fallbackPosts()
