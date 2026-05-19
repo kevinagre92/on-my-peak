@@ -74,6 +74,21 @@ function buildInstagramUrlCandidates() {
     });
 }
 
+function buildInstagramDiagnosticUrls() {
+  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+  if (!accessToken) return [];
+
+  const provider = (process.env.INSTAGRAM_PROVIDER || '').toLowerCase();
+  const useInstagramLogin = provider === 'instagram' || (!provider && !process.env.INSTAGRAM_USER_ID);
+  const base = process.env.INSTAGRAM_API_BASE || (useInstagramLogin ? 'https://graph.instagram.com' : 'https://graph.facebook.com');
+  const version = process.env.INSTAGRAM_GRAPH_VERSION || 'v21.0';
+  const userId = process.env.INSTAGRAM_USER_ID || 'me';
+  const profileUrl = new URL(`${base.replace(/\/$/, '')}/${useInstagramLogin ? '' : `${version}/`}${userId}`);
+  profileUrl.searchParams.set('fields', useInstagramLogin ? 'id,username,account_type,media_count' : 'id,username');
+  profileUrl.searchParams.set('access_token', accessToken);
+  return isAllowedApiUrl(profileUrl) ? [profileUrl] : [];
+}
+
 function normalizePost(post, index = 0) {
   const firstCarouselItem = post.children?.data?.find(child => child.media_url || child.thumbnail_url);
   const imageUrl =
@@ -162,6 +177,36 @@ module.exports = async function handler(request, response) {
     }
 
     if (!instagramResponse?.ok) {
+      if (request.query?.debug === '1') {
+        for (const diagnosticUrl of buildInstagramDiagnosticUrls()) {
+          const diagnosticResponse = await fetch(diagnosticUrl, {
+            headers: { Accept: 'application/json' }
+          });
+          const diagnosticPayload = await diagnosticResponse.json();
+          diagnostics.push({
+            url: redactInstagramUrl(diagnosticUrl),
+            status: diagnosticResponse.status,
+            ok: diagnosticResponse.ok,
+            profile: diagnosticResponse.ok
+              ? {
+                  id: diagnosticPayload.id,
+                  username: diagnosticPayload.username,
+                  account_type: diagnosticPayload.account_type,
+                  media_count: diagnosticPayload.media_count
+                }
+              : null,
+            error: diagnosticPayload?.error
+              ? {
+                  message: diagnosticPayload.error.message,
+                  type: diagnosticPayload.error.type,
+                  code: diagnosticPayload.error.code,
+                  error_subcode: diagnosticPayload.error.error_subcode,
+                  fbtrace_id: diagnosticPayload.error.fbtrace_id
+                }
+              : null
+          });
+        }
+      }
       response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       return response.status(200).json({
         error: 'Instagram API request failed',
