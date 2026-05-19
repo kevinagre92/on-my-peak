@@ -550,6 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: 'Negra', hex: '#101010' },
       { name: 'Blanca', hex: '#fafafa' },
       { name: 'Ebano', hex: '#aaa7a3' },
+      { name: 'Gris', hex: '#6f706c' },
       { name: 'Azul tormenta', hex: '#5f7482' },
       { name: 'Marino', hex: '#012653' },
       { name: 'Blanco vintage', hex: '#eee5e3' }
