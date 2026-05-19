@@ -1097,9 +1097,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let cartToastTimer;
-  function showCartToast() {
+  function showCartToast(message = '¡Articulo añadido al carrito!') {
     if (!cartToast) return;
     window.clearTimeout(cartToastTimer);
+    cartToast.textContent = message;
     cartToast.classList.add('active');
     cartToastTimer = window.setTimeout(() => {
       cartToast.classList.remove('active');
@@ -1185,6 +1186,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `Código ${code} aplicado a todo el carrito.`
           : 'Código no válido.';
     }
+    if (valid) showCartToast('Código canjeado');
     renderCart();
   });
   discountInput?.addEventListener('keydown', (e) => {
@@ -1422,20 +1424,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('waitlistName').value.trim();
-      const email = document.getElementById('waitlistEmail').value.trim();
-      const phone = document.getElementById('waitlistPhone').value.trim();
       const order = {
-        name,
-        email,
-        phone,
+        name: '',
+        email: '',
+        phone: '',
         model: modelSelect.value,
         color: colorSelect.value,
         size: sizeSelect.value,
         createdAt: new Date().toISOString()
       };
 
-      if (!name || !email || !phone || !order.model || !order.color || !order.size) return;
+      if (!order.model || !order.color || !order.size) return;
 
       addToCart(order);
       resetProductFields();
