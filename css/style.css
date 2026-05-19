@@ -710,10 +710,47 @@ select:focus-visible {
 .hero__btn small strong {
   color: #FFFFFF;
   font-family: var(--font-mono);
-  font-size: clamp(1rem, 2vw, 1.35rem);
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: 0.1em;
+}
+
+.deadline-countdown {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(2.35rem, 1fr));
+  gap: 0.34rem;
+  width: min(100%, 15.8rem);
+}
+
+.deadline-countdown span {
+  display: grid;
+  justify-items: center;
+  gap: 0.14rem;
+  min-width: 0;
+  padding: 0.52rem 0.36rem 0.46rem;
+  border: 1px solid rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.075);
+}
+
+.deadline-countdown b,
+.deadline-countdown small {
+  display: block;
+  font-family: var(--font-logo);
+  line-height: 1;
+}
+
+.deadline-countdown b {
+  color: #FFFFFF;
+  font-size: clamp(0.94rem, 1.8vw, 1.28rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.deadline-countdown small {
+  color: rgba(255,255,255,0.62);
+  font-size: 0.43rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .hero__btn:hover {
@@ -1076,10 +1113,28 @@ select:focus-visible {
 .drop__urgency strong {
   color: var(--accent-lava);
   font-weight: 400;
-  font-size: clamp(0.95rem, 1.7vw, 1.22rem);
   letter-spacing: 0.08em;
   line-height: 1;
   white-space: nowrap;
+}
+
+.drop__urgency .deadline-countdown {
+  width: min(100%, 16.6rem);
+  flex: 0 0 auto;
+}
+
+.drop__urgency .deadline-countdown span {
+  border-color: rgba(232,83,30,0.34);
+  background: rgba(232,83,30,0.1);
+}
+
+.drop__urgency .deadline-countdown b {
+  color: var(--accent-lava);
+  font-size: clamp(1rem, 1.7vw, 1.25rem);
+}
+
+.drop__urgency .deadline-countdown small {
+  color: rgba(232,83,30,0.72);
 }
 
 .drop__grid {
@@ -3267,20 +3322,38 @@ select:focus-visible {
     letter-spacing: 0.08em;
   }
   .hero__btn small strong {
-    font-size: clamp(0.86rem, 4.2vw, 1.1rem);
+    letter-spacing: 0.07em;
+  }
+  .deadline-countdown {
+    gap: 0.22rem;
+    width: min(100%, 13.6rem);
+  }
+  .deadline-countdown span {
+    padding: 0.42rem 0.2rem 0.36rem;
+  }
+  .deadline-countdown b {
+    font-size: clamp(0.78rem, 3.75vw, 1rem);
+    letter-spacing: 0.04em;
+  }
+  .deadline-countdown small {
+    font-size: 0.35rem;
     letter-spacing: 0.07em;
   }
   .drop__urgency {
     width: 100%;
-    justify-content: space-between;
-    gap: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.52rem;
     padding: 0.62rem 0.62rem;
     font-size: 0.48rem;
     letter-spacing: 0.05em;
   }
   .drop__urgency strong {
-    font-size: clamp(0.72rem, 3.35vw, 0.94rem);
     letter-spacing: 0.04em;
+  }
+  .drop__urgency .deadline-countdown {
+    width: 100%;
   }
   .color-options {
     grid-template-columns: 1fr;

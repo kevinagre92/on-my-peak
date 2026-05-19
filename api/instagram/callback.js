@@ -1,7 +1,7 @@
 const TOKEN_ENDPOINT = 'https://api.instagram.com/oauth/access_token';
 const LONG_LIVED_ENDPOINT = 'https://graph.instagram.com/access_token';
 const REFRESH_ENDPOINT = 'https://graph.instagram.com/refresh_access_token';
-const DEFAULT_REDIRECT_URI = 'https://on-my-peak-peach.vercel.app/api/instagram/callback';
+const DEFAULT_REDIRECT_URI = 'https://onmypeak.vercel.app/api/instagram/callback';
 
 function html(response, status, body) {
   response.setHeader('Content-Type', 'text/html; charset=utf-8');

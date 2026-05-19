@@ -17,7 +17,7 @@ Este sitio presenta el primer drop de OMP con una estética premium, oscura y ed
 
 Producción en Vercel:
 
-https://on-my-peak-peach.vercel.app
+https://onmypeak.vercel.app
 
 ## Estructura
 

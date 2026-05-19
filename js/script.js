@@ -912,9 +912,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const hours = Math.floor((distance % 86400000) / 3600000);
     const minutes = Math.floor((distance % 3600000) / 60000);
     const seconds = Math.floor((distance % 60000) / 1000);
-    const label = `${padTime(days)}D ${padTime(hours)}H ${padTime(minutes)}M ${padTime(seconds)}S`;
+    const label = [
+      ['D', days],
+      ['H', hours],
+      ['M', minutes],
+      ['S', seconds]
+    ].map(([unit, value]) => `<span><b>${padTime(value)}</b><small>${unit}</small></span>`).join('');
     dropDeadlineNodes.forEach(node => {
-      node.textContent = label;
+      node.innerHTML = label;
     });
   }
 
