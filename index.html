@@ -33,7 +33,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260519-drop-current1">
+  <link rel="stylesheet" href="css/style.css?v=20260519-cartfix1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -630,6 +630,21 @@
       </div>
       <div class="cart-drawer__items" id="cartItems"></div>
       <div class="cart-drawer__empty" id="cartEmpty">Tu carrito está vacío.</div>
+      <form class="cart-customer" id="cartCustomerForm" aria-label="Datos para confirmar por WhatsApp">
+        <p>Datos para confirmar por WhatsApp</p>
+        <label>
+          <span>Nombre completo</span>
+          <input type="text" id="cartCustomerName" name="cartCustomerName" placeholder="Nombre y apellidos" autocomplete="name" required>
+        </label>
+        <label>
+          <span>Correo</span>
+          <input type="email" id="cartCustomerEmail" name="cartCustomerEmail" placeholder="tu@email.com" autocomplete="email" required>
+        </label>
+        <label>
+          <span>Teléfono</span>
+          <input type="tel" id="cartCustomerPhone" name="cartCustomerPhone" placeholder="+34 600 000 000" autocomplete="tel" required>
+        </label>
+      </form>
       <div class="cart-drawer__totals" id="cartTotals">
         <div><span>Subtotal</span><strong id="cartSubtotal">0,00 <span class="currency-symbol" aria-label="euros">&euro;</span></strong></div>
         <div class="cart-drawer__discount-row" id="cartDiscountRow"><span>Descuento</span><strong id="cartDiscount">-0,00 <span class="currency-symbol" aria-label="euros">&euro;</span></strong></div>
@@ -652,6 +667,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260519-drop-current1" defer></script>
+  <script src="js/script.js?v=20260519-cartfix1" defer></script>
 </body>
 </html>

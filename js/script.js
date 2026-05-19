@@ -132,6 +132,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const languageToggle = document.getElementById('languageToggle');
   const languageFlag = document.getElementById('languageFlag');
   let currentLanguage = 'es';
+  let fallbackLanguage = 'es';
+
+  function readLanguagePreference() {
+    try {
+      return window.localStorage.getItem('omp_language') || fallbackLanguage;
+    } catch (error) {
+      return fallbackLanguage;
+    }
+  }
+
+  function writeLanguagePreference(lang) {
+    fallbackLanguage = lang;
+    try {
+      window.localStorage.setItem('omp_language', lang);
+    } catch (error) {
+      // Some local previews block storage; language still works for the current visit.
+    }
+  }
 
   function applyLanguage(lang) {
     const dictionary = translations[lang] || translations.es;
@@ -142,10 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const key = el.dataset.i18n;
       if (dictionary[key]) el.innerHTML = dictionary[key];
     });
-    localStorage.setItem('omp_language', lang);
+    writeLanguagePreference(lang);
   }
 
-  const savedLanguage = localStorage.getItem('omp_language') || 'es';
+  const savedLanguage = readLanguagePreference();
   applyLanguage(savedLanguage);
 
   languageToggle?.addEventListener('click', (e) => {
@@ -528,6 +546,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartClear = document.getElementById('cartClear');
   const cartCheckout = document.getElementById('cartCheckout');
   const cartToast = document.getElementById('cartToast');
+  const cartCustomerForm = document.getElementById('cartCustomerForm');
+  const cartCustomerName = document.getElementById('cartCustomerName');
+  const cartCustomerEmail = document.getElementById('cartCustomerEmail');
+  const cartCustomerPhone = document.getElementById('cartCustomerPhone');
   const IGIC_RATE = 0.07;
 
   const colorsByModel = {
@@ -927,24 +949,68 @@ document.addEventListener('DOMContentLoaded', () => {
   window.setInterval(updateDropDeadlineCountdown, 1000);
 
   /* --- Cart --- */
+  const cartMemory = {
+    omp_cart: '[]',
+    omp_discount: ''
+  };
+
+  function canUseStorage() {
+    try {
+      const key = '__omp_storage_test__';
+      window.localStorage.setItem(key, '1');
+      window.localStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  const storageAvailable = canUseStorage();
+
+  function getStoredValue(key, fallback = '') {
+    if (!storageAvailable) return cartMemory[key] ?? fallback;
+    return window.localStorage.getItem(key) ?? fallback;
+  }
+
+  function setStoredValue(key, value) {
+    if (!storageAvailable) {
+      cartMemory[key] = value;
+      return;
+    }
+    window.localStorage.setItem(key, value);
+  }
+
+  function removeStoredValue(key) {
+    if (!storageAvailable) {
+      cartMemory[key] = key === 'omp_cart' ? '[]' : '';
+      return;
+    }
+    window.localStorage.removeItem(key);
+  }
+
   function readCart() {
-    return JSON.parse(localStorage.getItem('omp_cart') || '[]');
+    try {
+      const cart = JSON.parse(getStoredValue('omp_cart', '[]'));
+      return Array.isArray(cart) ? cart : [];
+    } catch (error) {
+      return [];
+    }
   }
 
   function writeCart(cart) {
-    localStorage.setItem('omp_cart', JSON.stringify(cart));
+    setStoredValue('omp_cart', JSON.stringify(cart));
   }
 
   function readCartDiscount() {
-    return localStorage.getItem('omp_discount') || '';
+    return getStoredValue('omp_discount', '');
   }
 
   function writeCartDiscount(code) {
     const normalized = String(code || '').trim().toUpperCase();
     if (normalized) {
-      localStorage.setItem('omp_discount', normalized);
+      setStoredValue('omp_discount', normalized);
     } else {
-      localStorage.removeItem('omp_discount');
+      removeStoredValue('omp_discount');
     }
   }
 
@@ -972,6 +1038,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getLineDiscount(item) {
     return getLineSubtotal(item) * getDiscountRate(readCartDiscount());
+  }
+
+  function readCustomerDetails() {
+    return {
+      name: cartCustomerName?.value.trim() || '',
+      email: cartCustomerEmail?.value.trim() || '',
+      phone: cartCustomerPhone?.value.trim() || ''
+    };
+  }
+
+  function isCustomerReady() {
+    const customer = readCustomerDetails();
+    return Boolean(customer.name && customer.email && cartCustomerEmail?.checkValidity() && customer.phone);
   }
 
   function openCart() {
@@ -1007,14 +1086,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cartTax) cartTax.innerHTML = formatCurrencyHtml(tax);
     if (cartTotal) cartTotal.innerHTML = formatCurrencyHtml(total);
     if (cartDrawerTotal) cartDrawerTotal.innerHTML = formatCurrencyHtml(total);
+    cartCustomerForm?.classList.toggle('cart-customer--active', cart.length > 0);
     if (cartCheckout) {
+      const customer = readCustomerDetails();
+      const customerReady = isCustomerReady();
       const orderLines = cart.map(item => {
         return `Drop 01/XX - ${item.model} - ${item.color} - talla ${item.size} - ${formatCurrency(item.price)} x ${item.quantity}`;
       });
       const messageText = cart.length
-        ? `Hola OMP, quiero confirmar mi pedido:\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nTotal de la compra: ${formatCurrency(total)}`
+        ? `Hola OMP, quiero confirmar mi pedido:\nNombre: ${customer.name}\nEmail: ${customer.email}\nTelefono: ${customer.phone}\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nTotal de la compra: ${formatCurrency(total)}`
         : 'Hola OMP, quiero reservar mi Drop.';
       cartCheckout.href = `https://wa.me/34673094993?text=${encodeURIComponent(messageText)}`;
+      const disabled = !cart.length || !customerReady;
+      cartCheckout.classList.toggle('cart-drawer__checkout--disabled', disabled);
+      cartCheckout.setAttribute('aria-disabled', disabled.toString());
+      cartCheckout.tabIndex = disabled ? -1 : 0;
     }
     cartEmpty?.classList.toggle('active', cart.length === 0);
 
@@ -1137,6 +1223,14 @@ document.addEventListener('DOMContentLoaded', () => {
   cartDrawer?.addEventListener('click', (e) => {
     if (e.target === cartDrawer) closeCart();
   });
+  cartCheckout?.addEventListener('click', (e) => {
+    if (cartCheckout.getAttribute('aria-disabled') !== 'true') return;
+    e.preventDefault();
+    cartCustomerForm?.classList.add('cart-customer--attention');
+    cartCustomerForm?.querySelector('input:invalid, input')?.focus();
+    window.setTimeout(() => cartCustomerForm?.classList.remove('cart-customer--attention'), 900);
+  });
+  cartCustomerForm?.addEventListener('input', renderCart);
   cartItems?.addEventListener('click', (e) => {
     const cart = readCart();
     const control = e.target.closest('[data-cart-delta]');
