@@ -108,6 +108,14 @@ function fallbackPosts() {
   }));
 }
 
+function redactInstagramUrl(url) {
+  const safeUrl = new URL(url.toString());
+  if (safeUrl.searchParams.has('access_token')) {
+    safeUrl.searchParams.set('access_token', '[redacted]');
+  }
+  return safeUrl.toString();
+}
+
 module.exports = async function handler(request, response) {
   if (request.method !== 'GET') {
     response.setHeader('Allow', 'GET');
@@ -129,12 +137,27 @@ module.exports = async function handler(request, response) {
   try {
     let payload = null;
     let instagramResponse = null;
+    const diagnostics = [];
 
     for (const instagramUrl of instagramUrls) {
       instagramResponse = await fetch(instagramUrl, {
         headers: { Accept: 'application/json' }
       });
       payload = await instagramResponse.json();
+      diagnostics.push({
+        url: redactInstagramUrl(instagramUrl),
+        status: instagramResponse.status,
+        ok: instagramResponse.ok,
+        error: payload?.error
+          ? {
+              message: payload.error.message,
+              type: payload.error.type,
+              code: payload.error.code,
+              error_subcode: payload.error.error_subcode,
+              fbtrace_id: payload.error.fbtrace_id
+            }
+          : null
+      });
       if (instagramResponse.ok) break;
     }
 
@@ -144,6 +167,7 @@ module.exports = async function handler(request, response) {
         error: 'Instagram API request failed',
         configured: true,
         source: 'fallback',
+        diagnostics: request.query?.debug === '1' ? diagnostics : undefined,
         posts: fallbackPosts()
       });
     }
@@ -165,6 +189,9 @@ module.exports = async function handler(request, response) {
       error: 'Instagram feed unavailable',
       configured: true,
       source: 'fallback',
+      diagnostics: request.query?.debug === '1'
+        ? [{ message: error.message, name: error.name }]
+        : undefined,
       posts: fallbackPosts()
     });
   }
