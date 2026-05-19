@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
       dropUrgency: 'Disponible durante',
       lookbookLabel: 'NEXT DROP',
-      waitlistLabel: 'Consigue tu Peak',
+      waitlistLabel: 'Alcanza tu Peak',
       waitlistSubtitle: 'Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.',
       nameLabel: 'Nombre completo',
       emailLabel: 'Correo',
