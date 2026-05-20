@@ -305,6 +305,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const infoModalTitle = document.getElementById('infoModalTitle');
   const infoModalBody = document.getElementById('infoModalBody');
   const infoModalClose = document.getElementById('infoModalClose');
+  const sellerStats = document.getElementById('sellerStats');
+  const sellerStatsGrid = document.getElementById('sellerStatsGrid');
+  const sellerStatsClose = document.getElementById('sellerStatsClose');
+  const sellerStatsReset = document.getElementById('sellerStatsReset');
 
   function openInfoPage(pageKey) {
     const page = legalPages[currentLanguage]?.[pageKey] || legalPages.es[pageKey];
@@ -329,6 +333,12 @@ document.addEventListener('DOMContentLoaded', () => {
   infoModal?.addEventListener('click', (e) => {
     if (e.target === infoModal) closeInfoPage();
   });
+
+  function closeSellerStats() {
+    sellerStats?.classList.remove('active');
+    sellerStats?.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+  }
 
   /* --- Custom Cursor --- */
   const cursor    = document.querySelector('.cursor');
@@ -951,7 +961,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Cart --- */
   const cartMemory = {
     omp_cart: '[]',
-    omp_discount: ''
+    omp_discount: '',
+    omp_discount_usage: '{}'
   };
 
   function canUseStorage() {
@@ -982,10 +993,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeStoredValue(key) {
     if (!storageAvailable) {
-      cartMemory[key] = key === 'omp_cart' ? '[]' : '';
+      cartMemory[key] = key === 'omp_cart' ? '[]' : key === 'omp_discount_usage' ? '{}' : '';
       return;
     }
     window.localStorage.removeItem(key);
+  }
+
+  function readDiscountUsage() {
+    try {
+      const usage = JSON.parse(getStoredValue('omp_discount_usage', '{}'));
+      return usage && typeof usage === 'object' && !Array.isArray(usage) ? usage : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function writeDiscountUsage(usage) {
+    setStoredValue('omp_discount_usage', JSON.stringify(usage || {}));
+  }
+
+  function trackDiscountConfirmation() {
+    const code = readCartDiscount();
+    if (!code || getDiscountRate(code) <= 0 || !readCart().length || !isCustomerReady()) return;
+
+    const usage = readDiscountUsage();
+    const now = new Date().toISOString();
+    usage[code] = {
+      count: Number(usage[code]?.count || 0) + 1,
+      lastUsedAt: now
+    };
+    writeDiscountUsage(usage);
+    renderSellerStats();
+
+    const payload = {
+      code,
+      confirmedAt: now,
+      total: cartTotal?.textContent?.trim() || '',
+      source: window.location.hostname || 'local-preview'
+    };
+
+    try {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+      if (navigator.sendBeacon && navigator.sendBeacon('/api/discount-usage', blob)) return;
+      fetch('/api/discount-usage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(() => {});
+    } catch (error) {
+      // The local counter above is the safe fallback if a private webhook is not configured yet.
+    }
+  }
+
+  function renderSellerStats() {
+    if (!sellerStatsGrid) return;
+    const usage = readDiscountUsage();
+    const rows = Array.from(discountCodes).sort().map(code => {
+      const item = usage[code] || {};
+      const count = Number(item.count || 0);
+      const lastDate = item.lastUsedAt
+        ? new Date(item.lastUsedAt).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })
+        : 'Sin usos';
+      return `
+        <article class="seller-stats__row">
+          <strong>${escapeHtml(code)}</strong>
+          <span>${count} usos</span>
+          <small>${escapeHtml(lastDate)}</small>
+        </article>
+      `;
+    });
+    sellerStatsGrid.innerHTML = rows.join('');
+  }
+
+  function openSellerStats() {
+    renderSellerStats();
+    sellerStats?.classList.add('active');
+    sellerStats?.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
   }
 
   function readCart() {
@@ -1224,11 +1309,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === cartDrawer) closeCart();
   });
   cartCheckout?.addEventListener('click', (e) => {
-    if (cartCheckout.getAttribute('aria-disabled') !== 'true') return;
+    if (cartCheckout.getAttribute('aria-disabled') !== 'true') {
+      trackDiscountConfirmation();
+      return;
+    }
     e.preventDefault();
     cartCustomerForm?.classList.add('cart-customer--attention');
     cartCustomerForm?.querySelector('input:invalid, input')?.focus();
     window.setTimeout(() => cartCustomerForm?.classList.remove('cart-customer--attention'), 900);
+  });
+  sellerStatsClose?.addEventListener('click', closeSellerStats);
+  sellerStats?.addEventListener('click', (e) => {
+    if (e.target === sellerStats) closeSellerStats();
+  });
+  sellerStatsReset?.addEventListener('click', () => {
+    writeDiscountUsage({});
+    renderSellerStats();
   });
   cartCustomerForm?.addEventListener('input', renderCart);
   cartItems?.addEventListener('click', (e) => {
@@ -1295,7 +1391,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && infoModal?.classList.contains('active')) {
       closeInfoPage();
     }
+    if (e.key === 'Escape' && sellerStats?.classList.contains('active')) {
+      closeSellerStats();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+      e.preventDefault();
+      openSellerStats();
+    }
   });
+  if (new URLSearchParams(window.location.search).get('seller') === 'codigos') {
+    openSellerStats();
+  }
   renderCart();
 
   /* --- Collection Quick Shop --- */

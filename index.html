@@ -33,7 +33,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260519-cartfix1">
+  <link rel="stylesheet" href="css/style.css?v=20260520-sellerstats1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -476,7 +476,7 @@
         </figure>
         <figure class="drop-calendar__card drop-calendar__card--three">
           <div class="drop-calendar__cover drop-calendar__cover--empty" aria-hidden="true"></div>
-          <figcaption>DROP 03/XX · (WORKING PROGRESS)</figcaption>
+          <figcaption>DROP 03/XX · (work in progress)</figcaption>
         </figure>
       </div>
 
@@ -658,6 +658,17 @@
 
   <div class="cart-toast" id="cartToast" role="status" aria-live="polite">¡Articulo añadido al carrito!</div>
 
+  <div class="seller-stats" id="sellerStats" aria-hidden="true">
+    <div class="seller-stats__panel" role="dialog" aria-modal="true" aria-labelledby="sellerStatsTitle">
+      <button class="seller-stats__close" type="button" id="sellerStatsClose" aria-label="Cerrar">×</button>
+      <p class="section-label">Vendedor</p>
+      <h2 class="seller-stats__title" id="sellerStatsTitle">Uso de códigos</h2>
+      <p class="seller-stats__note">Se cuentan cuando el pedido se confirma pulsando WhatsApp desde este navegador. Para verlo globalmente en todos los clientes, conecta el webhook privado de Vercel.</p>
+      <div class="seller-stats__grid" id="sellerStatsGrid"></div>
+      <button class="seller-stats__reset" type="button" id="sellerStatsReset">Reiniciar contador local</button>
+    </div>
+  </div>
+
   <div class="info-modal" id="infoModal" aria-hidden="true">
     <div class="info-modal__panel" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
       <button class="info-modal__close" type="button" id="infoModalClose" aria-label="Cerrar">×</button>
@@ -667,6 +678,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260519-cartfix1" defer></script>
+  <script src="js/script.js?v=20260520-sellerstats1" defer></script>
 </body>
 </html>
