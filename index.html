@@ -33,7 +33,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260521-ux1">
+  <link rel="stylesheet" href="css/style.css?v=20260521-sales1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -647,6 +647,14 @@
           <input type="tel" id="cartCustomerPhone" name="cartCustomerPhone" placeholder="+34 600 000 000" autocomplete="tel" required>
         </label>
       </form>
+      <div class="cart-discount" id="cartDiscountBox">
+        <label class="cart-discount__field">
+          <span>Código de descuento</span>
+          <input type="text" id="cartDiscountCode" placeholder="Código opcional" autocomplete="off" aria-label="Código de descuento en carrito">
+        </label>
+        <button class="cart-discount__button" type="button" id="cartDiscountApply">Canjear</button>
+        <p class="cart-discount__message" id="cartDiscountMessage" aria-live="polite"></p>
+      </div>
       <div class="cart-drawer__totals" id="cartTotals">
         <div><span>Subtotal</span><strong id="cartSubtotal">0,00 <span class="currency-symbol" aria-label="euros">&euro;</span></strong></div>
         <div class="cart-drawer__discount-row" id="cartDiscountRow"><span>Descuento</span><strong id="cartDiscount">-0,00 <span class="currency-symbol" aria-label="euros">&euro;</span></strong></div>
@@ -672,6 +680,17 @@
     </div>
   </div>
 
+  <div class="seller-stats seller-stats--sales" id="sellerSales" aria-hidden="true">
+    <div class="seller-stats__panel seller-stats__panel--wide" role="dialog" aria-modal="true" aria-labelledby="sellerSalesTitle">
+      <button class="seller-stats__close" type="button" id="sellerSalesClose" aria-label="Cerrar">×</button>
+      <p class="section-label">Vendedor</p>
+      <h2 class="seller-stats__title" id="sellerSalesTitle">Historial de ventas</h2>
+      <p class="seller-stats__note">Se guarda cuando se pulsa confirmar por WhatsApp. Marca el check cuando hayas recibido el pago.</p>
+      <div class="seller-sales__table" id="sellerSalesTable"></div>
+      <button class="seller-stats__reset" type="button" id="sellerSalesReset">Vaciar historial local</button>
+    </div>
+  </div>
+
   <div class="info-modal" id="infoModal" aria-hidden="true">
     <div class="info-modal__panel" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
       <button class="info-modal__close" type="button" id="infoModalClose" aria-label="Cerrar">×</button>
@@ -681,6 +700,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260521-ux1" defer></script>
+  <script src="js/script.js?v=20260521-sales1" defer></script>
 </body>
 </html>

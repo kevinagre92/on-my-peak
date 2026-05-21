@@ -332,6 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const sellerStatsGrid = document.getElementById('sellerStatsGrid');
   const sellerStatsClose = document.getElementById('sellerStatsClose');
   const sellerStatsReset = document.getElementById('sellerStatsReset');
+  const sellerSales = document.getElementById('sellerSales');
+  const sellerSalesTable = document.getElementById('sellerSalesTable');
+  const sellerSalesClose = document.getElementById('sellerSalesClose');
+  const sellerSalesReset = document.getElementById('sellerSalesReset');
 
   function openInfoPage(pageKey) {
     const page = legalPages[currentLanguage]?.[pageKey] || legalPages.es[pageKey];
@@ -360,6 +364,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeSellerStats() {
     sellerStats?.classList.remove('active');
     sellerStats?.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+  }
+
+  function closeSellerSales() {
+    sellerSales?.classList.remove('active');
+    sellerSales?.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('lightbox-open');
   }
 
@@ -563,6 +573,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const discountInput = document.getElementById('discountCode');
   const discountApply = document.getElementById('discountApply');
   const discountMessage = document.getElementById('discountMessage');
+  const cartDiscountInput = document.getElementById('cartDiscountCode');
+  const cartDiscountApply = document.getElementById('cartDiscountApply');
+  const cartDiscountMessage = document.getElementById('cartDiscountMessage');
   const cartToggle = document.getElementById('cartToggle');
   const cartCount = document.getElementById('cartCount');
   const cartNavTotal = document.getElementById('cartNavTotal');
@@ -986,7 +999,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartMemory = {
     omp_cart: '[]',
     omp_discount: '',
-    omp_discount_usage: '{}'
+    omp_discount_usage: '{}',
+    omp_sales_history: '[]'
   };
 
   function canUseStorage() {
@@ -1017,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeStoredValue(key) {
     if (!storageAvailable) {
-      cartMemory[key] = key === 'omp_cart' ? '[]' : key === 'omp_discount_usage' ? '{}' : '';
+      cartMemory[key] = key === 'omp_cart' || key === 'omp_sales_history' ? '[]' : key === 'omp_discount_usage' ? '{}' : '';
       return;
     }
     window.localStorage.removeItem(key);
@@ -1097,6 +1111,87 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('lightbox-open');
   }
 
+  function readSalesHistory() {
+    try {
+      const sales = JSON.parse(getStoredValue('omp_sales_history', '[]'));
+      return Array.isArray(sales) ? sales : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeSalesHistory(sales) {
+    setStoredValue('omp_sales_history', JSON.stringify(Array.isArray(sales) ? sales : []));
+  }
+
+  function getCartTotals() {
+    const cart = readCart();
+    const subtotal = cart.reduce((sum, item) => sum + getLineSubtotal(item), 0);
+    const discountTotal = cart.reduce((sum, item) => sum + getLineDiscount(item), 0);
+    const total = Math.max(0, subtotal - discountTotal);
+    return { cart, subtotal, discountTotal, total };
+  }
+
+  function recordSaleConfirmation() {
+    const { cart, total } = getCartTotals();
+    if (!cart.length || !isCustomerReady()) return;
+    const customer = readCustomerDetails();
+    const code = readCartDiscount();
+    const now = new Date().toISOString();
+    const saleId = `sale-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const rows = cart.map((item, index) => ({
+      id: `${saleId}-${index}`,
+      createdAt: now,
+      model: item.model,
+      color: item.color,
+      size: item.size,
+      quantity: Number(item.quantity || 1),
+      client: customer.name,
+      phone: customer.phone,
+      email: customer.email,
+      code: getDiscountRate(code) > 0 ? code : '',
+      total,
+      paid: false
+    }));
+    writeSalesHistory([...rows, ...readSalesHistory()].slice(0, 300));
+    renderSellerSales();
+  }
+
+  function renderSellerSales() {
+    if (!sellerSalesTable) return;
+    const sales = readSalesHistory();
+    if (!sales.length) {
+      sellerSalesTable.innerHTML = '<p class="seller-sales__empty">Todavía no hay ventas confirmadas desde este navegador.</p>';
+      return;
+    }
+    sellerSalesTable.innerHTML = `
+      <div class="seller-sales__head" aria-hidden="true">
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Total</span><span>Pago</span>
+      </div>
+      ${sales.map(sale => `
+        <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''}" data-sale-id="${escapeHtml(sale.id)}">
+          <span data-label="Modelo">${escapeHtml(sale.model)}${Number(sale.quantity) > 1 ? ` x${sale.quantity}` : ''}</span>
+          <span data-label="Color">${escapeHtml(sale.color)}</span>
+          <span data-label="Talla">${escapeHtml(sale.size)}</span>
+          <span data-label="Cliente">${escapeHtml(sale.client)}</span>
+          <span data-label="Código">${sale.code ? escapeHtml(sale.code) : '-'}</span>
+          <span data-label="Total">${formatCurrencyHtml(Number(sale.total || 0))}</span>
+          <label class="seller-sales__paid">
+            <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
+            <span>Pago recibido</span>
+          </label>
+        </article>
+      `).join('')}
+    `;
+  }
+
+  function openSellerSales() {
+    renderSellerSales();
+    sellerSales?.classList.add('active');
+    sellerSales?.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+  }
+
   function readCart() {
     try {
       const cart = JSON.parse(getStoredValue('omp_cart', '[]'));
@@ -1121,6 +1216,37 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       removeStoredValue('omp_discount');
     }
+  }
+
+  function syncDiscountInputs(code = readCartDiscount()) {
+    if (discountInput) discountInput.value = code;
+    if (cartDiscountInput) cartDiscountInput.value = code;
+  }
+
+  function showDiscountMessage(target, code, valid) {
+    if (!target) return;
+    target.classList.toggle('discount-redeem__message--valid', valid);
+    target.classList.toggle('discount-redeem__message--invalid', Boolean(code && !valid));
+    target.classList.toggle('cart-discount__message--valid', valid);
+    target.classList.toggle('cart-discount__message--invalid', Boolean(code && !valid));
+    target.textContent = !code
+      ? 'Introduce tu código para aplicarlo al carrito.'
+      : valid
+        ? `Código ${code} aplicado a todo el carrito.`
+        : 'Código no válido.';
+  }
+
+  function applyDiscountCode(rawCode, preferredMessage) {
+    const code = String(rawCode || '').trim().toUpperCase();
+    const valid = getDiscountRate(code) > 0;
+    writeCartDiscount(valid ? code : '');
+    syncDiscountInputs(valid ? code : code);
+    discountInput?.classList.toggle('waitlist__input--error', Boolean(code && !valid));
+    cartDiscountInput?.classList.toggle('cart-discount__input--error', Boolean(code && !valid));
+    showDiscountMessage(discountMessage, code, valid);
+    showDiscountMessage(cartDiscountMessage, code, valid);
+    if (valid) showCartToast(preferredMessage || 'Código canjeado');
+    renderCart();
   }
 
   function formatCurrency(value) {
@@ -1186,6 +1312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartDiscountCode = readCartDiscount();
     const hasValidCartDiscount = getDiscountRate(cartDiscountCode) > 0;
 
+    syncDiscountInputs(cartDiscountCode);
     if (cartCount) cartCount.textContent = itemCount;
     if (cartNavTotal) cartNavTotal.innerHTML = formatCurrencyHtml(total);
     cartToggle?.classList.toggle('cart-toggle--has-items', itemCount > 0);
@@ -1345,6 +1472,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   cartCheckout?.addEventListener('click', (e) => {
     if (cartCheckout.getAttribute('aria-disabled') !== 'true') {
+      recordSaleConfirmation();
       trackDiscountConfirmation();
       return;
     }
@@ -1360,6 +1488,26 @@ document.addEventListener('DOMContentLoaded', () => {
   sellerStatsReset?.addEventListener('click', () => {
     writeDiscountUsage({});
     renderSellerStats();
+  });
+  sellerSalesClose?.addEventListener('click', closeSellerSales);
+  sellerSales?.addEventListener('click', (e) => {
+    if (e.target === sellerSales) closeSellerSales();
+  });
+  sellerSalesTable?.addEventListener('change', (e) => {
+    const checkbox = e.target.closest('[data-sale-paid]');
+    if (!checkbox) return;
+    const row = checkbox.closest('[data-sale-id]');
+    const saleId = row?.dataset.saleId;
+    const sales = readSalesHistory();
+    const sale = sales.find(item => item.id === saleId);
+    if (!sale) return;
+    sale.paid = checkbox.checked;
+    writeSalesHistory(sales);
+    renderSellerSales();
+  });
+  sellerSalesReset?.addEventListener('click', () => {
+    writeSalesHistory([]);
+    renderSellerSales();
   });
   cartCustomerForm?.addEventListener('input', renderCart);
   cartItems?.addEventListener('click', (e) => {
@@ -1393,31 +1541,26 @@ document.addEventListener('DOMContentLoaded', () => {
   cartClear?.addEventListener('click', () => {
     writeCart([]);
     writeCartDiscount('');
-    if (discountInput) discountInput.value = '';
+    syncDiscountInputs('');
     if (discountMessage) discountMessage.textContent = '';
+    if (cartDiscountMessage) cartDiscountMessage.textContent = '';
     renderCart();
   });
   discountApply?.addEventListener('click', () => {
-    const code = discountInput?.value.trim().toUpperCase() || '';
-    const valid = getDiscountRate(code) > 0;
-    writeCartDiscount(valid ? code : '');
-    discountInput?.classList.toggle('waitlist__input--error', Boolean(code && !valid));
-    if (discountMessage) {
-      discountMessage.classList.toggle('discount-redeem__message--valid', valid);
-      discountMessage.classList.toggle('discount-redeem__message--invalid', Boolean(code && !valid));
-      discountMessage.textContent = !code
-        ? 'Introduce tu código para aplicarlo al carrito.'
-        : valid
-          ? `Código ${code} aplicado a todo el carrito.`
-          : 'Código no válido.';
-    }
-    if (valid) showCartToast('Código canjeado');
-    renderCart();
+    applyDiscountCode(discountInput?.value, 'Código canjeado');
+  });
+  cartDiscountApply?.addEventListener('click', () => {
+    applyDiscountCode(cartDiscountInput?.value, 'Código canjeado');
   });
   discountInput?.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     e.preventDefault();
     discountApply?.click();
+  });
+  cartDiscountInput?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    cartDiscountApply?.click();
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && cartDrawer?.classList.contains('active')) {
@@ -1433,13 +1576,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && sellerStats?.classList.contains('active')) {
       closeSellerStats();
     }
+    if (e.key === 'Escape' && sellerSales?.classList.contains('active')) {
+      closeSellerSales();
+    }
     if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
       e.preventDefault();
       openSellerStats();
     }
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'v') {
+      e.preventDefault();
+      openSellerSales();
+    }
   });
-  if (new URLSearchParams(window.location.search).get('seller') === 'codigos') {
+  const sellerPanel = new URLSearchParams(window.location.search).get('seller');
+  if (sellerPanel === 'codigos') {
     openSellerStats();
+  } else if (sellerPanel === 'ventas') {
+    openSellerSales();
   }
   renderCart();
 
