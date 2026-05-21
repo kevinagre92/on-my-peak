@@ -1124,6 +1124,77 @@ document.addEventListener('DOMContentLoaded', () => {
     setStoredValue('omp_sales_history', JSON.stringify(Array.isArray(sales) ? sales : []));
   }
 
+  let sellerSalesLoading = false;
+
+  function getSellerApiKey() {
+    const params = new URLSearchParams(window.location.search);
+    const incomingKey = params.get('erpKey');
+    if (incomingKey) {
+      setStoredValue('omp_erp_key', incomingKey);
+      return incomingKey;
+    }
+    return getStoredValue('omp_erp_key', '');
+  }
+
+  function salesApiOptions(options = {}) {
+    const adminKey = getSellerApiKey();
+    return {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(adminKey ? { 'X-OMP-Admin-Key': adminKey } : {}),
+        ...(options.headers || {})
+      }
+    };
+  }
+
+  async function fetchSalesHistory() {
+    const response = await fetch('/api/sales', salesApiOptions({ cache: 'no-store' }));
+    if (!response.ok) throw new Error('sales_fetch_failed');
+    const data = await response.json();
+    const sales = Array.isArray(data.sales) ? data.sales : [];
+    writeSalesHistory(sales);
+    return sales;
+  }
+
+  function postSalesHistory(rows) {
+    if (!rows.length) return;
+    const payload = JSON.stringify({ sales: rows });
+    try {
+      const blob = new Blob([payload], { type: 'application/json' });
+      if (navigator.sendBeacon && navigator.sendBeacon('/api/sales', blob)) return;
+      fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    } catch (error) {
+      fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    }
+  }
+
+  async function patchSalePaid(id, paid) {
+    const response = await fetch('/api/sales', salesApiOptions({
+      method: 'PATCH',
+      body: JSON.stringify({ id, paid })
+    }));
+    if (!response.ok) throw new Error('sale_patch_failed');
+  }
+
+  async function deleteSaleRow(id) {
+    const response = await fetch('/api/sales', salesApiOptions({
+      method: 'DELETE',
+      body: JSON.stringify({ id })
+    }));
+    if (!response.ok) throw new Error('sale_delete_failed');
+  }
+
   function getCartTotals() {
     const cart = readCart();
     const subtotal = cart.reduce((sum, item) => sum + getLineSubtotal(item), 0);
@@ -1162,8 +1233,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const now = new Date().toISOString();
     const saleId = `sale-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    const rows = cart.map((item, index) => ({
+    const discountRate = getDiscountRate(code);
+    const rows = cart.map((item, index) => {
+      const lineSubtotal = getLineSubtotal(item);
+      const lineTotal = Math.max(0, lineSubtotal - (lineSubtotal * discountRate));
+      return ({
       id: `${saleId}-${index}`,
+      orderId: saleId,
       createdAt: now,
       model: item.model,
       color: item.color,
@@ -1173,10 +1249,14 @@ document.addEventListener('DOMContentLoaded', () => {
       phone: customer.phone,
       email: customer.email,
       code: getDiscountRate(code) > 0 ? code : '',
-      total,
+      unitPrice: Number(item.price || 0),
+      total: lineTotal,
+      orderTotal: total,
       paid: false
-    }));
+      });
+    });
     writeSalesHistory([...rows, ...readSalesHistory()].slice(0, 300));
+    postSalesHistory(rows);
     setStoredValue('omp_last_checkout_signature', checkoutSignature);
     renderSellerSales();
     return true;
@@ -1191,13 +1271,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return recorded;
   }
 
-  function renderSellerSales() {
+  function renderSellerSales(salesInput = readSalesHistory(), status = '') {
     if (!sellerSalesTable) return;
-    const sales = readSalesHistory();
+    const sales = Array.isArray(salesInput) ? salesInput : [];
     if (!sales.length) {
-      sellerSalesTable.innerHTML = '<p class="seller-sales__empty">Todavía no hay ventas confirmadas desde este navegador.</p>';
+      sellerSalesTable.innerHTML = `<p class="seller-sales__empty">${sellerSalesLoading ? 'Cargando ventas...' : 'Todavía no hay ventas confirmadas.'}</p>`;
       return;
     }
+    const totalSales = sales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+    const paidSales = sales.filter(sale => sale.paid).reduce((sum, sale) => sum + Number(sale.total || 0), 0);
     const summary = sales.reduce((acc, sale) => {
       const key = `${sale.model}|${sale.color}|${sale.size}`;
       if (!acc[key]) {
@@ -1213,6 +1295,7 @@ document.addEventListener('DOMContentLoaded', () => {
       acc[key].total += Number(sale.total || 0);
       return acc;
     }, {});
+    const statusRow = status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : '';
     const summaryRows = Object.values(summary)
       .sort((a, b) => b.quantity - a.quantity)
       .map(item => `
@@ -1223,11 +1306,22 @@ document.addEventListener('DOMContentLoaded', () => {
         </article>
       `).join('');
     sellerSalesTable.innerHTML = `
+      ${statusRow}
       <div class="seller-sales__summary" aria-label="Resumen de productos vendidos">
+        <article class="seller-sales__summary-card seller-sales__summary-card--total">
+          <strong>Total ERP</strong>
+          <span>${sales.length} líneas</span>
+          <b>${formatCurrencyHtml(totalSales)}</b>
+        </article>
+        <article class="seller-sales__summary-card seller-sales__summary-card--total">
+          <strong>Pagado</strong>
+          <span>Marcado recibido</span>
+          <b>${formatCurrencyHtml(paidSales)}</b>
+        </article>
         ${summaryRows}
       </div>
       <div class="seller-sales__head" aria-hidden="true">
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Total</span><span>Pago</span>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Total</span><span>Pago</span><span></span>
       </div>
       ${sales.map(sale => `
         <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''}" data-sale-id="${escapeHtml(sale.id)}">
@@ -1241,13 +1335,27 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
             <span>Pago recibido</span>
           </label>
+          <button class="seller-sales__delete" type="button" data-sale-delete aria-label="Eliminar venta">Eliminar</button>
         </article>
       `).join('')}
     `;
   }
 
-  function openSellerSales() {
+  async function loadSellerSales() {
+    sellerSalesLoading = true;
     renderSellerSales();
+    try {
+      const sales = await fetchSalesHistory();
+      renderSellerSales(sales, 'Sincronizado con el ERP.');
+    } catch (error) {
+      renderSellerSales(readSalesHistory(), 'No se pudo sincronizar ahora. Mostrando la última copia guardada en este navegador.');
+    } finally {
+      sellerSalesLoading = false;
+    }
+  }
+
+  function openSellerSales() {
+    loadSellerSales();
     sellerSales?.classList.add('active');
     sellerSales?.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lightbox-open');
@@ -1553,7 +1661,7 @@ document.addEventListener('DOMContentLoaded', () => {
   sellerSales?.addEventListener('click', (e) => {
     if (e.target === sellerSales) closeSellerSales();
   });
-  sellerSalesTable?.addEventListener('change', (e) => {
+  sellerSalesTable?.addEventListener('change', async (e) => {
     const checkbox = e.target.closest('[data-sale-paid]');
     if (!checkbox) return;
     const row = checkbox.closest('[data-sale-id]');
@@ -1564,10 +1672,31 @@ document.addEventListener('DOMContentLoaded', () => {
     sale.paid = checkbox.checked;
     writeSalesHistory(sales);
     renderSellerSales();
+    try {
+      await patchSalePaid(saleId, checkbox.checked);
+      await loadSellerSales();
+    } catch (error) {
+      renderSellerSales(readSalesHistory(), 'Pago marcado en esta copia. No se pudo sincronizar con el ERP.');
+    }
+  });
+  sellerSalesTable?.addEventListener('click', async (e) => {
+    const deleteButton = e.target.closest('[data-sale-delete]');
+    if (!deleteButton) return;
+    const row = deleteButton.closest('[data-sale-id]');
+    const saleId = row?.dataset.saleId;
+    if (!saleId) return;
+    const sales = readSalesHistory().filter(item => item.id !== saleId);
+    writeSalesHistory(sales);
+    renderSellerSales(sales, 'Venta eliminada.');
+    try {
+      await deleteSaleRow(saleId);
+      await loadSellerSales();
+    } catch (error) {
+      renderSellerSales(readSalesHistory(), 'Venta eliminada de esta copia. No se pudo sincronizar con el ERP.');
+    }
   });
   sellerSalesReset?.addEventListener('click', () => {
-    writeSalesHistory([]);
-    renderSellerSales();
+    loadSellerSales();
   });
   cartCustomerForm?.addEventListener('input', renderCart);
   cartItems?.addEventListener('click', (e) => {
