@@ -1275,7 +1275,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!sellerSalesTable) return;
     const sales = Array.isArray(salesInput) ? salesInput : [];
     if (!sales.length) {
-      sellerSalesTable.innerHTML = `<p class="seller-sales__empty">${sellerSalesLoading ? 'Cargando ventas...' : 'Todavía no hay ventas confirmadas.'}</p>`;
+      sellerSalesTable.innerHTML = `
+        ${status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : ''}
+        <p class="seller-sales__empty">${sellerSalesLoading && !status ? 'Cargando ventas...' : 'Todavía no hay ventas confirmadas.'}</p>
+      `;
       return;
     }
     const totalSales = sales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
@@ -1346,11 +1349,11 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSellerSales();
     try {
       const sales = await fetchSalesHistory();
+      sellerSalesLoading = false;
       renderSellerSales(sales, 'Sincronizado con el ERP.');
     } catch (error) {
-      renderSellerSales(readSalesHistory(), 'No se pudo sincronizar ahora. Mostrando la última copia guardada en este navegador.');
-    } finally {
       sellerSalesLoading = false;
+      renderSellerSales(readSalesHistory(), 'No se pudo sincronizar ahora. Mostrando la última copia guardada en este navegador.');
     }
   }
 
