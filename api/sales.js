@@ -1,5 +1,6 @@
 const SALES_KEY = 'omp:sales:v1';
 const MAX_SALES = 1000;
+const DEFAULT_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e4aa5-9303-74bf-9431-6a475567b287';
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -52,9 +53,33 @@ async function kvFetch(path, options = {}) {
   return response.json();
 }
 
+function getJsonBlobUrl() {
+  return process.env.SALES_JSONBLOB_URL || DEFAULT_JSONBLOB_URL;
+}
+
+async function jsonBlobFetch(options = {}) {
+  const url = getJsonBlobUrl();
+  if (!url) return null;
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`JSONBlob ${response.status}`);
+  }
+  return response.json();
+}
+
 async function getSales() {
   const data = await kvFetch(`/get/${encodeURIComponent(SALES_KEY)}`);
-  if (!data) return memoryStore();
+  if (!data) {
+    const blob = await jsonBlobFetch();
+    if (blob && Array.isArray(blob.sales)) return blob.sales;
+    return memoryStore();
+  }
   const value = data.result;
   if (Array.isArray(value)) return value;
   if (typeof value === 'string') {
@@ -75,6 +100,13 @@ async function setSales(sales) {
     body: JSON.stringify(normalized)
   });
   if (!data) {
+    await jsonBlobFetch({
+      method: 'PUT',
+      body: JSON.stringify({
+        updatedAt: new Date().toISOString(),
+        sales: normalized
+      })
+    });
     globalThis.__ompSalesStore = normalized;
   }
 }
@@ -110,7 +142,7 @@ module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
       if (!isAdminRequest(req)) return json(res, 401, { ok: false, error: 'unauthorized' });
       const sales = await getSales();
-      return json(res, 200, { ok: true, storage: process.env.KV_REST_API_URL ? 'kv' : 'memory', sales });
+      return json(res, 200, { ok: true, storage: process.env.KV_REST_API_URL ? 'kv' : 'jsonblob', sales });
     }
 
     if (req.method === 'POST') {
@@ -122,7 +154,7 @@ module.exports = async function handler(req, res) {
       const knownIds = new Set(current.map(sale => sale.id));
       const next = [...cleaned.filter(sale => !knownIds.has(sale.id)), ...current].slice(0, MAX_SALES);
       await setSales(next);
-      return json(res, 200, { ok: true, inserted: next.length - current.length, storage: process.env.KV_REST_API_URL ? 'kv' : 'memory' });
+      return json(res, 200, { ok: true, inserted: next.length - current.length, storage: process.env.KV_REST_API_URL ? 'kv' : 'jsonblob' });
     }
 
     if (req.method === 'PATCH') {

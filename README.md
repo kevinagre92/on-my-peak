@@ -39,14 +39,15 @@ Cada vez que un cliente pulsa **Confirmar por WhatsApp**, la web intenta registr
 - Marcar una venta como pagada.
 - Eliminar una fila si se registró por error.
 
-Para que el historial sea global y persistente entre navegadores, Vercel debe tener conectado Vercel KV/Redis con estas variables:
+El historial global ya puede funcionar con una URL privada de almacenamiento JSON configurada en Vercel:
+
+- `SALES_JSONBLOB_URL`
+- `OMP_ERP_ADMIN_KEY`
+
+Si en el futuro se conecta Vercel KV/Redis, el endpoint lo usará de forma preferente con estas variables:
 
 - `KV_REST_API_URL`
 - `KV_REST_API_TOKEN`
-
-Opcionalmente, para proteger el panel de vendedor:
-
-- `OMP_ERP_ADMIN_KEY`
 
 Si se configura `OMP_ERP_ADMIN_KEY`, abre el panel una vez con `?seller=ventas&erpKey=TU_CLAVE`; la web guardará esa clave en tu navegador.
 
