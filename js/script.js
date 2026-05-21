@@ -188,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Logo Chomp --- */
   const navLogo = document.querySelector('.nav__logo');
   const navMenu = document.getElementById('navMenu');
+  const navMenuLinks = navMenu ? Array.from(navMenu.querySelectorAll('a[href^="#"]')) : [];
 
   function closeNavMenu() {
     navMenu?.classList.remove('active');
@@ -210,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 260);
   });
 
-  navMenu?.querySelectorAll('a').forEach(link => {
+  navMenuLinks.forEach(link => {
     link.addEventListener('click', closeNavMenu);
   });
 
@@ -218,6 +219,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.closest('#navLogo') || e.target.closest('#navMenu')) return;
     closeNavMenu();
   });
+
+  if (navMenuLinks.length && 'IntersectionObserver' in window) {
+    const navSections = navMenuLinks
+      .map(link => document.querySelector(link.getAttribute('href')))
+      .filter(Boolean);
+
+    const navSectionObserver = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visible) return;
+      navMenuLinks.forEach(link => {
+        link.classList.toggle('is-current', link.getAttribute('href') === `#${visible.target.id}`);
+      });
+    }, {
+      threshold: [0.22, 0.48],
+      rootMargin: '-22% 0px -54% 0px'
+    });
+
+    navSections.forEach(section => navSectionObserver.observe(section));
+  }
 
   /* --- Footer Info Pages --- */
   const legalPages = {
@@ -555,6 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartDrawerTotal = document.getElementById('cartDrawerTotal');
   const cartClear = document.getElementById('cartClear');
   const cartCheckout = document.getElementById('cartCheckout');
+  const cartCheckoutHint = document.getElementById('cartCheckoutHint');
   const cartToast = document.getElementById('cartToast');
   const cartCustomerForm = document.getElementById('cartCustomerForm');
   const cartCustomerName = document.getElementById('cartCustomerName');
@@ -1186,6 +1210,17 @@ document.addEventListener('DOMContentLoaded', () => {
       cartCheckout.classList.toggle('cart-drawer__checkout--disabled', disabled);
       cartCheckout.setAttribute('aria-disabled', disabled.toString());
       cartCheckout.tabIndex = disabled ? -1 : 0;
+      if (cartCheckoutHint) {
+        const missing = [];
+        if (!cart.length) missing.push('añade una prenda');
+        if (cart.length && !customer.name) missing.push('nombre');
+        if (cart.length && (!customer.email || !cartCustomerEmail?.checkValidity())) missing.push('correo');
+        if (cart.length && !customer.phone) missing.push('teléfono');
+        cartCheckoutHint.textContent = disabled
+          ? `Para confirmar: ${missing.join(', ')}.`
+          : 'Listo para enviar el pedido por WhatsApp.';
+        cartCheckoutHint.classList.toggle('is-ready', !disabled);
+      }
     }
     cartEmpty?.classList.toggle('active', cart.length === 0);
 
@@ -1390,6 +1425,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (e.key === 'Escape' && infoModal?.classList.contains('active')) {
       closeInfoPage();
+    }
+    if (e.key === 'Escape' && navMenu?.classList.contains('active')) {
+      closeNavMenu();
+      navLogo?.focus();
     }
     if (e.key === 'Escape' && sellerStats?.classList.contains('active')) {
       closeSellerStats();

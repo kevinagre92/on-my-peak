@@ -33,7 +33,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260520-menuhint1">
+  <link rel="stylesheet" href="css/style.css?v=20260521-ux1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -152,8 +152,9 @@
 
   <!-- Navigation -->
   <nav class="nav" id="nav" aria-label="Navegación principal">
-    <button class="nav__logo" id="navLogo" type="button" aria-haspopup="true" aria-expanded="false">
+    <button class="nav__logo" id="navLogo" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navMenu" aria-label="Abrir menú de navegación">
       <span class="nav__burger" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="nav__menu-label" aria-hidden="true">Menú</span>
       <span class="nav__logo-paren">(</span><span class="nav__logo-text">OMP</span><span class="nav__logo-paren">)</span>
     </button>
     <div class="nav-menu" id="navMenu" aria-hidden="true">
@@ -653,6 +654,7 @@
         <div class="cart-drawer__total"><span>Total</span><strong id="cartTotal">0,00 <span class="currency-symbol" aria-label="euros">&euro;</span></strong></div>
       </div>
       <a class="cart-drawer__checkout" id="cartCheckout" href="https://wa.me/34673094993" target="_blank" rel="noopener">Confirmar por WhatsApp</a>
+      <p class="cart-drawer__hint" id="cartCheckoutHint">Añade una prenda y completa tus datos para confirmar por WhatsApp.</p>
       <button class="cart-drawer__clear" type="button" id="cartClear">Vaciar carrito</button>
     </div>
   </div>
@@ -679,6 +681,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260520-menuhint1" defer></script>
+  <script src="js/script.js?v=20260521-ux1" defer></script>
 </body>
 </html>
