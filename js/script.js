@@ -1000,7 +1000,8 @@ document.addEventListener('DOMContentLoaded', () => {
     omp_cart: '[]',
     omp_discount: '',
     omp_discount_usage: '{}',
-    omp_sales_history: '[]'
+    omp_sales_history: '[]',
+    omp_last_checkout_signature: ''
   };
 
   function canUseStorage() {
@@ -1050,8 +1051,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setStoredValue('omp_discount_usage', JSON.stringify(usage || {}));
   }
 
-  function trackDiscountConfirmation() {
-    const code = readCartDiscount();
+  function trackDiscountConfirmation(code = readCartDiscount()) {
     if (!code || getDiscountRate(code) <= 0 || !readCart().length || !isCustomerReady()) return;
 
     const usage = readDiscountUsage();
@@ -1132,11 +1132,34 @@ document.addEventListener('DOMContentLoaded', () => {
     return { cart, subtotal, discountTotal, total };
   }
 
+  function createCheckoutSignature(cart, customer, code, total) {
+    return JSON.stringify({
+      cart: cart.map(item => ({
+        model: item.model,
+        color: item.color,
+        size: item.size,
+        quantity: Number(item.quantity || 1),
+        price: Number(item.price || 0)
+      })),
+      customer: {
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone
+      },
+      code: getDiscountRate(code) > 0 ? code : '',
+      total: Number(total || 0)
+    });
+  }
+
   function recordSaleConfirmation() {
     const { cart, total } = getCartTotals();
-    if (!cart.length || !isCustomerReady()) return;
+    if (!cart.length || !isCustomerReady()) return false;
     const customer = readCustomerDetails();
     const code = readCartDiscount();
+    const checkoutSignature = createCheckoutSignature(cart, customer, code, total);
+    if (getStoredValue('omp_last_checkout_signature', '') === checkoutSignature) {
+      return false;
+    }
     const now = new Date().toISOString();
     const saleId = `sale-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const rows = cart.map((item, index) => ({
@@ -1154,7 +1177,18 @@ document.addEventListener('DOMContentLoaded', () => {
       paid: false
     }));
     writeSalesHistory([...rows, ...readSalesHistory()].slice(0, 300));
+    setStoredValue('omp_last_checkout_signature', checkoutSignature);
     renderSellerSales();
+    return true;
+  }
+
+  function handleCheckoutConfirmation() {
+    const code = readCartDiscount();
+    const recorded = recordSaleConfirmation();
+    if (recorded) {
+      trackDiscountConfirmation(code);
+    }
+    return recorded;
   }
 
   function renderSellerSales() {
@@ -1164,7 +1198,34 @@ document.addEventListener('DOMContentLoaded', () => {
       sellerSalesTable.innerHTML = '<p class="seller-sales__empty">Todavía no hay ventas confirmadas desde este navegador.</p>';
       return;
     }
+    const summary = sales.reduce((acc, sale) => {
+      const key = `${sale.model}|${sale.color}|${sale.size}`;
+      if (!acc[key]) {
+        acc[key] = {
+          model: sale.model,
+          color: sale.color,
+          size: sale.size,
+          quantity: 0,
+          total: 0
+        };
+      }
+      acc[key].quantity += Number(sale.quantity || 1);
+      acc[key].total += Number(sale.total || 0);
+      return acc;
+    }, {});
+    const summaryRows = Object.values(summary)
+      .sort((a, b) => b.quantity - a.quantity)
+      .map(item => `
+        <article class="seller-sales__summary-card">
+          <strong>${escapeHtml(item.model)}</strong>
+          <span>${escapeHtml(item.color)} · ${escapeHtml(item.size)}</span>
+          <b>${item.quantity} uds</b>
+        </article>
+      `).join('');
     sellerSalesTable.innerHTML = `
+      <div class="seller-sales__summary" aria-label="Resumen de productos vendidos">
+        ${summaryRows}
+      </div>
       <div class="seller-sales__head" aria-hidden="true">
         <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Total</span><span>Pago</span>
       </div>
@@ -1472,8 +1533,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   cartCheckout?.addEventListener('click', (e) => {
     if (cartCheckout.getAttribute('aria-disabled') !== 'true') {
-      recordSaleConfirmation();
-      trackDiscountConfirmation();
+      handleCheckoutConfirmation();
       return;
     }
     e.preventDefault();
