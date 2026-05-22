@@ -10,6 +10,7 @@ const DEFAULT_FIELDS = [
 ].join(',');
 
 const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbnail_url,permalink}`;
+const DEFAULT_INSTAGRAM_CACHE_URL = 'https://jsonblob.com/api/jsonBlob/019e5052-f8fa-787c-8d4f-7b09f8c3b404';
 
 const FALLBACK_IMAGES = [
   '/assets/instagram/post-omp1-26.jpg',
@@ -123,6 +124,60 @@ function fallbackPosts() {
   }));
 }
 
+function getInstagramCacheUrl() {
+  return process.env.INSTAGRAM_CACHE_JSONBLOB_URL || DEFAULT_INSTAGRAM_CACHE_URL;
+}
+
+async function readCachedPosts() {
+  const cacheUrl = getInstagramCacheUrl();
+  if (!cacheUrl) return [];
+  try {
+    const response = await fetch(cacheUrl, { headers: { Accept: 'application/json' } });
+    if (!response.ok) return [];
+    const payload = await response.json();
+    return Array.isArray(payload.posts) ? payload.posts.slice(0, 9) : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+async function writeCachedPosts(posts) {
+  const cacheUrl = getInstagramCacheUrl();
+  if (!cacheUrl || !Array.isArray(posts) || posts.length < 1) return;
+  try {
+    await fetch(cacheUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        updatedAt: new Date().toISOString(),
+        posts: posts.slice(0, 9)
+      })
+    });
+  } catch (error) {
+    // The public fallback still keeps the feed visible if the cache store is unavailable.
+  }
+}
+
+async function resilientPosts(source = 'fallback') {
+  const cached = await readCachedPosts();
+  if (cached.length) {
+    return { source: source === 'fallback' ? 'cached' : source, posts: cached };
+  }
+  return { source: 'fallback', posts: fallbackPosts() };
+}
+
+function ensureNinePosts(posts) {
+  const fallback = fallbackPosts();
+  const byId = new Set();
+  const merged = [...(Array.isArray(posts) ? posts : []), ...fallback].filter((post) => {
+    const key = post.id || post.media_url || post.fallback_image;
+    if (byId.has(key)) return false;
+    byId.add(key);
+    return true;
+  });
+  return merged.slice(0, 9);
+}
+
 function redactInstagramUrl(url) {
   const safeUrl = new URL(url.toString());
   if (safeUrl.searchParams.has('access_token')) {
@@ -144,13 +199,14 @@ module.exports = async function handler(request, response) {
 
   const instagramUrls = buildInstagramUrlCandidates();
   if (!instagramUrls.length) {
+    const fallback = await resilientPosts('fallback');
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return response.status(200).json({
       error: 'Instagram feed is not configured',
       configured: false,
       requiredEnv: ['INSTAGRAM_ACCESS_TOKEN', 'INSTAGRAM_PROVIDER=instagram'],
-      source: 'fallback',
-      posts: fallbackPosts()
+      source: fallback.source,
+      posts: fallback.posts
     });
   }
 
@@ -213,13 +269,14 @@ module.exports = async function handler(request, response) {
           });
         }
       }
+      const fallback = await resilientPosts('fallback');
       response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       return response.status(200).json({
         error: 'Instagram API request failed',
         configured: true,
-        source: 'fallback',
+        source: fallback.source,
         diagnostics: showDiagnostics ? diagnostics : undefined,
-        posts: fallbackPosts()
+        posts: fallback.posts
       });
     }
 
@@ -228,22 +285,35 @@ module.exports = async function handler(request, response) {
       .filter(post => post.media_url)
       .slice(0, 9);
 
+    if (!posts.length) {
+      const fallback = await resilientPosts('fallback');
+      response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      return response.status(200).json({
+        error: 'Instagram feed returned no media',
+        configured: true,
+        source: fallback.source,
+        posts: fallback.posts
+      });
+    }
+
     response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=3600');
+    await writeCachedPosts(posts);
     return response.status(200).json({
       configured: true,
       source: 'instagram',
-      posts
+      posts: ensureNinePosts(posts)
     });
   } catch (error) {
+    const fallback = await resilientPosts('fallback');
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return response.status(200).json({
       error: 'Instagram feed unavailable',
       configured: true,
-      source: 'fallback',
+      source: fallback.source,
       diagnostics: canShowDiagnostics(request)
         ? [{ message: error.message, name: error.name }]
         : undefined,
-      posts: fallbackPosts()
+      posts: fallback.posts
     });
   }
 };
