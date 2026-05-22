@@ -336,6 +336,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const sellerSalesTable = document.getElementById('sellerSalesTable');
   const sellerSalesClose = document.getElementById('sellerSalesClose');
   const sellerSalesReset = document.getElementById('sellerSalesReset');
+  const sellerManualSaleForm = document.getElementById('sellerManualSaleForm');
+  const sellerManualModel = document.getElementById('sellerManualModel');
+  const sellerManualColor = document.getElementById('sellerManualColor');
+  const sellerManualSize = document.getElementById('sellerManualSize');
+  const sellerManualClient = document.getElementById('sellerManualClient');
+  const sellerManualCode = document.getElementById('sellerManualCode');
+  const sellerManualQuantity = document.getElementById('sellerManualQuantity');
+  const sellerManualTotal = document.getElementById('sellerManualTotal');
 
   function openInfoPage(pageKey) {
     const page = legalPages[currentLanguage]?.[pageKey] || legalPages.es[pageKey];
@@ -630,6 +638,12 @@ document.addEventListener('DOMContentLoaded', () => {
     Oversized: 22,
     'Crop top': 22,
     Hoodie: 35
+  };
+
+  const costsByModel = {
+    Oversized: 12,
+    'Crop top': 12,
+    Hoodie: 19
   };
 
   const modelCards = {
@@ -1187,6 +1201,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!response.ok) throw new Error('sale_patch_failed');
   }
 
+  async function patchSaleTotal(id, total) {
+    const response = await fetch('/api/sales', salesApiOptions({
+      method: 'PATCH',
+      body: JSON.stringify({ id, total })
+    }));
+    if (!response.ok) throw new Error('sale_total_failed');
+  }
+
+  async function createManualSale(sale) {
+    const response = await fetch('/api/sales', salesApiOptions({
+      method: 'POST',
+      body: JSON.stringify({ sales: [sale] })
+    }));
+    if (!response.ok) throw new Error('manual_sale_failed');
+    return response.json();
+  }
+
   async function deleteSaleRow(id) {
     const response = await fetch('/api/sales', salesApiOptions({
       method: 'DELETE',
@@ -1201,6 +1232,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const discountTotal = cart.reduce((sum, item) => sum + getLineDiscount(item), 0);
     const total = Math.max(0, subtotal - discountTotal);
     return { cart, subtotal, discountTotal, total };
+  }
+
+  function getSaleUnitCost(model) {
+    return costsByModel[model] || (String(model || '').toLowerCase().includes('hoodie') ? 19 : String(model || '').toLowerCase().includes('crop') || String(model || '').toLowerCase().includes('oversized') ? 12 : 0);
+  }
+
+  function getSaleCost(sale) {
+    const quantity = Number(sale.quantity || 1);
+    return Number(sale.cost ?? (Number(sale.unitCost ?? getSaleUnitCost(sale.model)) * quantity));
+  }
+
+  function getSaleProfit(sale) {
+    return Number(sale.total || 0) - getSaleCost(sale);
   }
 
   function createCheckoutSignature(cart, customer, code, total) {
@@ -1250,7 +1294,10 @@ document.addEventListener('DOMContentLoaded', () => {
       email: customer.email,
       code: getDiscountRate(code) > 0 ? code : '',
       unitPrice: Number(item.price || 0),
+      unitCost: getSaleUnitCost(item.model),
+      cost: getSaleUnitCost(item.model) * Number(item.quantity || 1),
       total: lineTotal,
+      netProfit: lineTotal - (getSaleUnitCost(item.model) * Number(item.quantity || 1)),
       orderTotal: total,
       paid: false
       });
@@ -1283,6 +1330,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const totalSales = sales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
     const paidSales = sales.filter(sale => sale.paid).reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+    const totalCost = sales.reduce((sum, sale) => sum + getSaleCost(sale), 0);
+    const totalProfit = sales.reduce((sum, sale) => sum + getSaleProfit(sale), 0);
     const summary = sales.reduce((acc, sale) => {
       const key = `${sale.model}|${sale.color}|${sale.size}`;
       if (!acc[key]) {
@@ -1321,10 +1370,20 @@ document.addEventListener('DOMContentLoaded', () => {
           <span>Marcado recibido</span>
           <b>${formatCurrencyHtml(paidSales)}</b>
         </article>
+        <article class="seller-sales__summary-card seller-sales__summary-card--total">
+          <strong>Beneficio neto</strong>
+          <span>Venta menos coste</span>
+          <b>${formatCurrencyHtml(totalProfit)}</b>
+        </article>
+        <article class="seller-sales__summary-card seller-sales__summary-card--total">
+          <strong>Coste total</strong>
+          <span>Gasto producto</span>
+          <b>${formatCurrencyHtml(totalCost)}</b>
+        </article>
         ${summaryRows}
       </div>
       <div class="seller-sales__head" aria-hidden="true">
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Total</span><span>Pago</span><span></span>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span></span>
       </div>
       ${sales.map(sale => `
         <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''}" data-sale-id="${escapeHtml(sale.id)}">
@@ -1333,7 +1392,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <span data-label="Talla">${escapeHtml(sale.size)}</span>
           <span data-label="Cliente">${escapeHtml(sale.client)}</span>
           <span data-label="Código">${sale.code ? escapeHtml(sale.code) : '-'}</span>
-          <span data-label="Total">${formatCurrencyHtml(Number(sale.total || 0))}</span>
+          <label class="seller-sales__price" data-label="Venta">
+            <input type="number" min="0" step="0.01" value="${Number(sale.total || 0).toFixed(2)}" data-sale-total aria-label="Precio de venta">
+          </label>
+          <span data-label="Coste">${formatCurrencyHtml(getSaleCost(sale))}</span>
+          <span data-label="Beneficio" class="${getSaleProfit(sale) < 0 ? 'seller-sales__loss' : 'seller-sales__profit'}">${formatCurrencyHtml(getSaleProfit(sale))}</span>
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
             <span>Pago recibido</span>
@@ -1666,7 +1729,29 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   sellerSalesTable?.addEventListener('change', async (e) => {
     const checkbox = e.target.closest('[data-sale-paid]');
-    if (!checkbox) return;
+    const priceInput = e.target.closest('[data-sale-total]');
+    if (!checkbox && !priceInput) return;
+    if (priceInput) {
+      const priceRow = priceInput.closest('[data-sale-id]');
+      const saleId = priceRow?.dataset.saleId;
+      const total = Math.max(0, Number(priceInput.value || 0));
+      const sales = readSalesHistory();
+      const sale = sales.find(item => item.id === saleId);
+      if (!sale) return;
+      sale.total = total;
+      sale.unitPrice = total / Number(sale.quantity || 1);
+      sale.cost = getSaleCost(sale);
+      sale.netProfit = getSaleProfit(sale);
+      writeSalesHistory(sales);
+      renderSellerSales(sales, 'Precio actualizado.');
+      try {
+        await patchSaleTotal(saleId, total);
+        await loadSellerSales();
+      } catch (error) {
+        renderSellerSales(readSalesHistory(), 'Precio actualizado en esta copia. No se pudo sincronizar con el ERP.');
+      }
+      return;
+    }
     const row = checkbox.closest('[data-sale-id]');
     const saleId = row?.dataset.saleId;
     const sales = readSalesHistory();
@@ -1700,6 +1785,58 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   sellerSalesReset?.addEventListener('click', () => {
     loadSellerSales();
+  });
+  sellerManualModel?.addEventListener('change', () => {
+    if (!sellerManualTotal) return;
+    const quantity = Math.max(1, Number(sellerManualQuantity?.value || 1));
+    sellerManualTotal.value = String((pricesByModel[sellerManualModel.value] || 0) * quantity);
+  });
+  sellerManualQuantity?.addEventListener('input', () => {
+    if (!sellerManualTotal || !sellerManualModel) return;
+    const quantity = Math.max(1, Number(sellerManualQuantity.value || 1));
+    const defaultTotal = (pricesByModel[sellerManualModel.value] || 0) * quantity;
+    if (!sellerManualTotal.value || Number(sellerManualTotal.value) === 0) {
+      sellerManualTotal.value = String(defaultTotal);
+    }
+  });
+  sellerManualSaleForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const model = sellerManualModel?.value || 'Oversized';
+    const quantity = Math.max(1, Number(sellerManualQuantity?.value || 1));
+    const total = Math.max(0, Number(sellerManualTotal?.value || 0));
+    const unitCost = getSaleUnitCost(model);
+    const sale = {
+      id: `manual-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      orderId: `manual-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      model,
+      color: sellerManualColor?.value.trim() || '',
+      size: sellerManualSize?.value || '',
+      quantity,
+      client: sellerManualClient?.value.trim() || '',
+      phone: '',
+      email: '',
+      code: sellerManualCode?.value.trim().toUpperCase() || '',
+      unitPrice: total / quantity,
+      unitCost,
+      cost: unitCost * quantity,
+      total,
+      netProfit: total - (unitCost * quantity),
+      paid: false
+    };
+    if (!sale.color || !sale.size || !sale.client || !sale.total) return;
+    const nextSales = [sale, ...readSalesHistory()].slice(0, 300);
+    writeSalesHistory(nextSales);
+    renderSellerSales(nextSales, 'Venta manual añadida.');
+    try {
+      await createManualSale(sale);
+      sellerManualSaleForm.reset();
+      if (sellerManualQuantity) sellerManualQuantity.value = '1';
+      if (sellerManualTotal) sellerManualTotal.value = String(pricesByModel[sellerManualModel?.value || 'Oversized'] || 22);
+      await loadSellerSales();
+    } catch (error) {
+      renderSellerSales(readSalesHistory(), 'Venta añadida en esta copia. No se pudo sincronizar con el ERP.');
+    }
   });
   cartCustomerForm?.addEventListener('input', renderCart);
   cartItems?.addEventListener('click', (e) => {

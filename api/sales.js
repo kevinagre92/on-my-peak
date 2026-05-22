@@ -115,22 +115,37 @@ function cleanText(value, max = 120) {
   return String(value || '').trim().slice(0, max);
 }
 
+function getUnitCost(model) {
+  const normalized = cleanText(model).toLowerCase();
+  if (normalized.includes('hoodie') || normalized.includes('hoddie')) return 19;
+  if (normalized.includes('crop') || normalized.includes('oversized')) return 12;
+  return 0;
+}
+
 function cleanSale(row = {}) {
   const id = cleanText(row.id) || `sale-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const model = cleanText(row.model, 80);
+  const quantity = Math.max(1, Math.min(99, Number(row.quantity || 1)));
+  const unitCost = Math.max(0, Number(row.unitCost ?? getUnitCost(model)));
+  const cost = Math.max(0, Number(row.cost ?? unitCost * quantity));
+  const total = Math.max(0, Number(row.total || 0));
   return {
     id,
     orderId: cleanText(row.orderId) || id,
     createdAt: cleanText(row.createdAt) || new Date().toISOString(),
-    model: cleanText(row.model, 80),
+    model,
     color: cleanText(row.color, 80),
     size: cleanText(row.size, 20),
-    quantity: Math.max(1, Math.min(99, Number(row.quantity || 1))),
+    quantity,
     client: cleanText(row.client, 120),
     phone: cleanText(row.phone, 60),
     email: cleanText(row.email, 120),
     code: cleanText(row.code, 40).toUpperCase(),
-    unitPrice: Math.max(0, Number(row.unitPrice || 0)),
-    total: Math.max(0, Number(row.total || 0)),
+    unitPrice: Math.max(0, Number(row.unitPrice || (quantity ? total / quantity : total))),
+    unitCost,
+    cost,
+    total,
+    netProfit: total - cost,
     paid: Boolean(row.paid)
   };
 }
@@ -165,8 +180,19 @@ module.exports = async function handler(req, res) {
       const sales = await getSales();
       const sale = sales.find(item => item.id === id);
       if (!sale) return json(res, 404, { ok: false, error: 'not_found' });
-      sale.paid = Boolean(body.paid);
-      sale.paidAt = sale.paid ? new Date().toISOString() : '';
+      if (Object.prototype.hasOwnProperty.call(body, 'paid')) {
+        sale.paid = Boolean(body.paid);
+        sale.paidAt = sale.paid ? new Date().toISOString() : '';
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'total')) {
+        sale.total = Math.max(0, Number(body.total || 0));
+        sale.unitPrice = Math.max(0, Number(sale.quantity || 1) ? sale.total / Number(sale.quantity || 1) : sale.total);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'unitCost')) {
+        sale.unitCost = Math.max(0, Number(body.unitCost || 0));
+      }
+      sale.cost = Math.max(0, Number(sale.unitCost ?? getUnitCost(sale.model)) * Number(sale.quantity || 1));
+      sale.netProfit = Number(sale.total || 0) - sale.cost;
       await setSales(sales);
       return json(res, 200, { ok: true, sale });
     }

@@ -33,7 +33,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260521-erp2">
+  <link rel="stylesheet" href="css/style.css?v=20260522-erp-profit1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -686,6 +686,49 @@
       <p class="section-label">Vendedor</p>
       <h2 class="seller-stats__title" id="sellerSalesTitle">Historial de ventas</h2>
       <p class="seller-stats__note">ERP de pedidos confirmados por WhatsApp. Marca el check cuando hayas recibido el pago o borra una fila si fue un error.</p>
+      <form class="seller-sales__manual" id="sellerManualSaleForm" aria-label="Añadir venta manual">
+        <p class="seller-sales__manual-title">Añadir venta manual</p>
+        <label>
+          <span>Modelo</span>
+          <select id="sellerManualModel" required>
+            <option value="Oversized">Oversized</option>
+            <option value="Crop top">Crop top</option>
+            <option value="Hoodie">Hoodie</option>
+          </select>
+        </label>
+        <label>
+          <span>Color</span>
+          <input type="text" id="sellerManualColor" placeholder="Negro, blanco, azul tormenta..." required>
+        </label>
+        <label>
+          <span>Talla</span>
+          <select id="sellerManualSize" required>
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </label>
+        <label>
+          <span>Cliente</span>
+          <input type="text" id="sellerManualClient" placeholder="Nombre del cliente" required>
+        </label>
+        <label>
+          <span>Código</span>
+          <input type="text" id="sellerManualCode" placeholder="Opcional">
+        </label>
+        <label>
+          <span>Unidades</span>
+          <input type="number" id="sellerManualQuantity" min="1" max="99" step="1" value="1" required>
+        </label>
+        <label>
+          <span>Precio venta total</span>
+          <input type="number" id="sellerManualTotal" min="0" step="0.01" value="22" required>
+        </label>
+        <button type="submit">Añadir venta</button>
+      </form>
       <div class="seller-sales__table" id="sellerSalesTable"></div>
       <button class="seller-stats__reset" type="button" id="sellerSalesReset">Actualizar ventas</button>
     </div>
@@ -700,6 +743,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260521-erp2" defer></script>
+  <script src="js/script.js?v=20260522-erp-profit1" defer></script>
 </body>
 </html>

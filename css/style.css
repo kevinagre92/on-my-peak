@@ -3375,6 +3375,67 @@ select:focus-visible {
   gap: 0.48rem;
 }
 
+.seller-sales__manual {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.58rem;
+  margin: 1rem 0 1.1rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.035);
+}
+
+.seller-sales__manual-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.seller-sales__manual label {
+  display: grid;
+  gap: 0.34rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.seller-sales__manual input,
+.seller-sales__manual select,
+.seller-sales__price input {
+  width: 100%;
+  min-height: 2.25rem;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.34);
+  color: var(--text-primary);
+  font: inherit;
+  letter-spacing: 0.04em;
+  border-radius: 0;
+}
+
+.seller-sales__manual input,
+.seller-sales__manual select {
+  padding: 0 0.65rem;
+}
+
+.seller-sales__manual button {
+  align-self: end;
+  min-height: 2.25rem;
+  border: 0;
+  background: var(--accent-lava);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 .seller-sales__summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -3426,7 +3487,7 @@ select:focus-visible {
 .seller-sales__head,
 .seller-sales__row {
   display: grid;
-  grid-template-columns: 1fr 1fr 0.5fr 1.25fr 0.82fr 0.82fr 1.05fr 0.75fr;
+  grid-template-columns: 0.85fr 0.85fr 0.42fr 1fr 0.7fr 0.75fr 0.75fr 0.8fr 0.95fr 0.65fr;
   gap: 0.55rem;
   align-items: center;
 }
@@ -3473,6 +3534,24 @@ select:focus-visible {
   width: 18px;
   height: 18px;
   accent-color: var(--accent-lava);
+}
+
+.seller-sales__price {
+  min-width: 0;
+}
+
+.seller-sales__price input {
+  min-height: 1.85rem;
+  padding: 0 0.42rem;
+  font-size: 0.54rem;
+}
+
+.seller-sales__profit {
+  color: #8fd4a4;
+}
+
+.seller-sales__loss {
+  color: var(--accent-lava);
 }
 
 .seller-sales__delete {
@@ -3802,10 +3881,22 @@ select:focus-visible {
     gap: 1rem;
   }
 
-  .seller-sales__row > span::before {
+  .seller-sales__row > span::before,
+  .seller-sales__price::before {
     content: attr(data-label);
     color: var(--text-muted);
     text-transform: uppercase;
+  }
+
+  .seller-sales__price {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .seller-sales__manual {
+    grid-template-columns: 1fr;
   }
 
   .seller-stats {
