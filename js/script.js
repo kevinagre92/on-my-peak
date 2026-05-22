@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       contact: {
         title: 'Contacto / Atención al Cliente',
-        body: '<p>Para pedidos, tallas, colores o cualquier duda, hablamos directo por WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener">Abrir WhatsApp: +34 673 094 993</a></p><p>Base: LPA, Canary Islands.</p>'
+        body: '<p>Para pedidos, tallas, colores o cualquier duda, hablamos directo por WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener noreferrer">Abrir WhatsApp: +34 673 094 993</a></p><p>Base: LPA, Canary Islands.</p>'
       },
       privacy: {
         title: 'Política de Privacidad',
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       contact: {
         title: 'Contact / Customer Support',
-        body: '<p>For orders, sizing, colors or any question, talk to us directly on WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener">Open WhatsApp: +34 673 094 993</a></p><p>Based in LPA, Canary Islands.</p>'
+        body: '<p>For orders, sizing, colors or any question, talk to us directly on WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener noreferrer">Open WhatsApp: +34 673 094 993</a></p><p>Based in LPA, Canary Islands.</p>'
       },
       privacy: {
         title: 'Privacy Policy',
@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       contact: {
         title: 'Contacto / Apoio ao Cliente',
-        body: '<p>Para pedidos, tamanhos, cores ou qualquer dúvida, fala connosco diretamente no WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener">Abrir WhatsApp: +34 673 094 993</a></p><p>Base: LPA, Canary Islands.</p>'
+        body: '<p>Para pedidos, tamanhos, cores ou qualquer dúvida, fala connosco diretamente no WhatsApp.</p><p><a href="https://wa.me/34673094993" target="_blank" rel="noopener noreferrer">Abrir WhatsApp: +34 673 094 993</a></p><p>Base: LPA, Canary Islands.</p>'
       },
       privacy: {
         title: 'Política de Privacidade',
@@ -1247,6 +1247,70 @@ document.addEventListener('DOMContentLoaded', () => {
     return Number(sale.total || 0) - getSaleCost(sale);
   }
 
+  function getColorHex(model, colorName) {
+    const normalized = String(colorName || '').toLowerCase();
+    const colors = colorsByModel[model] || Object.values(colorsByModel).flat();
+    return colors.find(color => color.name.toLowerCase() === normalized)?.hex || '#f4f4f4';
+  }
+
+  function renderSellerInventorySummary(sales) {
+    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    const grouped = sales.reduce((acc, sale) => {
+      const model = sale.model || 'Producto';
+      const quantity = Number(sale.quantity || 1);
+      if (!acc[model]) {
+        acc[model] = {
+          model,
+          total: 0,
+          colors: {},
+          sizes: {}
+        };
+      }
+      acc[model].total += quantity;
+      acc[model].colors[sale.color || 'Sin color'] = (acc[model].colors[sale.color || 'Sin color'] || 0) + quantity;
+      acc[model].sizes[sale.size || '-'] = (acc[model].sizes[sale.size || '-'] || 0) + quantity;
+      return acc;
+    }, {});
+
+    return Object.values(grouped).map(item => {
+      const colorChips = Object.entries(item.colors)
+        .sort((a, b) => b[1] - a[1])
+        .map(([color, count]) => `
+          <span class="seller-inventory__color" title="${escapeHtml(color)}">
+            <b>${count}</b>
+            <i style="--swatch:${escapeHtml(getColorHex(item.model, color))}"></i>
+            <small>${escapeHtml(color)}</small>
+          </span>
+        `).join('');
+      const sizeChips = sizes
+        .filter(size => item.sizes[size])
+        .map(size => `
+          <span class="seller-inventory__size">
+            <b>${escapeHtml(size)}</b>
+            <small>${item.sizes[size]}</small>
+          </span>
+        `).join('');
+      const otherSizes = Object.entries(item.sizes)
+        .filter(([size]) => !sizes.includes(size))
+        .map(([size, count]) => `
+          <span class="seller-inventory__size">
+            <b>${escapeHtml(size)}</b>
+            <small>${count}</small>
+          </span>
+        `).join('');
+      return `
+        <article class="seller-inventory__row">
+          <div class="seller-inventory__model">
+            <strong>${escapeHtml(item.model)}</strong>
+            <span>${item.total} uds vendidas</span>
+          </div>
+          <div class="seller-inventory__colors" aria-label="Colores vendidos">${colorChips}</div>
+          <div class="seller-inventory__sizes" aria-label="Tallas vendidas">${sizeChips}${otherSizes}</div>
+        </article>
+      `;
+    }).join('');
+  }
+
   function createCheckoutSignature(cart, customer, code, total) {
     return JSON.stringify({
       cart: cart.map(item => ({
@@ -1332,31 +1396,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const paidSales = sales.filter(sale => sale.paid).reduce((sum, sale) => sum + Number(sale.total || 0), 0);
     const totalCost = sales.reduce((sum, sale) => sum + getSaleCost(sale), 0);
     const totalProfit = sales.reduce((sum, sale) => sum + getSaleProfit(sale), 0);
-    const summary = sales.reduce((acc, sale) => {
-      const key = `${sale.model}|${sale.color}|${sale.size}`;
-      if (!acc[key]) {
-        acc[key] = {
-          model: sale.model,
-          color: sale.color,
-          size: sale.size,
-          quantity: 0,
-          total: 0
-        };
-      }
-      acc[key].quantity += Number(sale.quantity || 1);
-      acc[key].total += Number(sale.total || 0);
-      return acc;
-    }, {});
     const statusRow = status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : '';
-    const summaryRows = Object.values(summary)
-      .sort((a, b) => b.quantity - a.quantity)
-      .map(item => `
-        <article class="seller-sales__summary-card">
-          <strong>${escapeHtml(item.model)}</strong>
-          <span>${escapeHtml(item.color)} · ${escapeHtml(item.size)}</span>
-          <b>${item.quantity} uds</b>
-        </article>
-      `).join('');
+    const inventoryRows = renderSellerInventorySummary(sales);
     sellerSalesTable.innerHTML = `
       ${statusRow}
       <div class="seller-sales__summary" aria-label="Resumen de productos vendidos">
@@ -1380,7 +1421,9 @@ document.addEventListener('DOMContentLoaded', () => {
           <span>Gasto producto</span>
           <b>${formatCurrencyHtml(totalCost)}</b>
         </article>
-        ${summaryRows}
+      </div>
+      <div class="seller-inventory" aria-label="Resumen por modelo, color y talla">
+        ${inventoryRows}
       </div>
       <div class="seller-sales__head" aria-hidden="true">
         <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span></span>
@@ -2064,7 +2107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     link.className = 'instagram-preview__item';
     link.href = post.permalink || 'https://instagram.com/onmypeak_';
     link.target = '_blank';
-    link.rel = 'noopener';
+    link.rel = 'noopener noreferrer';
     link.setAttribute('aria-label', post.caption ? `Abrir post de Instagram: ${post.caption}` : 'Abrir post de Instagram de On My Peak');
 
     if (post.media_type === 'VIDEO') {
