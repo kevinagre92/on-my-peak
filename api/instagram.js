@@ -12,15 +12,15 @@ const DEFAULT_FIELDS = [
 const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbnail_url,permalink}`;
 
 const FALLBACK_IMAGES = [
-  '/assets/collection/drop-current/thumbs/drop-current-01.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-02.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-03.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-04.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-05.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-06.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-07.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-08.jpg',
-  '/assets/collection/drop-current/thumbs/drop-current-09.jpg'
+  '/assets/instagram/post-omp1-26.jpg',
+  '/assets/instagram/post-omp1-27.jpg',
+  '/assets/instagram/post-omp1-25.jpg',
+  '/assets/instagram/post-omp1-31.jpg',
+  '/assets/instagram/post-omp1-30.jpg',
+  '/assets/instagram/post-omp1-24.jpg',
+  '/assets/instagram/post-omp1-23.jpg',
+  '/assets/instagram/post-omp1-29.jpg',
+  '/assets/instagram/post-omp1-28.jpg'
 ];
 
 const ALLOWED_API_HOSTS = new Set([
@@ -133,7 +133,7 @@ function redactInstagramUrl(url) {
 
 function canShowDiagnostics(request) {
   const debugKey = process.env.INSTAGRAM_DEBUG_KEY;
-  return Boolean(debugKey && request.query?.debug_key === debugKey);
+  return Boolean(debugKey && (request.query?.debug_key === debugKey || request.query?.debug === debugKey));
 }
 
 module.exports = async function handler(request, response) {

@@ -344,6 +344,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const sellerManualCode = document.getElementById('sellerManualCode');
   const sellerManualQuantity = document.getElementById('sellerManualQuantity');
   const sellerManualTotal = document.getElementById('sellerManualTotal');
+  const sellerCommunity = document.getElementById('sellerCommunity');
+  const sellerCommunityTable = document.getElementById('sellerCommunityTable');
+  const sellerCommunityClose = document.getElementById('sellerCommunityClose');
+  const sellerCommunityRefresh = document.getElementById('sellerCommunityRefresh');
+  const peakLeadForm = document.getElementById('peakLeadForm');
+  const peakLeadMessage = document.getElementById('peakLeadMessage');
+  const peakPhotoForm = document.getElementById('peakPhotoForm');
+  const peakPhotoMessage = document.getElementById('peakPhotoMessage');
+  const approvedCommunityGrid = document.getElementById('approvedCommunityGrid');
 
   function openInfoPage(pageKey) {
     const page = legalPages[currentLanguage]?.[pageKey] || legalPages.es[pageKey];
@@ -378,6 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeSellerSales() {
     sellerSales?.classList.remove('active');
     sellerSales?.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+  }
+
+  function closeSellerCommunity() {
+    sellerCommunity?.classList.remove('active');
+    sellerCommunity?.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('lightbox-open');
   }
 
@@ -1162,6 +1177,120 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  function communityApiOptions(options = {}) {
+    return salesApiOptions(options);
+  }
+
+  async function fetchCommunity(admin = false) {
+    const url = admin ? '/api/community' : '/api/community';
+    const response = await fetch(url, communityApiOptions({ cache: 'no-store' }));
+    if (!response.ok) throw new Error('community_fetch_failed');
+    return response.json();
+  }
+
+  async function postCommunity(payload) {
+    const response = await fetch('/api/community', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error('community_post_failed');
+    return response.json();
+  }
+
+  async function patchCommunitySubmission(id, approved) {
+    const response = await fetch('/api/community', communityApiOptions({
+      method: 'PATCH',
+      body: JSON.stringify({ id, approved })
+    }));
+    if (!response.ok) throw new Error('community_patch_failed');
+    return response.json();
+  }
+
+  async function deleteCommunitySubmission(id) {
+    const response = await fetch('/api/community', communityApiOptions({
+      method: 'DELETE',
+      body: JSON.stringify({ id })
+    }));
+    if (!response.ok) throw new Error('community_delete_failed');
+  }
+
+  function renderApprovedCommunity(submissions = []) {
+    if (!approvedCommunityGrid) return;
+    const approved = submissions.filter(item => item.photo).slice(0, 6);
+    approvedCommunityGrid.innerHTML = approved.map(item => `
+      <article>
+        <img src="${escapeHtml(item.photo)}" alt="Foto aprobada de la comunidad OMP subida por ${escapeHtml(item.name || item.handle || 'cliente')}" loading="lazy" decoding="async">
+        <span>${escapeHtml(item.handle || item.name || 'OMP')}</span>
+      </article>
+    `).join('');
+  }
+
+  async function loadApprovedCommunity() {
+    try {
+      const data = await fetchCommunity(false);
+      renderApprovedCommunity(Array.isArray(data.submissions) ? data.submissions : []);
+    } catch (error) {
+      renderApprovedCommunity([]);
+    }
+  }
+
+  function renderSellerCommunity(data = {}, status = '') {
+    if (!sellerCommunityTable) return;
+    const submissions = Array.isArray(data.submissions) ? data.submissions : [];
+    const leads = Array.isArray(data.leads) ? data.leads : [];
+    const rows = submissions.map(item => `
+      <article class="seller-community__row" data-community-id="${escapeHtml(item.id)}">
+        <img src="${escapeHtml(item.photo)}" alt="Foto enviada por ${escapeHtml(item.name || item.handle || 'cliente')}">
+        <div>
+          <strong>${escapeHtml(item.handle || item.name || 'Sin nombre')}</strong>
+          <span>${item.approved ? 'Aprobada' : 'Pendiente'} · ${escapeHtml(new Date(item.createdAt || Date.now()).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }))}</span>
+        </div>
+        <div class="seller-community__actions">
+          <button type="button" data-community-approve="${item.approved ? 'false' : 'true'}">${item.approved ? 'Ocultar' : 'Aprobar'}</button>
+          <button type="button" data-community-delete>Eliminar</button>
+        </div>
+      </article>
+    `).join('');
+    const leadRows = leads.slice(0, 40).map(item => `
+      <article class="seller-community__row">
+        <div></div>
+        <div>
+          <strong>${escapeHtml(item.name || 'Lead')}</strong>
+          <span>${escapeHtml(item.email || '-')} · ${escapeHtml(item.phone || '-')} · ${(item.channels || []).map(escapeHtml).join(', ') || 'sin canal'}</span>
+        </div>
+        <div class="seller-community__actions"><span>${escapeHtml(new Date(item.createdAt || Date.now()).toLocaleDateString('es-ES'))}</span></div>
+      </article>
+    `).join('');
+
+    sellerCommunityTable.innerHTML = `
+      ${status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : ''}
+      <p class="seller-stats__note">${submissions.length} fotos enviadas · ${leads.length} altas en Únete al Peak.</p>
+      ${rows || '<p class="seller-community__empty">Todavía no hay fotos pendientes.</p>'}
+      <p class="seller-sales__manual-title">Altas Únete al Peak</p>
+      ${leadRows || '<p class="seller-community__empty">Todavía no hay altas.</p>'}
+    `;
+  }
+
+  async function loadSellerCommunity() {
+    if (!sellerCommunityTable) return;
+    sellerCommunityTable.innerHTML = '<p class="seller-community__empty">Cargando comunidad...</p>';
+    try {
+      const data = await fetchCommunity(true);
+      renderSellerCommunity(data, 'Sincronizado con comunidad.');
+      renderApprovedCommunity((data.submissions || []).filter(item => item.approved));
+    } catch (error) {
+      renderSellerCommunity({}, 'No se pudo sincronizar comunidad ahora.');
+    }
+  }
+
+  function openSellerCommunity() {
+    loadSellerCommunity();
+    sellerCommunity?.classList.add('active');
+    sellerCommunity?.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+  }
+
   async function fetchSalesHistory() {
     const response = await fetch('/api/sales', salesApiOptions({ cache: 'no-store' }));
     if (!response.ok) throw new Error('sales_fetch_failed');
@@ -1770,6 +1899,29 @@ document.addEventListener('DOMContentLoaded', () => {
   sellerSales?.addEventListener('click', (e) => {
     if (e.target === sellerSales) closeSellerSales();
   });
+  sellerCommunityClose?.addEventListener('click', closeSellerCommunity);
+  sellerCommunity?.addEventListener('click', (e) => {
+    if (e.target === sellerCommunity) closeSellerCommunity();
+  });
+  sellerCommunityRefresh?.addEventListener('click', loadSellerCommunity);
+  sellerCommunityTable?.addEventListener('click', async (e) => {
+    const row = e.target.closest('[data-community-id]');
+    if (!row) return;
+    const id = row.dataset.communityId;
+    const approveButton = e.target.closest('[data-community-approve]');
+    const deleteButton = e.target.closest('[data-community-delete]');
+    try {
+      if (approveButton) {
+        await patchCommunitySubmission(id, approveButton.dataset.communityApprove === 'true');
+        await loadSellerCommunity();
+      } else if (deleteButton) {
+        await deleteCommunitySubmission(id);
+        await loadSellerCommunity();
+      }
+    } catch (error) {
+      renderSellerCommunity({}, 'No se pudo actualizar esa foto ahora.');
+    }
+  });
   sellerSalesTable?.addEventListener('change', async (e) => {
     const checkbox = e.target.closest('[data-sale-paid]');
     const priceInput = e.target.closest('[data-sale-total]');
@@ -1951,6 +2103,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape' && sellerSales?.classList.contains('active')) {
       closeSellerSales();
     }
+    if (e.key === 'Escape' && sellerCommunity?.classList.contains('active')) {
+      closeSellerCommunity();
+    }
     if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
       e.preventDefault();
       openSellerStats();
@@ -1959,14 +2114,94 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       openSellerSales();
     }
+    if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'm') {
+      e.preventDefault();
+      openSellerCommunity();
+    }
   });
   const sellerPanel = new URLSearchParams(window.location.search).get('seller');
   if (sellerPanel === 'codigos') {
     openSellerStats();
   } else if (sellerPanel === 'ventas') {
     openSellerSales();
+  } else if (sellerPanel === 'comunidad') {
+    openSellerCommunity();
   }
   renderCart();
+
+  async function resizeCommunityImage(file) {
+    if (!file) throw new Error('missing_file');
+    const source = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+    const img = await new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = source;
+    });
+    const maxSide = 900;
+    const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(img.width * ratio));
+    canvas.height = Math.max(1, Math.round(img.height * ratio));
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg', 0.78);
+  }
+
+  peakLeadForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(peakLeadForm);
+    const channels = data.getAll('channels');
+    if (!data.get('email') && !data.get('phone')) {
+      if (peakLeadMessage) peakLeadMessage.textContent = 'Deja correo o WhatsApp para poder avisarte.';
+      return;
+    }
+    if (peakLeadMessage) peakLeadMessage.textContent = 'Guardando...';
+    try {
+      await postCommunity({
+        type: 'lead',
+        name: data.get('name'),
+        email: data.get('email'),
+        phone: data.get('phone'),
+        channels
+      });
+      peakLeadForm.reset();
+      if (peakLeadMessage) peakLeadMessage.textContent = 'Estás dentro. Te avisaremos del próximo movimiento.';
+    } catch (error) {
+      if (peakLeadMessage) peakLeadMessage.textContent = 'No se pudo guardar ahora. Escríbenos por WhatsApp y te apuntamos.';
+    }
+  });
+
+  peakPhotoForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(peakPhotoForm);
+    if (!data.get('consent')) {
+      if (peakPhotoMessage) peakPhotoMessage.textContent = 'Necesitamos tu permiso para revisar y publicar la foto.';
+      return;
+    }
+    if (peakPhotoMessage) peakPhotoMessage.textContent = 'Comprimiendo y subiendo...';
+    try {
+      const photo = await resizeCommunityImage(data.get('photo'));
+      await postCommunity({
+        type: 'submission',
+        name: data.get('name'),
+        handle: data.get('name'),
+        photo
+      });
+      peakPhotoForm.reset();
+      if (peakPhotoMessage) peakPhotoMessage.textContent = 'Foto enviada. La revisamos antes de publicarla.';
+      showCartToast('Foto enviada para aprobación');
+    } catch (error) {
+      if (peakPhotoMessage) peakPhotoMessage.textContent = 'No se pudo subir. Prueba con una imagen más ligera.';
+    }
+  });
+
+  loadApprovedCommunity();
 
   /* --- Collection Quick Shop --- */
   const shopSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
