@@ -1604,7 +1604,6 @@ select:focus-visible {
 }
 
 .drop__conversion,
-.waitlist-trust,
 .product-proof article,
 .peak-form,
 .cart-item,
@@ -2348,12 +2347,19 @@ select:focus-visible {
   min-height: 56vh;
   display: flex;
   align-items: center;
+  overflow-x: clip;
+}
+
+.waitlist,
+.waitlist * {
+  min-width: 0;
 }
 
 .waitlist .container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: min(100%, var(--container-max));
 }
 
 .waitlist__subtitle {
@@ -3328,12 +3334,19 @@ select:focus-visible {
   min-height: 56vh;
   display: flex;
   align-items: center;
+  overflow-x: clip;
+}
+
+.waitlist,
+.waitlist * {
+  min-width: 0;
 }
 
 .waitlist .container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: min(100%, var(--container-max));
 }
 
 .waitlist__form {
@@ -3344,40 +3357,6 @@ select:focus-visible {
   width: 100%;
   max-width: 720px;
   text-align: left;
-}
-
-.waitlist-trust {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.55rem;
-  width: min(100%, 720px);
-  margin-top: 1.35rem;
-}
-
-.waitlist-trust span {
-  min-height: 4.25rem;
-  display: grid;
-  place-items: center;
-  padding: 0.75rem;
-  border: 1px solid rgba(255,255,255,0.11);
-  background: rgba(255,255,255,0.025);
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 0.52rem;
-  letter-spacing: 0.12em;
-  line-height: 1.45;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.waitlist-trust span::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  margin-bottom: 0.25rem;
-  border-radius: 999px;
-  background: var(--accent-lava);
-  box-shadow: 0 0 16px var(--accent-lava-glow);
 }
 
 .waitlist__field {
@@ -4738,10 +4717,14 @@ select:focus-visible {
 
   .waitlist {
     align-items: flex-start;
+    overflow-x: clip;
   }
 
   .waitlist .container {
     align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: max(1rem, var(--container-pad));
   }
 
   .waitlist .section-label,
@@ -4757,7 +4740,8 @@ select:focus-visible {
 
   .waitlist__form {
     grid-template-columns: 1fr;
-    max-width: none;
+    width: 100%;
+    max-width: 100%;
     margin-top: 1.2rem;
     padding: 0;
     border: 0;
@@ -4765,37 +4749,30 @@ select:focus-visible {
     box-shadow: none;
   }
 
-  .waitlist-trust {
-    grid-template-columns: 1fr;
-    gap: 0.45rem;
-    width: 100%;
-    margin-top: 1rem;
-  }
-
-  .waitlist-trust span {
-    min-height: 3.1rem;
-    padding: 0.55rem 0.75rem;
-    display: flex;
-    justify-content: center;
-    gap: 0.55rem;
-    text-align: left;
-  }
-
-  .waitlist-trust span::before {
-    margin-bottom: 0;
-    flex: 0 0 auto;
-  }
-
   .model-options {
     grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
     max-height: min(62svh, 540px);
     overflow-y: auto;
   }
 
   .model-option {
+    width: 100%;
     grid-template-columns: 116px minmax(0, 1fr);
     grid-template-rows: auto;
     align-items: center;
+  }
+
+  .model-picker,
+  .color-picker,
+  .waitlist__input,
+  .waitlist__submit,
+  .discount-redeem,
+  .waitlist-order-preview,
+  .color-options {
+    width: 100%;
+    max-width: 100%;
   }
 
   .model-option__media {
