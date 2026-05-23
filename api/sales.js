@@ -1,6 +1,6 @@
 const SALES_KEY = 'omp:sales:v1';
 const MAX_SALES = 1000;
-const DEFAULT_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e4aa5-9303-74bf-9431-6a475567b287';
+const DEFAULT_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e545a-dadf-7137-a85d-bebff86313fe';
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -53,24 +53,36 @@ async function kvFetch(path, options = {}) {
   return response.json();
 }
 
-function getJsonBlobUrl() {
-  return process.env.SALES_JSONBLOB_URL || DEFAULT_JSONBLOB_URL;
+function getJsonBlobUrls() {
+  return [...new Set([process.env.SALES_JSONBLOB_URL, DEFAULT_JSONBLOB_URL].filter(Boolean))];
 }
 
 async function jsonBlobFetch(options = {}) {
-  const url = getJsonBlobUrl();
-  if (!url) return null;
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
+  const urls = getJsonBlobUrls();
+  if (!urls.length) return null;
+
+  let lastError = null;
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        }
+      });
+      if (!response.ok) {
+        lastError = new Error(`JSONBlob ${response.status}`);
+        continue;
+      }
+      return response.json();
+    } catch (error) {
+      lastError = error;
     }
-  });
-  if (!response.ok) {
-    throw new Error(`JSONBlob ${response.status}`);
   }
-  return response.json();
+
+  if (lastError) throw lastError;
+  return null;
 }
 
 async function getSales() {
