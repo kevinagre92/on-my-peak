@@ -3489,20 +3489,6 @@ select:focus-visible {
   overflow: hidden;
 }
 
-.peak-community::before {
-  content: 'COMMUNITY';
-  position: absolute;
-  top: -0.17em;
-  right: -0.08em;
-  color: transparent;
-  font-family: var(--font-display);
-  font-size: clamp(5rem, 18vw, 15rem);
-  font-weight: 900;
-  letter-spacing: 0.02em;
-  -webkit-text-stroke: 1px rgba(255,255,255,0.045);
-  pointer-events: none;
-}
-
 .peak-community__grid {
   display: grid;
   grid-template-columns: 1fr;

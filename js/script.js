@@ -2210,14 +2210,26 @@ document.addEventListener('DOMContentLoaded', () => {
       image.onerror = reject;
       image.src = source;
     });
-    const maxSide = 900;
-    const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.max(1, Math.round(img.width * ratio));
-    canvas.height = Math.max(1, Math.round(img.height * ratio));
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL('image/jpeg', 0.78);
+    const maxPayloadLength = 2800000;
+    let maxSide = 1600;
+    let quality = 0.84;
+    let output = '';
+
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(img.width * ratio));
+      canvas.height = Math.max(1, Math.round(img.height * ratio));
+      const ctx = canvas.getContext('2d', { alpha: false });
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      output = canvas.toDataURL('image/jpeg', quality);
+      if (output.length <= maxPayloadLength) return output;
+      quality = Math.max(0.62, quality - 0.08);
+      maxSide = Math.max(980, Math.round(maxSide * 0.84));
+    }
+
+    if (output && output.length <= 3200000) return output;
+    throw new Error('image_too_large_after_compression');
   }
 
   peakLeadForm?.addEventListener('submit', async (e) => {
@@ -2264,7 +2276,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (peakPhotoMessage) peakPhotoMessage.textContent = 'Foto enviada. La revisamos antes de publicarla.';
       showCartToast('Foto enviada para aprobación');
     } catch (error) {
-      if (peakPhotoMessage) peakPhotoMessage.textContent = 'No se pudo subir. Prueba con una imagen más ligera.';
+      if (peakPhotoMessage) peakPhotoMessage.textContent = 'No se pudo subir ahora. Prueba otra vez o envíanos la foto por WhatsApp.';
     }
   });
 
@@ -2441,8 +2453,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       instagramFeed.dataset.loading = 'true';
-      const response = await fetch('/api/instagram', {
-        headers: { Accept: 'application/json' }
+      const response = await fetch(`/api/instagram?fresh=${Date.now()}`, {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store'
       });
       if (!response.ok) {
         renderInstagramFallback();

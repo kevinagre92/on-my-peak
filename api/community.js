@@ -1,7 +1,7 @@
 const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e4ece-6d1c-79b9-9a49-c39ca8da01fb';
 const MAX_SUBMISSIONS = 120;
 const MAX_LEADS = 1000;
-const MAX_PHOTO_LENGTH = 900000;
+const MAX_PHOTO_LENGTH = 3200000;
 
 function json(res, status, body) {
   res.statusCode = status;

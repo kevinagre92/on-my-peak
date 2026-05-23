@@ -51,18 +51,20 @@ function buildInstagramUrlCandidates() {
   const userId = process.env.INSTAGRAM_USER_ID || 'me';
   const fields = process.env.INSTAGRAM_FIELDS || DEFAULT_FIELDS;
   const limit = process.env.INSTAGRAM_LIMIT || '9';
-  const urls = [
-    new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`)
-  ];
+  const urls = [];
 
   if (useInstagramLogin) {
     urls.push(new URL(`${base.replace(/\/$/, '')}/${userId}/media`));
+    urls.push(new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`));
   } else if (!process.env.INSTAGRAM_FIELDS) {
+    urls.push(new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`));
     const extendedUrl = new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`);
     extendedUrl.searchParams.set('fields', EXTENDED_FIELDS);
     extendedUrl.searchParams.set('limit', limit);
     extendedUrl.searchParams.set('access_token', accessToken);
     urls.push(extendedUrl);
+  } else {
+    urls.push(new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`));
   }
 
   return urls
@@ -178,6 +180,14 @@ function ensureNinePosts(posts) {
   return merged.slice(0, 9);
 }
 
+function sortPostsByDate(posts) {
+  return [...(Array.isArray(posts) ? posts : [])].sort((a, b) => {
+    const dateA = Date.parse(a.timestamp || '') || 0;
+    const dateB = Date.parse(b.timestamp || '') || 0;
+    return dateB - dateA;
+  });
+}
+
 function redactInstagramUrl(url) {
   const safeUrl = new URL(url.toString());
   if (safeUrl.searchParams.has('access_token')) {
@@ -282,9 +292,9 @@ module.exports = async function handler(request, response) {
       });
     }
 
-    const posts = (payload.data || [])
+    const posts = sortPostsByDate((payload.data || [])
       .map(normalizePost)
-      .filter(post => post.media_url)
+      .filter(post => post.media_url))
       .slice(0, 9);
 
     if (!posts.length) {
@@ -299,7 +309,7 @@ module.exports = async function handler(request, response) {
       });
     }
 
-    response.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=3600');
+    response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     await writeCachedPosts(posts);
     return response.status(200).json({
       configured: true,
