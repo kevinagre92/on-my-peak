@@ -206,6 +206,7 @@ module.exports = async function handler(request, response) {
       configured: false,
       requiredEnv: ['INSTAGRAM_ACCESS_TOKEN', 'INSTAGRAM_PROVIDER=instagram'],
       source: fallback.source,
+      count: fallback.posts.length,
       posts: fallback.posts
     });
   }
@@ -275,6 +276,7 @@ module.exports = async function handler(request, response) {
         error: 'Instagram API request failed',
         configured: true,
         source: fallback.source,
+        count: fallback.posts.length,
         diagnostics: showDiagnostics ? diagnostics : undefined,
         posts: fallback.posts
       });
@@ -292,6 +294,7 @@ module.exports = async function handler(request, response) {
         error: 'Instagram feed returned no media',
         configured: true,
         source: fallback.source,
+        count: fallback.posts.length,
         posts: fallback.posts
       });
     }
@@ -301,6 +304,7 @@ module.exports = async function handler(request, response) {
     return response.status(200).json({
       configured: true,
       source: 'instagram',
+      count: ensureNinePosts(posts).length,
       posts: ensureNinePosts(posts)
     });
   } catch (error) {
@@ -310,6 +314,7 @@ module.exports = async function handler(request, response) {
       error: 'Instagram feed unavailable',
       configured: true,
       source: fallback.source,
+      count: fallback.posts.length,
       diagnostics: canShowDiagnostics(request)
         ? [{ message: error.message, name: error.name }]
         : undefined,
