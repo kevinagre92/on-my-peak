@@ -1440,6 +1440,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
+  function renderSellerCodeUsage(sales) {
+    const usage = sales.reduce((acc, sale) => {
+      const code = String(sale.code || '').trim().toUpperCase();
+      if (!code) return acc;
+      const quantity = Number(sale.quantity || 1);
+      if (!acc[code]) {
+        acc[code] = {
+          code,
+          quantity: 0,
+          orders: new Set(),
+          total: 0
+        };
+      }
+      acc[code].quantity += quantity;
+      acc[code].orders.add(sale.orderId || sale.id);
+      acc[code].total += Number(sale.total || 0);
+      return acc;
+    }, {});
+
+    const knownRows = Array.from(discountCodes).sort().map(code => usage[code] || {
+      code,
+      quantity: 0,
+      orders: new Set(),
+      total: 0
+    });
+    const extraRows = Object.values(usage)
+      .filter(item => !discountCodes.has(item.code))
+      .sort((a, b) => b.quantity - a.quantity);
+    const rows = [...knownRows, ...extraRows];
+
+    return rows.map(item => `
+      <article class="seller-code-usage__card ${item.quantity > 0 ? 'seller-code-usage__card--active' : ''}">
+        <strong>${escapeHtml(item.code)}</strong>
+        <span>${item.quantity} usos</span>
+        <small>${item.orders.size} pedidos · ${formatCurrencyHtml(item.total)}</small>
+      </article>
+    `).join('');
+  }
+
   function createCheckoutSignature(cart, customer, code, total) {
     return JSON.stringify({
       cart: cart.map(item => ({
@@ -1527,6 +1566,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalProfit = sales.reduce((sum, sale) => sum + getSaleProfit(sale), 0);
     const statusRow = status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : '';
     const inventoryRows = renderSellerInventorySummary(sales);
+    const codeUsageRows = renderSellerCodeUsage(sales);
     sellerSalesTable.innerHTML = `
       ${statusRow}
       <div class="seller-sales__summary" aria-label="Resumen de productos vendidos">
@@ -1554,6 +1594,15 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="seller-inventory" aria-label="Resumen por modelo, color y talla">
         ${inventoryRows}
       </div>
+      <section class="seller-code-usage" aria-label="Uso de códigos de descuento">
+        <div class="seller-code-usage__head">
+          <strong>Códigos usados</strong>
+          <span>Contador basado en ventas confirmadas del ERP</span>
+        </div>
+        <div class="seller-code-usage__grid">
+          ${codeUsageRows}
+        </div>
+      </section>
       <div class="seller-sales__head" aria-hidden="true">
         <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span></span>
       </div>

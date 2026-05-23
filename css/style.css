@@ -4090,6 +4090,76 @@ select:focus-visible {
   color: var(--accent-lava);
 }
 
+.seller-code-usage {
+  display: grid;
+  gap: 0.58rem;
+  margin: 0 0 0.9rem;
+  padding: 0.82rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.024);
+}
+
+.seller-code-usage__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.seller-code-usage__head strong {
+  color: var(--text-primary);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+}
+
+.seller-code-usage__head span {
+  color: var(--text-muted);
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+.seller-code-usage__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(116px, 1fr));
+  gap: 0.45rem;
+}
+
+.seller-code-usage__card {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.62rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.2);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.seller-code-usage__card--active {
+  border-color: rgba(232,83,30,0.5);
+  background: rgba(232,83,30,0.07);
+}
+
+.seller-code-usage__card strong {
+  color: var(--text-primary);
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+}
+
+.seller-code-usage__card span {
+  color: var(--accent-lava);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+.seller-code-usage__card small {
+  color: var(--text-muted);
+  font-size: 0.48rem;
+  letter-spacing: 0.05em;
+}
+
 .seller-sales__summary-card--total {
   border-color: rgba(255,255,255,0.18);
   background: rgba(255,255,255,0.06);
@@ -4696,6 +4766,27 @@ select:focus-visible {
   .seller-inventory__colors,
   .seller-inventory__sizes {
     gap: 0.62rem;
+  }
+
+  .seller-code-usage__head {
+    display: grid;
+  }
+
+  .seller-code-usage__head span {
+    text-align: left;
+  }
+
+  .seller-code-usage__grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 0.5rem;
+    padding-bottom: 0.18rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .seller-code-usage__card {
+    flex: 0 0 132px;
+    scroll-snap-align: start;
   }
 
   .seller-sales__paid {
