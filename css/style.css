@@ -4556,17 +4556,13 @@ select:focus-visible {
 
   .hero__actions {
     gap: 0.5rem;
+    margin-top: 1.25rem;
   }
 
   .hero__actions a {
     flex: 1 1 0;
     padding-inline: 0.65rem;
     font-size: 0.48rem;
-  }
-
-  .hero__signals {
-    max-width: 20rem;
-    line-height: 1.7;
   }
 
   .brand-story__grid,
@@ -4740,26 +4736,78 @@ select:focus-visible {
     transform: none;
   }
 
-  .waitlist__form { grid-template-columns: 1fr; }
-
-  .waitlist-trust {
-    display: flex;
-    gap: 0.65rem;
-    margin-inline: calc(var(--container-pad) * -1);
-    padding-inline: var(--container-pad);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+  .waitlist {
+    align-items: flex-start;
   }
 
-  .waitlist-trust::-webkit-scrollbar {
-    display: none;
+  .waitlist .container {
+    align-items: stretch;
+  }
+
+  .waitlist .section-label,
+  .waitlist .section-title,
+  .waitlist__subtitle {
+    align-self: center;
+    text-align: center;
+  }
+
+  .waitlist__subtitle {
+    max-width: 28rem;
+  }
+
+  .waitlist__form {
+    grid-template-columns: 1fr;
+    max-width: none;
+    margin-top: 1.2rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .waitlist-trust {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+    width: 100%;
+    margin-top: 1rem;
   }
 
   .waitlist-trust span {
-    flex: 0 0 min(74vw, 280px);
-    min-height: 4rem;
-    scroll-snap-align: start;
+    min-height: 3.1rem;
+    padding: 0.55rem 0.75rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.55rem;
+    text-align: left;
+  }
+
+  .waitlist-trust span::before {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
+
+  .model-options {
+    grid-template-columns: 1fr;
+    max-height: min(62svh, 540px);
+    overflow-y: auto;
+  }
+
+  .model-option {
+    grid-template-columns: 116px minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+  }
+
+  .model-option__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .discount-redeem {
+    grid-template-columns: 1fr;
+  }
+
+  .discount-redeem__button {
+    width: 100%;
   }
 
   .waitlist__perks {

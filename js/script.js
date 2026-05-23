@@ -470,13 +470,18 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateScrollState() {
     const scrollY = window.scrollY;
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    const waitlistSection = document.getElementById('waitlist');
+    const waitlistRect = waitlistSection?.getBoundingClientRect();
+    const isInsideCheckout = waitlistRect
+      ? waitlistRect.top < window.innerHeight * 0.78 && waitlistRect.bottom > window.innerHeight * 0.18
+      : false;
     document.documentElement.style.setProperty('--scroll-progress', Math.min(1, scrollY / maxScroll));
     if (scrollY > 80) {
       nav?.classList.add('nav--scrolled');
     } else {
       nav?.classList.remove('nav--scrolled');
     }
-    buyRail?.classList.toggle('is-visible', scrollY > window.innerHeight * 0.62);
+    buyRail?.classList.toggle('is-visible', scrollY > window.innerHeight * 0.62 && !isInsideCheckout);
     scrollTicking = false;
   }
 
