@@ -461,6 +461,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Navbar Scroll --- */
   const nav = document.getElementById('nav');
+  const buyRail = document.getElementById('buyRail');
+  const buyRailCart = document.getElementById('buyRailCart');
+  const buyRailCount = document.getElementById('buyRailCount');
+  const buyRailTotal = document.getElementById('buyRailTotal');
   let scrollTicking = false;
 
   function updateScrollState() {
@@ -472,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       nav?.classList.remove('nav--scrolled');
     }
+    buyRail?.classList.toggle('is-visible', scrollY > window.innerHeight * 0.62);
     scrollTicking = false;
   }
 
@@ -615,6 +620,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartClear = document.getElementById('cartClear');
   const cartCheckout = document.getElementById('cartCheckout');
   const cartCheckoutHint = document.getElementById('cartCheckoutHint');
+  const cartStepData = document.getElementById('cartStepData');
+  const cartStepWhatsapp = document.getElementById('cartStepWhatsapp');
   const cartToast = document.getElementById('cartToast');
   const cartCustomerForm = document.getElementById('cartCustomerForm');
   const cartCustomerName = document.getElementById('cartCustomerName');
@@ -1771,7 +1778,10 @@ document.addEventListener('DOMContentLoaded', () => {
     syncDiscountInputs(cartDiscountCode);
     if (cartCount) cartCount.textContent = itemCount;
     if (cartNavTotal) cartNavTotal.innerHTML = formatCurrencyHtml(total);
+    if (buyRailCount) buyRailCount.textContent = `${itemCount} ${itemCount === 1 ? 'pieza' : 'piezas'}`;
+    if (buyRailTotal) buyRailTotal.innerHTML = formatCurrencyHtml(total);
     cartToggle?.classList.toggle('cart-toggle--has-items', itemCount > 0);
+    buyRailCart?.classList.toggle('cart-toggle--has-items', itemCount > 0);
     if (cartSubtotal) cartSubtotal.innerHTML = formatCurrencyHtml(subtotal);
     if (cartDiscount) cartDiscount.innerHTML = `-${formatCurrencyHtml(discountTotal)}`;
     cartDiscountRow?.classList.toggle('active', discountTotal > 0);
@@ -1793,6 +1803,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cartCheckout.classList.toggle('cart-drawer__checkout--disabled', disabled);
       cartCheckout.setAttribute('aria-disabled', disabled.toString());
       cartCheckout.tabIndex = disabled ? -1 : 0;
+      cartStepData?.classList.toggle('cart-step--active', cart.length > 0);
+      cartStepWhatsapp?.classList.toggle('cart-step--active', cart.length > 0 && customerReady);
       if (cartCheckoutHint) {
         const missing = [];
         if (!cart.length) missing.push('añade una prenda');
@@ -1922,6 +1934,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   cartToggle?.addEventListener('click', openCart);
+  buyRailCart?.addEventListener('click', openCart);
   cartClose?.addEventListener('click', closeCart);
   cartDrawer?.addEventListener('click', (e) => {
     if (e.target === cartDrawer) closeCart();
