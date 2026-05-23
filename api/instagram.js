@@ -13,15 +13,15 @@ const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbna
 const DEFAULT_INSTAGRAM_CACHE_URL = 'https://jsonblob.com/api/jsonBlob/019e5052-f8fa-787c-8d4f-7b09f8c3b404';
 
 const FALLBACK_IMAGES = [
-  '/assets/instagram/post-omp1-26.jpg',
-  '/assets/instagram/post-omp1-27.jpg',
-  '/assets/instagram/post-omp1-25.jpg',
   '/assets/instagram/post-omp1-31.jpg',
   '/assets/instagram/post-omp1-30.jpg',
-  '/assets/instagram/post-omp1-24.jpg',
-  '/assets/instagram/post-omp1-23.jpg',
   '/assets/instagram/post-omp1-29.jpg',
-  '/assets/instagram/post-omp1-28.jpg'
+  '/assets/instagram/post-omp1-28.jpg',
+  '/assets/instagram/post-omp1-27.jpg',
+  '/assets/instagram/post-omp1-26.jpg',
+  '/assets/instagram/post-omp1-25.jpg',
+  '/assets/instagram/post-omp1-24.jpg',
+  '/assets/instagram/post-omp1-23.jpg'
 ];
 
 const ALLOWED_API_HOSTS = new Set([
