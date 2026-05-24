@@ -2433,7 +2433,8 @@ document.addEventListener('DOMContentLoaded', () => {
     img.alt = post.caption || 'Post reciente de On My Peak';
     img.width = 416;
     img.height = 520;
-    img.loading = 'lazy';
+    img.loading = 'eager';
+    img.fetchPriority = 'low';
     img.decoding = 'async';
     img.referrerPolicy = 'no-referrer';
     img.onerror = () => {
