@@ -2195,15 +2195,7 @@ select:focus-visible {
 }
 
 .drop-calendar__card--two .drop-calendar__cover::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background:
-    radial-gradient(ellipse 75% 42% at 50% 49%, rgba(0,0,0,0.38), rgba(0,0,0,0.76) 72%, rgba(0,0,0,0.9)),
-    rgba(0,0,0,0.46);
-  backdrop-filter: blur(6px);
-  pointer-events: none;
+  content: none;
 }
 
 .drop-calendar__card figcaption {
@@ -2223,14 +2215,21 @@ select:focus-visible {
 
 .drop-calendar__next-action {
   position: absolute;
-  inset: 0;
+  top: 7%;
+  left: 0;
+  right: 0;
   z-index: 2;
   display: grid;
   justify-items: center;
-  align-content: center;
   gap: 0.85rem;
-  padding: 1.1rem;
+  padding: 0 1.1rem;
   text-align: center;
+  pointer-events: none;
+}
+
+.drop-calendar__next-action .drop-countdown,
+.drop-calendar__next-action .calendar-btn {
+  pointer-events: auto;
 }
 
 .drop-calendar__month-shell {

@@ -2404,7 +2404,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!url || url.startsWith('/assets/') || url.startsWith('assets/')) return url;
     try {
       const parsedUrl = new URL(url);
-      if (!/(^|\.)cdninstagram\.com$/i.test(parsedUrl.hostname)) return url;
+      if (!/(^|\.)(cdninstagram\.com|fbcdn\.net)$/i.test(parsedUrl.hostname)) return url;
       return `/api/instagram-image?url=${encodeURIComponent(url)}`;
     } catch (error) {
       return url;

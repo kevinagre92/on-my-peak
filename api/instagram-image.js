@@ -1,4 +1,4 @@
-const ALLOWED_HOST = /(^|\.)cdninstagram\.com$/i;
+const ALLOWED_HOST = /(^|\.)(cdninstagram\.com|fbcdn\.net)$/i;
 const MAX_URL_LENGTH = 4096;
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
@@ -34,7 +34,8 @@ module.exports = async function handler(request, response) {
     const instagramResponse = await fetch(target, {
       headers: {
         Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-        'User-Agent': 'Mozilla/5.0 OnMyPeak/1.0'
+        Referer: 'https://www.instagram.com/',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
       }
     });
 
