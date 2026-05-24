@@ -2210,9 +2210,9 @@ document.addEventListener('DOMContentLoaded', () => {
       image.onerror = reject;
       image.src = source;
     });
-    const maxPayloadLength = 2800000;
-    let maxSide = 1600;
-    let quality = 0.84;
+    const maxPayloadLength = 1200000;
+    let maxSide = 1500;
+    let quality = 0.82;
     let output = '';
 
     for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -2224,11 +2224,11 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       output = canvas.toDataURL('image/jpeg', quality);
       if (output.length <= maxPayloadLength) return output;
-      quality = Math.max(0.62, quality - 0.08);
+      quality = Math.max(0.58, quality - 0.08);
       maxSide = Math.max(980, Math.round(maxSide * 0.84));
     }
 
-    if (output && output.length <= 3200000) return output;
+    if (output && output.length <= 1600000) return output;
     throw new Error('image_too_large_after_compression');
   }
 

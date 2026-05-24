@@ -1,7 +1,7 @@
-const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e4ece-6d1c-79b9-9a49-c39ca8da01fb';
+const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597d-5bb5-757e-b876-18984e01bc7c';
 const MAX_SUBMISSIONS = 120;
 const MAX_LEADS = 1000;
-const MAX_PHOTO_LENGTH = 3200000;
+const MAX_PHOTO_LENGTH = 1600000;
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -12,8 +12,8 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
-function getStoreUrl() {
-  return process.env.COMMUNITY_JSONBLOB_URL || DEFAULT_COMMUNITY_JSONBLOB_URL;
+function getStoreUrls() {
+  return [...new Set([process.env.COMMUNITY_JSONBLOB_URL, DEFAULT_COMMUNITY_JSONBLOB_URL].filter(Boolean))];
 }
 
 function isAdminRequest(req) {
@@ -55,9 +55,20 @@ function normalizeStore(data) {
 }
 
 async function readStore() {
-  const response = await fetch(getStoreUrl(), { headers: { Accept: 'application/json' } });
-  if (!response.ok) throw new Error(`community_store_${response.status}`);
-  return normalizeStore(await response.json());
+  let lastError = null;
+  for (const url of getStoreUrls()) {
+    try {
+      const response = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!response.ok) {
+        lastError = new Error(`community_store_${response.status}`);
+        continue;
+      }
+      return normalizeStore(await response.json());
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError || new Error('community_store_missing');
 }
 
 async function writeStore(store) {
@@ -67,12 +78,24 @@ async function writeStore(store) {
     submissions: store.submissions.slice(0, MAX_SUBMISSIONS),
     leads: store.leads.slice(0, MAX_LEADS)
   });
-  const response = await fetch(getStoreUrl(), {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  if (!response.ok) throw new Error(`community_store_put_${response.status}`);
+  let lastError = null;
+  for (const url of getStoreUrls()) {
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        lastError = new Error(`community_store_put_${response.status}`);
+        continue;
+      }
+      return payload;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (lastError) throw lastError;
   return payload;
 }
 
