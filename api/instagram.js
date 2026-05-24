@@ -29,6 +29,10 @@ const ALLOWED_API_HOSTS = new Set([
   'graph.facebook.com'
 ]);
 
+const INSTAGRAM_USERNAME = 'onmypeak_';
+const INSTAGRAM_WEB_PROFILE_URL = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(INSTAGRAM_USERNAME)}`;
+const INSTAGRAM_WEB_APP_ID = '936619743392459';
+
 function isAllowedApiUrl(url) {
   return url.protocol === 'https:' && ALLOWED_API_HOSTS.has(url.hostname);
 }
@@ -112,6 +116,29 @@ function normalizePost(post, index = 0) {
   };
 }
 
+function normalizeWebPost(edge, index = 0) {
+  const node = edge?.node || {};
+  const firstChild = node.edge_sidecar_to_children?.edges?.find(child => child?.node?.display_url || child?.node?.thumbnail_src)?.node;
+  const captionEdge = node.edge_media_to_caption?.edges?.[0]?.node;
+  const shortcode = node.shortcode || '';
+  const imageUrl = node.display_url || node.thumbnail_src || firstChild?.display_url || firstChild?.thumbnail_src || '';
+  const timestamp = node.taken_at_timestamp
+    ? new Date(Number(node.taken_at_timestamp) * 1000).toISOString()
+    : '';
+
+  return {
+    id: node.id || `instagram-web-${shortcode || index + 1}`,
+    caption: captionEdge?.text || '',
+    media_type: node.is_video ? 'VIDEO' : 'IMAGE',
+    media_url: imageUrl,
+    thumbnail_url: node.thumbnail_src || imageUrl,
+    fallback_image: FALLBACK_IMAGES[index % FALLBACK_IMAGES.length],
+    permalink: shortcode ? `https://www.instagram.com/p/${shortcode}/` : 'https://instagram.com/onmypeak_',
+    timestamp,
+    username: INSTAGRAM_USERNAME
+  };
+}
+
 function fallbackPosts() {
   return FALLBACK_IMAGES.map((image, index) => ({
     id: `fallback-${index + 1}`,
@@ -157,6 +184,32 @@ async function writeCachedPosts(posts) {
     });
   } catch (error) {
     // The public fallback still keeps the feed visible if the cache store is unavailable.
+  }
+}
+
+async function fetchInstagramWebPosts() {
+  try {
+    const response = await fetch(INSTAGRAM_WEB_PROFILE_URL, {
+      headers: {
+        Accept: 'application/json,text/plain,*/*',
+        'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+        Referer: `https://www.instagram.com/${INSTAGRAM_USERNAME}/`,
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'X-IG-App-ID': INSTAGRAM_WEB_APP_ID
+      }
+    });
+    if (!response.ok) return [];
+    const payload = await response.json();
+    const edges = payload?.data?.user?.edge_owner_to_timeline_media?.edges || [];
+    return sortPostsByDate(edges
+      .map(normalizeWebPost)
+      .filter(post => post.media_url))
+      .slice(0, 9);
+  } catch (error) {
+    return [];
   }
 }
 
@@ -210,6 +263,17 @@ module.exports = async function handler(request, response) {
 
   const instagramUrls = buildInstagramUrlCandidates();
   if (!instagramUrls.length) {
+    const webPosts = await fetchInstagramWebPosts();
+    if (webPosts.length) {
+      await writeCachedPosts(webPosts);
+      response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      return response.status(200).json({
+        configured: false,
+        source: 'instagram-web',
+        count: ensureNinePosts(webPosts).length,
+        posts: ensureNinePosts(webPosts)
+      });
+    }
     const fallback = await resilientPosts('fallback');
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
     return response.status(200).json({
@@ -280,6 +344,19 @@ module.exports = async function handler(request, response) {
               : null
           });
         }
+      }
+      const webPosts = await fetchInstagramWebPosts();
+      if (webPosts.length) {
+        await writeCachedPosts(webPosts);
+        response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+        return response.status(200).json({
+          error: 'Instagram Graph API request failed',
+          configured: true,
+          source: 'instagram-web',
+          count: ensureNinePosts(webPosts).length,
+          diagnostics: showDiagnostics ? diagnostics : undefined,
+          posts: ensureNinePosts(webPosts)
+        });
       }
       const fallback = await resilientPosts('fallback');
       response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
