@@ -2217,12 +2217,14 @@ select:focus-visible {
   display: grid;
   justify-items: center;
   gap: 0.75rem;
-  padding: 1rem 1rem 0.9rem;
+  width: min(100%, 520px);
+  margin: clamp(1rem, 2.4vw, 1.35rem) auto 0;
+  padding: 1rem;
   text-align: center;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
   background:
     linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012)),
-    rgba(0,0,0,0.3);
+    rgba(0,0,0,0.34);
 }
 
 .drop-calendar__next-action .drop-countdown {
@@ -3637,7 +3639,18 @@ select:focus-visible {
   letter-spacing: 0.08em;
 }
 
-.peak-form__consent span { line-height: 1.5; }
+.peak-form label.peak-form__consent {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 0.55rem;
+}
+
+.peak-form__consent input {
+  margin-top: 0.12rem;
+}
+
+.peak-form__consent span { line-height: 1.45; }
 
 .peak-form button {
   min-height: 3rem;
