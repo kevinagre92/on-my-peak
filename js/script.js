@@ -1349,6 +1349,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return patchSaleStatus(id, { delivered });
   }
 
+  async function patchSaleDeliveryDetails(id, deliveryDetails) {
+    return patchSaleStatus(id, { deliveryDetails });
+  }
+
   async function patchSaleTotal(id, total) {
     const response = await fetch('/api/sales', salesApiOptions({
       method: 'PATCH',
@@ -1551,7 +1555,8 @@ document.addEventListener('DOMContentLoaded', () => {
       netProfit: lineTotal - (getSaleUnitCost(item.model) * Number(item.quantity || 1)),
       orderTotal: total,
       paid: false,
-      delivered: false
+      delivered: false,
+      deliveryDetails: ''
       });
     });
     writeSalesHistory([...rows, ...readSalesHistory()].slice(0, 300));
@@ -1647,6 +1652,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>Entregado</span>
           </label>
           <button class="seller-sales__delete" type="button" data-sale-delete aria-label="Eliminar venta">Eliminar</button>
+          <label class="seller-sales__delivery" data-label="Dónde/cuándo entrega">
+            <span>Entrega</span>
+            <input type="text" value="${escapeHtml(sale.deliveryDetails || '')}" data-sale-delivery-details placeholder="Lugar y hora de entrega">
+          </label>
         </article>
       `).join('')}
     `;
@@ -2004,7 +2013,8 @@ document.addEventListener('DOMContentLoaded', () => {
   sellerSalesTable?.addEventListener('change', async (e) => {
     const checkbox = e.target.closest('[data-sale-paid], [data-sale-delivered]');
     const priceInput = e.target.closest('[data-sale-total]');
-    if (!checkbox && !priceInput) return;
+    const deliveryInput = e.target.closest('[data-sale-delivery-details]');
+    if (!checkbox && !priceInput && !deliveryInput) return;
     if (priceInput) {
       const priceRow = priceInput.closest('[data-sale-id]');
       const saleId = priceRow?.dataset.saleId;
@@ -2023,6 +2033,24 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadSellerSales();
       } catch (error) {
         renderSellerSales(readSalesHistory(), 'Precio actualizado en esta copia. No se pudo sincronizar con el ERP.');
+      }
+      return;
+    }
+    if (deliveryInput) {
+      const deliveryRow = deliveryInput.closest('[data-sale-id]');
+      const saleId = deliveryRow?.dataset.saleId;
+      const deliveryDetails = deliveryInput.value.trim();
+      const sales = readSalesHistory();
+      const sale = sales.find(item => item.id === saleId);
+      if (!sale) return;
+      sale.deliveryDetails = deliveryDetails;
+      writeSalesHistory(sales);
+      renderSellerSales(sales, 'Entrega actualizada.');
+      try {
+        await patchSaleDeliveryDetails(saleId, deliveryDetails);
+        await loadSellerSales();
+      } catch (error) {
+        renderSellerSales(readSalesHistory(), 'Entrega actualizada en esta copia. No se pudo sincronizar con el ERP.');
       }
       return;
     }
@@ -2106,7 +2134,8 @@ document.addEventListener('DOMContentLoaded', () => {
       total,
       netProfit: total - (unitCost * quantity),
       paid: false,
-      delivered: false
+      delivered: false,
+      deliveryDetails: ''
     };
     if (!sale.color || !sale.size || !sale.client || !sale.total) return;
     const nextSales = [sale, ...readSalesHistory()].slice(0, 300);

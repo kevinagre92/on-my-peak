@@ -161,7 +161,8 @@ function cleanSale(row = {}) {
     paid: Boolean(row.paid),
     paidAt: cleanText(row.paidAt, 60),
     delivered: Boolean(row.delivered),
-    deliveredAt: cleanText(row.deliveredAt, 60)
+    deliveredAt: cleanText(row.deliveredAt, 60),
+    deliveryDetails: cleanText(row.deliveryDetails, 240)
   };
 }
 
@@ -202,6 +203,9 @@ module.exports = async function handler(req, res) {
       if (Object.prototype.hasOwnProperty.call(body, 'delivered')) {
         sale.delivered = Boolean(body.delivered);
         sale.deliveredAt = sale.delivered ? new Date().toISOString() : '';
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'deliveryDetails')) {
+        sale.deliveryDetails = cleanText(body.deliveryDetails, 240);
       }
       if (Object.prototype.hasOwnProperty.call(body, 'total')) {
         sale.total = Math.max(0, Number(body.total || 0));

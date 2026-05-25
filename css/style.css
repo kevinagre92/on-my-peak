@@ -4492,10 +4492,42 @@ select:focus-visible {
   min-width: 0;
 }
 
-.seller-sales__price input {
+.seller-sales__price input,
+.seller-sales__delivery input {
   min-height: 1.85rem;
   padding: 0 0.42rem;
   font-size: 0.54rem;
+}
+
+.seller-sales__delivery {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  padding-top: 0.42rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.seller-sales__delivery span {
+  color: var(--text-muted);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.seller-sales__delivery input {
+  width: 100%;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.22);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.seller-sales__delivery input:focus {
+  border-color: rgba(55,213,197,0.58);
+  outline: none;
 }
 
 .seller-sales__profit {
@@ -5112,7 +5144,8 @@ select:focus-visible {
   }
 
   .seller-sales__row > span::before,
-  .seller-sales__price::before {
+  .seller-sales__price::before,
+  .seller-sales__delivery::before {
     content: attr(data-label);
     color: var(--text-muted);
     text-transform: uppercase;
@@ -5123,6 +5156,20 @@ select:focus-visible {
     grid-template-columns: 1fr minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
+  }
+
+  .seller-sales__delivery {
+    grid-template-columns: 1fr;
+    gap: 0.38rem;
+  }
+
+  .seller-sales__delivery span {
+    display: none;
+  }
+
+  .seller-sales__delivery input {
+    min-height: 42px;
+    font-size: 0.58rem;
   }
 
   .seller-sales__manual {
