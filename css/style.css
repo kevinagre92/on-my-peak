@@ -2239,6 +2239,8 @@ select:focus-visible {
 
 .drop-calendar__next-action .calendar-btn {
   margin-top: 0.2rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 .drop-calendar__month-shell {
