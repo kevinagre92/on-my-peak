@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260525-drop2outside1">
+  <link rel="stylesheet" href="css/style.css?v=20260525-drop2top1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -497,6 +497,20 @@
         <figure class="drop-calendar__card drop-calendar__card--two">
           <div class="drop-calendar__cover">
             <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
+            <div class="drop-calendar__next-action reveal reveal-delay-3">
+              <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
+                <span class="drop-countdown__label">DROP 02/XX EN</span>
+                <div class="drop-countdown__grid">
+                  <span><strong id="countDays">00</strong><small>Días</small></span>
+                  <span><strong id="countHours">00</strong><small>Horas</small></span>
+                  <span><strong id="countMinutes">00</strong><small>Min</small></span>
+                  <span><strong id="countSeconds">00</strong><small>Seg</small></span>
+                </div>
+              </div>
+              <a class="calendar-btn" id="calendarButton" href="assets/calendar/next-drop-omp.ics" data-i18n="calendarButton">
+                MARCAR EN TU CALENDARIO
+              </a>
+            </div>
           </div>
           <figcaption>DROP 02/XX · 30 MAY - 28 JUN</figcaption>
         </figure>
@@ -504,21 +518,6 @@
           <div class="drop-calendar__cover drop-calendar__cover--empty" aria-hidden="true"></div>
           <figcaption>DROP 03/XX · (work in progress)</figcaption>
         </figure>
-      </div>
-
-      <div class="drop-calendar__next-action reveal reveal-delay-3">
-        <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
-          <span class="drop-countdown__label">DROP 02/XX EN</span>
-          <div class="drop-countdown__grid">
-            <span><strong id="countDays">00</strong><small>Días</small></span>
-            <span><strong id="countHours">00</strong><small>Horas</small></span>
-            <span><strong id="countMinutes">00</strong><small>Min</small></span>
-            <span><strong id="countSeconds">00</strong><small>Seg</small></span>
-          </div>
-        </div>
-        <a class="calendar-btn" id="calendarButton" href="assets/calendar/next-drop-omp.ics" data-i18n="calendarButton">
-          MARCAR EN TU CALENDARIO
-        </a>
       </div>
 
       <div class="drop-calendar__month-shell reveal reveal-delay-3" aria-label="Calendario de drops 2026">
@@ -849,6 +848,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260525-drop2outside1" defer></script>
+  <script src="js/script.js?v=20260525-drop2top1" defer></script>
 </body>
 </html>
