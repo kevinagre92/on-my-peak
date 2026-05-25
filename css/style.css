@@ -2089,11 +2089,11 @@ select:focus-visible {
   border: 2px solid rgba(255,255,255,0.12);
   background: #050505;
   scroll-snap-align: start;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
 .drop-calendar__card:hover {
-  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.28);
 }
 
 .drop-calendar__card--one {
@@ -2101,14 +2101,26 @@ select:focus-visible {
   box-shadow: 0 0 0 1px rgba(232,83,30,0.25), 0 24px 60px rgba(232,83,30,0.08);
 }
 
+.drop-calendar__card--one:hover {
+  border-color: var(--accent-lava);
+}
+
 .drop-calendar__card--two {
   border-color: #ffd32a;
   box-shadow: 0 0 0 1px rgba(255,211,42,0.22), 0 24px 60px rgba(255,211,42,0.07);
 }
 
+.drop-calendar__card--two:hover {
+  border-color: #ffd32a;
+}
+
 .drop-calendar__card--three {
   border-color: #37d5c5;
   box-shadow: 0 0 0 1px rgba(55,213,197,0.22), 0 24px 60px rgba(55,213,197,0.06);
+}
+
+.drop-calendar__card--three:hover {
+  border-color: #37d5c5;
 }
 
 .drop-calendar__cover {
