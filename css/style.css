@@ -2234,7 +2234,12 @@ select:focus-visible {
 }
 
 .drop-calendar__next-action .drop-countdown {
+  width: 100%;
   margin-top: 0;
+}
+
+.drop-calendar__next-action .drop-countdown__grid {
+  width: 100%;
 }
 
 .drop-calendar__next-action .calendar-btn {
