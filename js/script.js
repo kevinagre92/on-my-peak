@@ -1399,6 +1399,31 @@ document.addEventListener('DOMContentLoaded', () => {
     return Number(sale.total || 0) - getSaleCost(sale);
   }
 
+  function getSaleBuyerName(sale) {
+    return String(sale.client || '').trim();
+  }
+
+  function getSaleTimestamp(sale) {
+    const timestamp = new Date(sale.createdAt || 0).getTime();
+    return Number.isFinite(timestamp) ? timestamp : 0;
+  }
+
+  function sortSalesForDisplay(sales) {
+    return [...sales].sort((a, b) => {
+      const aComplete = Boolean(a.paid && a.delivered);
+      const bComplete = Boolean(b.paid && b.delivered);
+      if (aComplete !== bComplete) return aComplete ? -1 : 1;
+
+      const byBuyer = getSaleBuyerName(a).localeCompare(getSaleBuyerName(b), 'es', {
+        sensitivity: 'base',
+        numeric: true
+      });
+      if (byBuyer) return byBuyer;
+
+      return getSaleTimestamp(b) - getSaleTimestamp(a);
+    });
+  }
+
   function getColorHex(model, colorName) {
     const normalized = String(colorName || '').toLowerCase();
     const colors = colorsByModel[model] || Object.values(colorsByModel).flat();
@@ -1578,6 +1603,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSellerSales(salesInput = readSalesHistory(), status = '') {
     if (!sellerSalesTable) return;
     const sales = Array.isArray(salesInput) ? salesInput : [];
+    const sortedSales = sortSalesForDisplay(sales);
     if (!sales.length) {
       sellerSalesTable.innerHTML = `
         ${status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : ''}
@@ -1631,7 +1657,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="seller-sales__head" aria-hidden="true">
         <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span>Entrega</span><span></span>
       </div>
-      ${sales.map(sale => `
+      ${sortedSales.map(sale => `
         <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
           <span data-label="Modelo">${escapeHtml(sale.model)}${Number(sale.quantity) > 1 ? ` x${sale.quantity}` : ''}</span>
           <span data-label="Color">${escapeHtml(sale.color)}</span>
