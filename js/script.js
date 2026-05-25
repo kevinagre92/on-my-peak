@@ -1408,11 +1408,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return Number.isFinite(timestamp) ? timestamp : 0;
   }
 
+  function getSaleStatusPriority(sale) {
+    if (sale.paid && sale.delivered) return 0;
+    if (sale.paid) return 1;
+    if (sale.delivered) return 2;
+    return 3;
+  }
+
   function sortSalesForDisplay(sales) {
     return [...sales].sort((a, b) => {
-      const aComplete = Boolean(a.paid && a.delivered);
-      const bComplete = Boolean(b.paid && b.delivered);
-      if (aComplete !== bComplete) return aComplete ? -1 : 1;
+      const byStatus = getSaleStatusPriority(a) - getSaleStatusPriority(b);
+      if (byStatus) return byStatus;
 
       const byBuyer = getSaleBuyerName(a).localeCompare(getSaleBuyerName(b), 'es', {
         sensitivity: 'base',
