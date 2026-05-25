@@ -1333,12 +1333,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function patchSalePaid(id, paid) {
+  async function patchSaleStatus(id, status) {
     const response = await fetch('/api/sales', salesApiOptions({
       method: 'PATCH',
-      body: JSON.stringify({ id, paid })
+      body: JSON.stringify({ id, ...status })
     }));
     if (!response.ok) throw new Error('sale_patch_failed');
+  }
+
+  async function patchSalePaid(id, paid) {
+    return patchSaleStatus(id, { paid });
+  }
+
+  async function patchSaleDelivered(id, delivered) {
+    return patchSaleStatus(id, { delivered });
   }
 
   async function patchSaleTotal(id, total) {
@@ -1542,7 +1550,8 @@ document.addEventListener('DOMContentLoaded', () => {
       total: lineTotal,
       netProfit: lineTotal - (getSaleUnitCost(item.model) * Number(item.quantity || 1)),
       orderTotal: total,
-      paid: false
+      paid: false,
+      delivered: false
       });
     });
     writeSalesHistory([...rows, ...readSalesHistory()].slice(0, 300));
@@ -1615,10 +1624,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
       <div class="seller-sales__head" aria-hidden="true">
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span></span>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span>Entrega</span><span></span>
       </div>
       ${sales.map(sale => `
-        <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''}" data-sale-id="${escapeHtml(sale.id)}">
+        <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
           <span data-label="Modelo">${escapeHtml(sale.model)}${Number(sale.quantity) > 1 ? ` x${sale.quantity}` : ''}</span>
           <span data-label="Color">${escapeHtml(sale.color)}</span>
           <span data-label="Talla">${escapeHtml(sale.size)}</span>
@@ -1632,6 +1641,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
             <span>Pago recibido</span>
+          </label>
+          <label class="seller-sales__paid seller-sales__paid--delivered">
+            <input type="checkbox" data-sale-delivered ${sale.delivered ? 'checked' : ''}>
+            <span>Entregado</span>
           </label>
           <button class="seller-sales__delete" type="button" data-sale-delete aria-label="Eliminar venta">Eliminar</button>
         </article>
@@ -1989,7 +2002,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   sellerSalesTable?.addEventListener('change', async (e) => {
-    const checkbox = e.target.closest('[data-sale-paid]');
+    const checkbox = e.target.closest('[data-sale-paid], [data-sale-delivered]');
     const priceInput = e.target.closest('[data-sale-total]');
     if (!checkbox && !priceInput) return;
     if (priceInput) {
@@ -2018,14 +2031,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const sales = readSalesHistory();
     const sale = sales.find(item => item.id === saleId);
     if (!sale) return;
-    sale.paid = checkbox.checked;
+    const isDeliveryToggle = checkbox.matches('[data-sale-delivered]');
+    if (isDeliveryToggle) {
+      sale.delivered = checkbox.checked;
+    } else {
+      sale.paid = checkbox.checked;
+    }
     writeSalesHistory(sales);
     renderSellerSales();
     try {
-      await patchSalePaid(saleId, checkbox.checked);
+      if (isDeliveryToggle) {
+        await patchSaleDelivered(saleId, checkbox.checked);
+      } else {
+        await patchSalePaid(saleId, checkbox.checked);
+      }
       await loadSellerSales();
     } catch (error) {
-      renderSellerSales(readSalesHistory(), 'Pago marcado en esta copia. No se pudo sincronizar con el ERP.');
+      renderSellerSales(readSalesHistory(), `${isDeliveryToggle ? 'Entrega' : 'Pago'} marcado en esta copia. No se pudo sincronizar con el ERP.`);
     }
   });
   sellerSalesTable?.addEventListener('click', async (e) => {
@@ -2083,7 +2105,8 @@ document.addEventListener('DOMContentLoaded', () => {
       cost: unitCost * quantity,
       total,
       netProfit: total - (unitCost * quantity),
-      paid: false
+      paid: false,
+      delivered: false
     };
     if (!sale.color || !sale.size || !sale.client || !sale.total) return;
     const nextSales = [sale, ...readSalesHistory()].slice(0, 300);

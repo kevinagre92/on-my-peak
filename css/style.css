@@ -4431,7 +4431,7 @@ select:focus-visible {
 .seller-sales__head,
 .seller-sales__row {
   display: grid;
-  grid-template-columns: 0.85fr 0.85fr 0.42fr 1fr 0.7fr 0.75fr 0.75fr 0.8fr 0.95fr 0.65fr;
+  grid-template-columns: 0.85fr 0.85fr 0.42fr 1fr 0.7fr 0.75fr 0.75fr 0.8fr 0.92fr 0.78fr 0.65fr;
   gap: 0.55rem;
   align-items: center;
 }
@@ -4465,6 +4465,10 @@ select:focus-visible {
   color: rgba(255,255,255,0.84);
 }
 
+.seller-sales__row--delivered {
+  box-shadow: inset 3px 0 0 rgba(55,213,197,0.55);
+}
+
 .seller-sales__paid {
   display: flex;
   align-items: center;
@@ -4478,6 +4482,10 @@ select:focus-visible {
   width: 18px;
   height: 18px;
   accent-color: var(--accent-lava);
+}
+
+.seller-sales__paid--delivered input {
+  accent-color: #37d5c5;
 }
 
 .seller-sales__price {
