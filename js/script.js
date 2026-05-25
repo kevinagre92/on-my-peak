@@ -1345,6 +1345,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return patchSaleStatus(id, { paid });
   }
 
+  async function patchSaleManufactured(id, manufactured) {
+    return patchSaleStatus(id, { manufactured });
+  }
+
   async function patchSaleDelivered(id, delivered) {
     return patchSaleStatus(id, { delivered });
   }
@@ -1585,6 +1589,7 @@ document.addEventListener('DOMContentLoaded', () => {
       total: lineTotal,
       netProfit: lineTotal - (getSaleUnitCost(item.model) * Number(item.quantity || 1)),
       orderTotal: total,
+      manufactured: false,
       paid: false,
       delivered: false,
       deliveryDetails: ''
@@ -1661,10 +1666,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </section>
       <div class="seller-sales__head" aria-hidden="true">
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Pago</span><span>Entrega</span><span></span>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Fabricada</span><span>Pago</span><span>Entrega</span><span></span>
       </div>
       ${sortedSales.map(sale => `
-        <article class="seller-sales__row ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
+        <article class="seller-sales__row ${sale.manufactured ? 'seller-sales__row--manufactured' : ''} ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
           <span data-label="Modelo">${escapeHtml(sale.model)}${Number(sale.quantity) > 1 ? ` x${sale.quantity}` : ''}</span>
           <span data-label="Color">${escapeHtml(sale.color)}</span>
           <span data-label="Talla">${escapeHtml(sale.size)}</span>
@@ -1675,6 +1680,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </label>
           <span data-label="Coste">${formatCurrencyHtml(getSaleCost(sale))}</span>
           <span data-label="Beneficio" class="${getSaleProfit(sale) < 0 ? 'seller-sales__loss' : 'seller-sales__profit'}">${formatCurrencyHtml(getSaleProfit(sale))}</span>
+          <label class="seller-sales__paid seller-sales__paid--manufactured">
+            <input type="checkbox" data-sale-manufactured ${sale.manufactured ? 'checked' : ''}>
+            <span>Fabricada</span>
+          </label>
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
             <span>Pago recibido</span>
@@ -2043,7 +2052,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   sellerSalesTable?.addEventListener('change', async (e) => {
-    const checkbox = e.target.closest('[data-sale-paid], [data-sale-delivered]');
+    const checkbox = e.target.closest('[data-sale-manufactured], [data-sale-paid], [data-sale-delivered]');
     const priceInput = e.target.closest('[data-sale-total]');
     const deliveryInput = e.target.closest('[data-sale-delivery-details]');
     if (!checkbox && !priceInput && !deliveryInput) return;
@@ -2091,8 +2100,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const sales = readSalesHistory();
     const sale = sales.find(item => item.id === saleId);
     if (!sale) return;
+    const isManufacturedToggle = checkbox.matches('[data-sale-manufactured]');
     const isDeliveryToggle = checkbox.matches('[data-sale-delivered]');
-    if (isDeliveryToggle) {
+    if (isManufacturedToggle) {
+      sale.manufactured = checkbox.checked;
+    } else if (isDeliveryToggle) {
       sale.delivered = checkbox.checked;
     } else {
       sale.paid = checkbox.checked;
@@ -2100,14 +2112,17 @@ document.addEventListener('DOMContentLoaded', () => {
     writeSalesHistory(sales);
     renderSellerSales();
     try {
-      if (isDeliveryToggle) {
+      if (isManufacturedToggle) {
+        await patchSaleManufactured(saleId, checkbox.checked);
+      } else if (isDeliveryToggle) {
         await patchSaleDelivered(saleId, checkbox.checked);
       } else {
         await patchSalePaid(saleId, checkbox.checked);
       }
       await loadSellerSales();
     } catch (error) {
-      renderSellerSales(readSalesHistory(), `${isDeliveryToggle ? 'Entrega' : 'Pago'} marcado en esta copia. No se pudo sincronizar con el ERP.`);
+      const statusLabel = isManufacturedToggle ? 'Fabricación' : isDeliveryToggle ? 'Entrega' : 'Pago';
+      renderSellerSales(readSalesHistory(), `${statusLabel} marcada en esta copia. No se pudo sincronizar con el ERP.`);
     }
   });
   sellerSalesTable?.addEventListener('click', async (e) => {
@@ -2165,6 +2180,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cost: unitCost * quantity,
       total,
       netProfit: total - (unitCost * quantity),
+      manufactured: false,
       paid: false,
       delivered: false,
       deliveryDetails: ''

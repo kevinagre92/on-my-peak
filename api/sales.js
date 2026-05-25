@@ -158,6 +158,8 @@ function cleanSale(row = {}) {
     cost,
     total,
     netProfit: total - cost,
+    manufactured: Boolean(row.manufactured),
+    manufacturedAt: cleanText(row.manufacturedAt, 60),
     paid: Boolean(row.paid),
     paidAt: cleanText(row.paidAt, 60),
     delivered: Boolean(row.delivered),
@@ -199,6 +201,10 @@ module.exports = async function handler(req, res) {
       if (Object.prototype.hasOwnProperty.call(body, 'paid')) {
         sale.paid = Boolean(body.paid);
         sale.paidAt = sale.paid ? new Date().toISOString() : '';
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'manufactured')) {
+        sale.manufactured = Boolean(body.manufactured);
+        sale.manufacturedAt = sale.manufactured ? new Date().toISOString() : '';
       }
       if (Object.prototype.hasOwnProperty.call(body, 'delivered')) {
         sale.delivered = Boolean(body.delivered);
