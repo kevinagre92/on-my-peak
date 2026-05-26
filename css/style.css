@@ -4257,6 +4257,83 @@ select:focus-visible {
   color: var(--accent-lava);
 }
 
+.seller-calendar {
+  display: grid;
+  gap: 0.46rem;
+  margin-bottom: 0.9rem;
+  padding: 0.78rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.035);
+}
+
+.seller-calendar__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.seller-calendar__head span {
+  color: var(--accent-lava);
+}
+
+.seller-calendar__week,
+.seller-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.28rem;
+}
+
+.seller-calendar__week {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+}
+
+.seller-calendar__day {
+  position: relative;
+  min-height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+}
+
+.seller-calendar__day--empty {
+  border-color: transparent;
+  background: transparent;
+}
+
+.seller-calendar__day--active {
+  border-color: rgba(232,83,30,0.5);
+  background: rgba(232,83,30,0.12);
+  color: var(--text-primary);
+}
+
+.seller-calendar__day em {
+  position: absolute;
+  top: 0.18rem;
+  right: 0.18rem;
+  min-width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-lava);
+  color: #fff;
+  font-style: normal;
+  font-size: 0.46rem;
+  line-height: 1;
+}
+
 .seller-inventory {
   display: grid;
   gap: 0.48rem;

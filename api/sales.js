@@ -1,6 +1,7 @@
 const SALES_KEY = 'omp:sales:v1';
 const MAX_SALES = 1000;
-const DEFAULT_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e545a-dadf-7137-a85d-bebff86313fe';
+const DEFAULT_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e63bb-dfce-78dd-b5a6-f27c26b8e4a3';
+const LEGACY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e545a-dadf-7137-a85d-bebff86313fe';
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -54,7 +55,7 @@ async function kvFetch(path, options = {}) {
 }
 
 function getJsonBlobUrls() {
-  return [...new Set([process.env.SALES_JSONBLOB_URL, DEFAULT_JSONBLOB_URL].filter(Boolean))];
+  return [...new Set([process.env.SALES_JSONBLOB_URL, DEFAULT_JSONBLOB_URL, LEGACY_JSONBLOB_URL].filter(Boolean))];
 }
 
 async function jsonBlobFetch(options = {}) {
@@ -86,9 +87,19 @@ async function jsonBlobFetch(options = {}) {
 }
 
 async function getSales() {
-  const data = await kvFetch(`/get/${encodeURIComponent(SALES_KEY)}`);
+  let data = null;
+  try {
+    data = await kvFetch(`/get/${encodeURIComponent(SALES_KEY)}`);
+  } catch (error) {
+    data = null;
+  }
   if (!data) {
-    const blob = await jsonBlobFetch();
+    let blob = null;
+    try {
+      blob = await jsonBlobFetch();
+    } catch (error) {
+      blob = null;
+    }
     if (blob && Array.isArray(blob.sales)) return blob.sales;
     return memoryStore();
   }
@@ -107,18 +118,27 @@ async function getSales() {
 
 async function setSales(sales) {
   const normalized = Array.isArray(sales) ? sales.slice(0, MAX_SALES) : [];
-  const data = await kvFetch(`/set/${encodeURIComponent(SALES_KEY)}`, {
-    method: 'POST',
-    body: JSON.stringify(normalized)
-  });
-  if (!data) {
-    await jsonBlobFetch({
-      method: 'PUT',
-      body: JSON.stringify({
-        updatedAt: new Date().toISOString(),
-        sales: normalized
-      })
+  let data = null;
+  try {
+    data = await kvFetch(`/set/${encodeURIComponent(SALES_KEY)}`, {
+      method: 'POST',
+      body: JSON.stringify(normalized)
     });
+  } catch (error) {
+    data = null;
+  }
+  if (!data) {
+    try {
+      await jsonBlobFetch({
+        method: 'PUT',
+        body: JSON.stringify({
+          updatedAt: new Date().toISOString(),
+          sales: normalized
+        })
+      });
+    } catch (error) {
+      // Keep the API responsive even if the external fallback is temporarily down.
+    }
     globalThis.__ompSalesStore = normalized;
   }
 }

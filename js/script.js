@@ -1315,23 +1315,41 @@ document.addEventListener('DOMContentLoaded', () => {
   function postSalesHistory(rows) {
     if (!rows.length) return;
     const payload = JSON.stringify({ sales: rows });
-    try {
-      const blob = new Blob([payload], { type: 'application/json' });
-      if (navigator.sendBeacon && navigator.sendBeacon('/api/sales', blob)) return;
+    fetch('/api/sales', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true
+    }).catch(() => {
+      try {
+        const blob = new Blob([payload], { type: 'application/json' });
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/sales', blob);
+      } catch (error) {
+        fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true
+        }).catch(() => {});
+      }
+    });
+  }
+
+  function retryPendingSales() {
+    const pending = readSalesHistory().filter(sale => sale && sale.id && sale.model && sale.color && sale.size && sale.client);
+    if (!pending.length) return;
+    fetchSalesHistory().then(remoteSales => {
+      const remoteIds = new Set(remoteSales.map(sale => sale.id));
+      const missingRows = pending.filter(sale => !remoteIds.has(sale.id)).slice(0, 50);
+      if (missingRows.length) postSalesHistory(missingRows);
+    }).catch(() => {
       fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: payload,
+        body: JSON.stringify({ sales: pending.slice(0, 50) }),
         keepalive: true
       }).catch(() => {});
-    } catch (error) {
-      fetch('/api/sales', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload,
-        keepalive: true
-      }).catch(() => {});
-    }
+    });
   }
 
   async function patchSaleStatus(id, status) {
@@ -1427,6 +1445,62 @@ document.addEventListener('DOMContentLoaded', () => {
       dateStyle: 'short',
       timeStyle: 'short'
     });
+  }
+
+  function getSaleDateKey(sale) {
+    const timestamp = getSaleTimestamp(sale);
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function renderSellerSalesCalendar(sales) {
+    const datedSales = sales.filter(sale => getSaleTimestamp(sale));
+    const baseDate = datedSales.length
+      ? new Date(Math.max(...datedSales.map(sale => getSaleTimestamp(sale))))
+      : new Date();
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    const monthLabel = baseDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+    const firstDay = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const offset = (firstDay.getDay() + 6) % 7;
+    const counts = sales.reduce((acc, sale) => {
+      const key = getSaleDateKey(sale);
+      if (key) acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const cells = [];
+    for (let index = 0; index < offset; index += 1) {
+      cells.push('<span class="seller-calendar__day seller-calendar__day--empty"></span>');
+    }
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const count = counts[key] || 0;
+      cells.push(`
+        <span class="seller-calendar__day ${count ? 'seller-calendar__day--active' : ''}" title="${count ? `${count} pedido${count === 1 ? '' : 's'}` : 'Sin pedidos'}">
+          <b>${day}</b>
+          ${count ? `<em>${count}</em>` : ''}
+        </span>
+      `);
+    }
+    return `
+      <section class="seller-calendar" aria-label="Calendario de pedidos">
+        <div class="seller-calendar__head">
+          <strong>Calendario pedidos</strong>
+          <span>${escapeHtml(monthLabel)}</span>
+        </div>
+        <div class="seller-calendar__week" aria-hidden="true">
+          <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+        </div>
+        <div class="seller-calendar__grid">
+          ${cells.join('')}
+        </div>
+      </section>
+    `;
   }
 
   function sortSalesForDisplay(sales) {
@@ -1648,6 +1722,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusRow = status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : '';
     const inventoryRows = renderSellerInventorySummary(sales);
     const codeUsageRows = renderSellerCodeUsage(sales);
+    const salesCalendar = renderSellerSalesCalendar(sales);
     const allManufactured = sales.every(sale => sale.manufactured);
     const allPaid = sales.every(sale => sale.paid);
     const allDelivered = sales.every(sale => sale.delivered);
@@ -1678,6 +1753,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="seller-inventory" aria-label="Resumen por modelo, color y talla">
         ${inventoryRows}
       </div>
+      ${salesCalendar}
       <section class="seller-code-usage" aria-label="Uso de códigos de descuento">
         <div class="seller-code-usage__head">
           <strong>Códigos usados</strong>
@@ -1757,6 +1833,8 @@ document.addEventListener('DOMContentLoaded', () => {
     sellerSales?.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lightbox-open');
   }
+
+  setTimeout(retryPendingSales, 1200);
 
   function readCart() {
     try {
