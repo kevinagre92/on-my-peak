@@ -1413,16 +1413,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getSaleStatusPriority(sale) {
-    if (sale.paid && sale.delivered) return 0;
+    if (sale.paid && sale.delivered) return 3;
+    if (sale.delivered) return 0;
     if (sale.paid) return 1;
-    if (sale.delivered) return 2;
-    return 3;
+    return 2;
+  }
+
+  function formatSaleDateTime(sale) {
+    const timestamp = getSaleTimestamp(sale);
+    if (!timestamp) return '-';
+    return new Date(timestamp).toLocaleString('es-ES', {
+      dateStyle: 'short',
+      timeStyle: 'short'
+    });
   }
 
   function sortSalesForDisplay(sales) {
     return [...sales].sort((a, b) => {
       const byStatus = getSaleStatusPriority(a) - getSaleStatusPriority(b);
       if (byStatus) return byStatus;
+
+      const aTimestamp = getSaleTimestamp(a);
+      const bTimestamp = getSaleTimestamp(b);
+      if (getSaleStatusPriority(a) === 2 && aTimestamp && bTimestamp && aTimestamp !== bTimestamp) {
+        return bTimestamp - aTimestamp;
+      }
+      if (getSaleStatusPriority(a) === 2 && aTimestamp !== bTimestamp) {
+        return bTimestamp - aTimestamp;
+      }
 
       const byBuyer = getSaleBuyerName(a).localeCompare(getSaleBuyerName(b), 'es', {
         sensitivity: 'base',
@@ -1629,6 +1647,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusRow = status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : '';
     const inventoryRows = renderSellerInventorySummary(sales);
     const codeUsageRows = renderSellerCodeUsage(sales);
+    const allManufactured = sales.every(sale => sale.manufactured);
+    const allPaid = sales.every(sale => sale.paid);
+    const allDelivered = sales.every(sale => sale.delivered);
     sellerSalesTable.innerHTML = `
       ${statusRow}
       <div class="seller-sales__summary" aria-label="Resumen de productos vendidos">
@@ -1665,25 +1686,39 @@ document.addEventListener('DOMContentLoaded', () => {
           ${codeUsageRows}
         </div>
       </section>
-      <div class="seller-sales__head" aria-hidden="true">
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span><span>Fabricada</span><span>Pago</span><span>Entrega</span><span></span>
+      <div class="seller-sales__head">
+        <label class="seller-sales__bulk">
+          <input type="checkbox" data-sale-bulk="manufactured" ${allManufactured ? 'checked' : ''} aria-label="Marcar todas como fabricadas">
+          <span>Fabricada</span>
+        </label>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Compra</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span>
+        <label class="seller-sales__bulk">
+          <input type="checkbox" data-sale-bulk="paid" ${allPaid ? 'checked' : ''} aria-label="Marcar todas como pagadas">
+          <span>Pago</span>
+        </label>
+        <label class="seller-sales__bulk">
+          <input type="checkbox" data-sale-bulk="delivered" ${allDelivered ? 'checked' : ''} aria-label="Marcar todas como entregadas">
+          <span>Entrega</span>
+        </label>
+        <span></span>
       </div>
       ${sortedSales.map(sale => `
         <article class="seller-sales__row ${sale.manufactured ? 'seller-sales__row--manufactured' : ''} ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
+          <label class="seller-sales__paid seller-sales__paid--manufactured">
+            <input type="checkbox" data-sale-manufactured ${sale.manufactured ? 'checked' : ''}>
+            <span>Fabricada</span>
+          </label>
           <span data-label="Modelo">${escapeHtml(sale.model)}${Number(sale.quantity) > 1 ? ` x${sale.quantity}` : ''}</span>
           <span data-label="Color">${escapeHtml(sale.color)}</span>
           <span data-label="Talla">${escapeHtml(sale.size)}</span>
           <span data-label="Cliente">${escapeHtml(sale.client)}</span>
+          <span data-label="Compra">${escapeHtml(formatSaleDateTime(sale))}</span>
           <span data-label="Código">${sale.code ? escapeHtml(sale.code) : '-'}</span>
           <label class="seller-sales__price" data-label="Venta">
             <input type="number" min="0" step="0.01" value="${Number(sale.total || 0).toFixed(2)}" data-sale-total aria-label="Precio de venta">
           </label>
           <span data-label="Coste">${formatCurrencyHtml(getSaleCost(sale))}</span>
           <span data-label="Beneficio" class="${getSaleProfit(sale) < 0 ? 'seller-sales__loss' : 'seller-sales__profit'}">${formatCurrencyHtml(getSaleProfit(sale))}</span>
-          <label class="seller-sales__paid seller-sales__paid--manufactured">
-            <input type="checkbox" data-sale-manufactured ${sale.manufactured ? 'checked' : ''}>
-            <span>Fabricada</span>
-          </label>
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
             <span>Pago recibido</span>
@@ -2052,10 +2087,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   sellerSalesTable?.addEventListener('change', async (e) => {
+    const bulkCheckbox = e.target.closest('[data-sale-bulk]');
     const checkbox = e.target.closest('[data-sale-manufactured], [data-sale-paid], [data-sale-delivered]');
     const priceInput = e.target.closest('[data-sale-total]');
     const deliveryInput = e.target.closest('[data-sale-delivery-details]');
-    if (!checkbox && !priceInput && !deliveryInput) return;
+    if (!bulkCheckbox && !checkbox && !priceInput && !deliveryInput) return;
+    if (bulkCheckbox) {
+      const field = bulkCheckbox.dataset.saleBulk;
+      const checked = bulkCheckbox.checked;
+      const sales = readSalesHistory();
+      const allowedFields = new Set(['manufactured', 'paid', 'delivered']);
+      if (!allowedFields.has(field) || !sales.length) return;
+      sales.forEach(sale => {
+        sale[field] = checked;
+      });
+      writeSalesHistory(sales);
+      renderSellerSales(sales, `${checked ? 'Columna marcada' : 'Columna desmarcada'}.`);
+      try {
+        await Promise.all(sales.map(sale => patchSaleStatus(sale.id, { [field]: checked })));
+        await loadSellerSales();
+      } catch (error) {
+        renderSellerSales(readSalesHistory(), 'Columna actualizada en esta copia. No se pudo sincronizar todo con el ERP.');
+      }
+      return;
+    }
     if (priceInput) {
       const priceRow = priceInput.closest('[data-sale-id]');
       const saleId = priceRow?.dataset.saleId;
