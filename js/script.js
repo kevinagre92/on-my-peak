@@ -700,6 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'QUEROLI10',
     'GALVAN10',
     'GAROLI10',
+    'DOMPU10',
     'SALAN10'
   ]);
   const DISCOUNT_RATE = 0.10;
