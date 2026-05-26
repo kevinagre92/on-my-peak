@@ -699,6 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'CLAUDIA10',
     'QUEROLI10',
     'GALVAN10',
+    'GAROLI10',
     'SALAN10'
   ]);
   const DISCOUNT_RATE = 0.10;
