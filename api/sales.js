@@ -7,7 +7,7 @@ function json(res, status, body) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-OMP-Admin-Key');
   res.end(JSON.stringify(body));
 }
@@ -149,8 +149,14 @@ function cleanText(value, max = 120) {
 
 function getUnitCost(model) {
   const normalized = cleanText(model).toLowerCase();
-  if (normalized.includes('hoodie') || normalized.includes('hoddie')) return 19;
-  if (normalized.includes('crop') || normalized.includes('oversized')) return 12;
+  if (normalized.includes('hoodie') || normalized.includes('hoddie') || normalized.includes('otto')) return 19;
+  if (
+    normalized.includes('crop') ||
+    normalized.includes('oversized') ||
+    normalized.includes('dominica') ||
+    normalized.includes('bull') ||
+    normalized.includes('chow')
+  ) return 12;
   return 0;
 }
 
@@ -164,7 +170,8 @@ function cleanSale(row = {}) {
   return {
     id,
     orderId: cleanText(row.orderId) || id,
-    createdAt: cleanText(row.createdAt) || new Date().toISOString(),
+    drop: cleanText(row.drop, 40) || 'DROP 01/XX',
+    createdAt: Object.prototype.hasOwnProperty.call(row, 'createdAt') ? cleanText(row.createdAt, 60) : new Date().toISOString(),
     model,
     color: cleanText(row.color, 80),
     size: cleanText(row.size, 20),
@@ -208,6 +215,15 @@ module.exports = async function handler(req, res) {
       const next = [...cleaned.filter(sale => !knownIds.has(sale.id)), ...current].slice(0, MAX_SALES);
       await setSales(next);
       return json(res, 200, { ok: true, inserted: next.length - current.length, storage: process.env.KV_REST_API_URL ? 'kv' : 'jsonblob' });
+    }
+
+    if (req.method === 'PUT') {
+      if (!isAdminRequest(req)) return json(res, 401, { ok: false, error: 'unauthorized' });
+      const body = await readBody(req);
+      const incoming = Array.isArray(body.sales) ? body.sales : [];
+      const cleaned = incoming.map(cleanSale).filter(sale => sale.model && sale.color && sale.size && sale.client);
+      await setSales(cleaned);
+      return json(res, 200, { ok: true, replaced: cleaned.length, storage: process.env.KV_REST_API_URL ? 'kv' : 'jsonblob' });
     }
 
     if (req.method === 'PATCH') {

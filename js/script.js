@@ -337,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sellerSalesClose = document.getElementById('sellerSalesClose');
   const sellerSalesReset = document.getElementById('sellerSalesReset');
   const sellerManualSaleForm = document.getElementById('sellerManualSaleForm');
+  const sellerManualDrop = document.getElementById('sellerManualDrop');
   const sellerManualModel = document.getElementById('sellerManualModel');
   const sellerManualColor = document.getElementById('sellerManualColor');
   const sellerManualSize = document.getElementById('sellerManualSize');
@@ -663,13 +664,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const pricesByModel = {
     Oversized: 22,
     'Crop top': 22,
-    Hoodie: 35
+    Hoodie: 35,
+    Bull: 22,
+    Chow: 22,
+    Dominica: 22,
+    Otto: 35
   };
 
   const costsByModel = {
     Oversized: 12,
     'Crop top': 12,
-    Hoodie: 19
+    Hoodie: 19,
+    Bull: 12,
+    Chow: 12,
+    Dominica: 12,
+    Otto: 19
   };
 
   const modelCards = {
@@ -1167,6 +1176,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let sellerSalesLoading = false;
+  let sellerSalesDropFilter = getStoredValue('omp_seller_drop_filter', 'DROP 01/XX');
 
   function getSellerApiKey() {
     const params = new URLSearchParams(window.location.search);
@@ -1411,7 +1421,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getSaleUnitCost(model) {
-    return costsByModel[model] || (String(model || '').toLowerCase().includes('hoodie') ? 19 : String(model || '').toLowerCase().includes('crop') || String(model || '').toLowerCase().includes('oversized') ? 12 : 0);
+    const normalized = String(model || '').toLowerCase();
+    return costsByModel[model] || (
+      normalized.includes('hoodie') || normalized.includes('hoddie') || normalized.includes('otto')
+        ? 19
+        : normalized.includes('crop') || normalized.includes('oversized') || normalized.includes('dominica') || normalized.includes('bull') || normalized.includes('chow')
+          ? 12
+          : 0
+    );
   }
 
   function getSaleCost(sale) {
@@ -1425,6 +1442,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getSaleBuyerName(sale) {
     return String(sale.client || '').trim();
+  }
+
+  function getSaleDrop(sale) {
+    return String(sale.drop || 'DROP 01/XX').trim() || 'DROP 01/XX';
   }
 
   function getSaleTimestamp(sale) {
@@ -1530,6 +1551,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getColorHex(model, colorName) {
     const normalized = String(colorName || '').toLowerCase();
+    const namedColors = {
+      'azul lavado': '#7aaebd',
+      'azul tormenta': '#607989',
+      'azul zen': '#5b5aa3',
+      blanca: '#ffffff',
+      blanco: '#ffffff',
+      coral: '#ff6b6b',
+      ebano: '#343c43',
+      ébano: '#343c43',
+      gris: '#a8a5a0',
+      'gris ebano': '#66615c',
+      'gris ébano': '#66615c',
+      'gris piedra': '#b4b0aa',
+      jade: '#11b6a5',
+      marino: '#001f46',
+      negra: '#000000',
+      negro: '#000000',
+      rosa: '#f35699',
+      'rosa lady fluor': '#ff4fa0',
+      'verde mist': '#d1dbc2'
+    };
+    if (namedColors[normalized]) return namedColors[normalized];
     const colors = colorsByModel[model] || Object.values(colorsByModel).flat();
     return colors.find(color => color.name.toLowerCase() === normalized)?.hex || '#f4f4f4';
   }
@@ -1668,6 +1711,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return ({
       id: `${saleId}-${index}`,
       orderId: saleId,
+      drop: 'DROP 01/XX',
       createdAt: now,
       model: item.model,
       color: item.color,
@@ -1708,7 +1752,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSellerSales(salesInput = readSalesHistory(), status = '') {
     if (!sellerSalesTable) return;
     const sales = Array.isArray(salesInput) ? salesInput : [];
-    const sortedSales = sortSalesForDisplay(sales);
     if (!sales.length) {
       sellerSalesTable.innerHTML = `
         ${status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : ''}
@@ -1716,23 +1759,42 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       return;
     }
-    const totalSales = sales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
-    const paidSales = sales.filter(sale => sale.paid).reduce((sum, sale) => sum + Number(sale.total || 0), 0);
-    const totalCost = sales.reduce((sum, sale) => sum + getSaleCost(sale), 0);
-    const totalProfit = sales.reduce((sum, sale) => sum + getSaleProfit(sale), 0);
+    const drops = [...new Set(sales.map(getSaleDrop))].sort((a, b) => a.localeCompare(b, 'es', { numeric: true, sensitivity: 'base' }));
+    if (!drops.includes(sellerSalesDropFilter)) {
+      sellerSalesDropFilter = drops[0] || 'DROP 01/XX';
+      setStoredValue('omp_seller_drop_filter', sellerSalesDropFilter);
+    }
+    const visibleSales = sales.filter(sale => getSaleDrop(sale) === sellerSalesDropFilter);
+    const sortedSales = sortSalesForDisplay(visibleSales);
+    const dropTabs = drops.map(drop => {
+      const count = sales.filter(sale => getSaleDrop(sale) === drop).length;
+      return `
+        <button class="seller-drop-tabs__button ${drop === sellerSalesDropFilter ? 'is-active' : ''}" type="button" data-seller-drop="${escapeHtml(drop)}">
+          <span>${escapeHtml(drop)}</span>
+          <b>${count}</b>
+        </button>
+      `;
+    }).join('');
+    const totalSales = visibleSales.reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+    const paidSales = visibleSales.filter(sale => sale.paid).reduce((sum, sale) => sum + Number(sale.total || 0), 0);
+    const totalCost = visibleSales.reduce((sum, sale) => sum + getSaleCost(sale), 0);
+    const totalProfit = visibleSales.reduce((sum, sale) => sum + getSaleProfit(sale), 0);
     const statusRow = status ? `<p class="seller-sales__status">${escapeHtml(status)}</p>` : '';
-    const inventoryRows = renderSellerInventorySummary(sales);
-    const codeUsageRows = renderSellerCodeUsage(sales);
-    const salesCalendar = renderSellerSalesCalendar(sales);
-    const allManufactured = sales.every(sale => sale.manufactured);
-    const allPaid = sales.every(sale => sale.paid);
-    const allDelivered = sales.every(sale => sale.delivered);
+    const inventoryRows = renderSellerInventorySummary(visibleSales);
+    const codeUsageRows = renderSellerCodeUsage(visibleSales);
+    const salesCalendar = renderSellerSalesCalendar(visibleSales);
+    const allManufactured = visibleSales.length > 0 && visibleSales.every(sale => sale.manufactured);
+    const allPaid = visibleSales.length > 0 && visibleSales.every(sale => sale.paid);
+    const allDelivered = visibleSales.length > 0 && visibleSales.every(sale => sale.delivered);
     sellerSalesTable.innerHTML = `
       ${statusRow}
+      <nav class="seller-drop-tabs" aria-label="Ventas por drop">
+        ${dropTabs}
+      </nav>
       <div class="seller-sales__summary" aria-label="Resumen de productos vendidos">
         <article class="seller-sales__summary-card seller-sales__summary-card--total">
-          <strong>Total ERP</strong>
-          <span>${sales.length} líneas</span>
+          <strong>${escapeHtml(sellerSalesDropFilter)}</strong>
+          <span>${visibleSales.length} líneas</span>
           <b>${formatCurrencyHtml(totalSales)}</b>
         </article>
         <article class="seller-sales__summary-card seller-sales__summary-card--total">
@@ -2178,13 +2240,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const sales = readSalesHistory();
       const allowedFields = new Set(['manufactured', 'paid', 'delivered']);
       if (!allowedFields.has(field) || !sales.length) return;
-      sales.forEach(sale => {
+      const affectedSales = sales.filter(sale => getSaleDrop(sale) === sellerSalesDropFilter);
+      affectedSales.forEach(sale => {
         sale[field] = checked;
       });
       writeSalesHistory(sales);
       renderSellerSales(sales, `${checked ? 'Columna marcada' : 'Columna desmarcada'}.`);
       try {
-        await Promise.all(sales.map(sale => patchSaleStatus(sale.id, { [field]: checked })));
+        await Promise.all(affectedSales.map(sale => patchSaleStatus(sale.id, { [field]: checked })));
         await loadSellerSales();
       } catch (error) {
         renderSellerSales(readSalesHistory(), 'Columna actualizada en esta copia. No se pudo sincronizar todo con el ERP.');
@@ -2261,6 +2324,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   sellerSalesTable?.addEventListener('click', async (e) => {
+    const dropButton = e.target.closest('[data-seller-drop]');
+    if (dropButton) {
+      sellerSalesDropFilter = dropButton.dataset.sellerDrop || 'DROP 01/XX';
+      setStoredValue('omp_seller_drop_filter', sellerSalesDropFilter);
+      renderSellerSales();
+      return;
+    }
     const deleteButton = e.target.closest('[data-sale-delete]');
     if (!deleteButton) return;
     const row = deleteButton.closest('[data-sale-id]');
@@ -2301,6 +2371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sale = {
       id: `manual-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       orderId: `manual-${Date.now()}`,
+      drop: sellerManualDrop?.value || sellerSalesDropFilter || 'DROP 01/XX',
       createdAt: new Date().toISOString(),
       model,
       color: sellerManualColor?.value.trim() || '',

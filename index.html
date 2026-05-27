@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260527-communityfix1">
+  <link rel="stylesheet" href="css/style.css?v=20260527-droperp1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -782,11 +782,23 @@
       <form class="seller-sales__manual" id="sellerManualSaleForm" aria-label="Añadir venta manual">
         <p class="seller-sales__manual-title">Añadir venta manual</p>
         <label>
+          <span>Drop</span>
+          <select id="sellerManualDrop" required>
+            <option value="DROP 01/XX">DROP 01/XX</option>
+            <option value="DROP 02/XX">DROP 02/XX</option>
+            <option value="DROP 03/XX">DROP 03/XX</option>
+          </select>
+        </label>
+        <label>
           <span>Modelo</span>
           <select id="sellerManualModel" required>
             <option value="Oversized">Oversized</option>
             <option value="Crop top">Crop top</option>
             <option value="Hoodie">Hoodie</option>
+            <option value="Bull">Bull</option>
+            <option value="Chow">Chow</option>
+            <option value="Dominica">Dominica</option>
+            <option value="Otto">Otto</option>
           </select>
         </label>
         <label>
@@ -847,6 +859,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260527-communityfix1" defer></script>
+  <script src="js/script.js?v=20260527-droperp1" defer></script>
 </body>
 </html>
