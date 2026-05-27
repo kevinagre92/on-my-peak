@@ -4593,7 +4593,7 @@ select:focus-visible {
 .seller-sales__head,
 .seller-sales__row {
   display: grid;
-  grid-template-columns: 0.42fr 0.72fr 0.72fr 0.36fr 0.92fr 0.9fr 0.58fr 0.68fr 0.42fr 0.62fr 0.58fr 0.66fr 0.34fr 0.34fr 0.55fr;
+  grid-template-columns: 0.42fr 0.72fr 0.72fr 0.36fr 0.96fr 0.9fr 0.58fr 0.42fr 0.62fr 0.58fr 0.66fr 0.34fr 0.34fr 0.62fr;
   gap: 0.42rem;
   align-items: center;
 }
@@ -4683,18 +4683,22 @@ select:focus-visible {
 }
 
 .seller-sales__editable,
-.seller-sales__purchase {
+.seller-sales__purchase,
+.seller-sales__readonly {
   min-width: 0;
 }
 
-.seller-sales__purchase {
+.seller-sales__purchase,
+.seller-sales__readonly {
   display: grid;
   gap: 0.22rem;
 }
 
-.seller-sales__purchase span {
+.seller-sales__purchase span,
+.seller-sales__readonly span {
   color: var(--text-secondary);
   white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .seller-sales__purchase button {
@@ -4709,6 +4713,10 @@ select:focus-visible {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.seller-sales__readonly--money span {
+  color: var(--text-primary);
 }
 
 .seller-sales__price input,
@@ -4749,6 +4757,12 @@ select:focus-visible {
   outline: none;
 }
 
+.seller-sales__delivery--readonly p {
+  margin: 0;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
 .seller-sales__profit {
   color: #8fd4a4;
 }
@@ -4757,17 +4771,34 @@ select:focus-visible {
   color: var(--accent-lava);
 }
 
+.seller-sales__actions {
+  display: grid;
+  gap: 0.24rem;
+  min-width: 0;
+}
+
+.seller-sales__edit,
 .seller-sales__delete {
-  min-height: 2.15rem;
+  width: 100%;
+  min-height: 1.72rem;
+  padding: 0 0.35rem;
   border: 1px solid rgba(255,255,255,0.13);
   background: rgba(255,255,255,0.03);
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.1em;
+  font-size: 0.4rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
   transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.seller-sales__edit:hover,
+.seller-sales__edit:focus-visible,
+.seller-sales__edit.is-active {
+  border-color: rgba(55,213,197,0.55);
+  background: rgba(55,213,197,0.08);
+  color: #37d5c5;
 }
 
 .seller-sales__delete:hover,
@@ -5366,6 +5397,8 @@ select:focus-visible {
   .seller-sales__price::before,
   .seller-sales__editable::before,
   .seller-sales__purchase::before,
+  .seller-sales__readonly::before,
+  .seller-sales__actions::before,
   .seller-sales__delivery::before {
     content: attr(data-label);
     color: var(--text-muted);
@@ -5374,11 +5407,17 @@ select:focus-visible {
 
   .seller-sales__price,
   .seller-sales__editable,
-  .seller-sales__purchase {
+  .seller-sales__purchase,
+  .seller-sales__readonly,
+  .seller-sales__actions {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1fr);
     align-items: center;
     gap: 1rem;
+  }
+
+  .seller-sales__actions {
+    grid-template-columns: 1fr;
   }
 
   .seller-sales__purchase button {

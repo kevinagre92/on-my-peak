@@ -1178,6 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let sellerSalesLoading = false;
   let sellerSalesDropFilter = getStoredValue('omp_seller_drop_filter', 'DROP 01/XX');
+  let editingSaleId = '';
   let editingSalePurchaseId = '';
 
   function getSellerApiKey() {
@@ -1493,6 +1494,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function saleEditableInput(sale, field, label, type = 'text') {
     const value = field === 'createdAt' ? formatSaleDateInput(sale) : sale[field] ?? '';
+    if (editingSaleId !== sale.id) {
+      return `
+        <div class="seller-sales__readonly" data-label="${escapeHtml(label)}">
+          <span>${escapeHtml(value || '-')}</span>
+        </div>
+      `;
+    }
     return `
       <label class="seller-sales__editable" data-label="${escapeHtml(label)}">
         <input type="${type}" value="${escapeHtml(value)}" data-sale-field="${escapeHtml(field)}" aria-label="${escapeHtml(label)}">
@@ -1501,14 +1509,55 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function salePurchaseControl(sale) {
-    if (editingSalePurchaseId === sale.id) {
+    if (editingSaleId === sale.id || editingSalePurchaseId === sale.id) {
       return saleEditableInput(sale, 'createdAt', 'Compra', 'datetime-local');
     }
     return `
       <div class="seller-sales__purchase" data-label="Compra">
         <span>${escapeHtml(formatSaleDateTime(sale))}</span>
-        <button type="button" data-sale-edit-purchase>Editar compra</button>
       </div>
+    `;
+  }
+
+  function salePriceControl(sale, field, label, value, type = 'number') {
+    if (editingSaleId !== sale.id) {
+      const formatted = field === 'unitCost'
+        ? formatCurrencyHtml(Number(value || 0))
+        : formatCurrencyHtml(Number(value || 0));
+      return `
+        <div class="seller-sales__readonly seller-sales__readonly--money" data-label="${escapeHtml(label)}">
+          <span>${formatted}</span>
+        </div>
+      `;
+    }
+    if (field === 'total') {
+      return `
+        <label class="seller-sales__price" data-label="${escapeHtml(label)}">
+          <input type="${type}" min="0" step="0.01" value="${Number(value || 0).toFixed(2)}" data-sale-total aria-label="${escapeHtml(label)}">
+        </label>
+      `;
+    }
+    return `
+      <label class="seller-sales__price" data-label="${escapeHtml(label)}">
+        <input type="${type}" min="0" step="0.01" value="${Number(value || 0).toFixed(2)}" data-sale-field="${escapeHtml(field)}" aria-label="${escapeHtml(label)}">
+      </label>
+    `;
+  }
+
+  function saleDeliveryControl(sale) {
+    if (editingSaleId !== sale.id) {
+      return `
+        <div class="seller-sales__delivery seller-sales__delivery--readonly" data-label="Dónde/cuándo entrega">
+          <span>Entrega</span>
+          <p>${escapeHtml(sale.deliveryDetails || 'Sin detalles de entrega')}</p>
+        </div>
+      `;
+    }
+    return `
+      <label class="seller-sales__delivery" data-label="Dónde/cuándo entrega">
+        <span>Entrega</span>
+        <input type="text" value="${escapeHtml(sale.deliveryDetails || '')}" data-sale-delivery-details placeholder="Lugar y hora de entrega">
+      </label>
     `;
   }
 
@@ -1873,7 +1922,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="checkbox" data-sale-bulk="manufactured" ${allManufactured ? 'checked' : ''} aria-label="Marcar todas como fabricadas">
           <span>Fab.</span>
         </label>
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Compra</span><span>Código</span><span>Drop</span><span>Uds</span><span>Venta</span><span>Coste</span><span>Beneficio</span>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Compra</span><span>Código</span><span>Uds</span><span>Venta</span><span>Coste</span><span>Beneficio</span>
         <label class="seller-sales__bulk">
           <input type="checkbox" data-sale-bulk="paid" ${allPaid ? 'checked' : ''} aria-label="Marcar todas como pagadas">
           <span>P</span>
@@ -1882,7 +1931,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="checkbox" data-sale-bulk="delivered" ${allDelivered ? 'checked' : ''} aria-label="Marcar todas como entregadas">
           <span>E</span>
         </label>
-        <span></span>
+        <span>Acción</span>
       </div>
       ${sortedSales.map(sale => `
         <article class="seller-sales__row ${sale.manufactured ? 'seller-sales__row--manufactured' : ''} ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
@@ -1895,14 +1944,9 @@ document.addEventListener('DOMContentLoaded', () => {
           ${saleEditableInput(sale, 'client', 'Cliente')}
           ${salePurchaseControl(sale)}
           ${saleEditableInput(sale, 'code', 'Código')}
-          ${saleEditableInput(sale, 'drop', 'Drop')}
           ${saleEditableInput(sale, 'quantity', 'Unidades', 'number')}
-          <label class="seller-sales__price" data-label="Venta">
-            <input type="number" min="0" step="0.01" value="${Number(sale.total || 0).toFixed(2)}" data-sale-total aria-label="Precio de venta">
-          </label>
-          <label class="seller-sales__price" data-label="Coste">
-            <input type="number" min="0" step="0.01" value="${Number(sale.unitCost ?? getSaleUnitCost(sale.model)).toFixed(2)}" data-sale-field="unitCost" aria-label="Coste unidad">
-          </label>
+          ${salePriceControl(sale, 'total', 'Venta', Number(sale.total || 0))}
+          ${salePriceControl(sale, 'unitCost', 'Coste', Number(sale.unitCost ?? getSaleUnitCost(sale.model)))}
           <span data-label="Beneficio" class="${getSaleProfit(sale) < 0 ? 'seller-sales__loss' : 'seller-sales__profit'}">${formatCurrencyHtml(getSaleProfit(sale))}</span>
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
@@ -1912,11 +1956,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="checkbox" data-sale-delivered ${sale.delivered ? 'checked' : ''}>
             <span>E</span>
           </label>
-          <button class="seller-sales__delete" type="button" data-sale-delete aria-label="Eliminar venta">Eliminar</button>
-          <label class="seller-sales__delivery" data-label="Dónde/cuándo entrega">
-            <span>Entrega</span>
-            <input type="text" value="${escapeHtml(sale.deliveryDetails || '')}" data-sale-delivery-details placeholder="Lugar y hora de entrega">
-          </label>
+          <div class="seller-sales__actions" data-label="Acción">
+            <button class="seller-sales__edit ${editingSaleId === sale.id ? 'is-active' : ''}" type="button" data-sale-edit-row>${editingSaleId === sale.id ? 'Cerrar' : 'Editar compra'}</button>
+            <button class="seller-sales__delete" type="button" data-sale-delete aria-label="Eliminar venta">Eliminar</button>
+          </div>
+          ${saleDeliveryControl(sale)}
         </article>
       `).join('')}
       ${salesCalendar}
@@ -2306,7 +2350,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const saleId = fieldRow?.dataset.saleId;
       const field = fieldInput.dataset.saleField;
       const editableFields = new Set(['drop', 'createdAt', 'model', 'color', 'size', 'quantity', 'client', 'phone', 'email', 'code', 'unitCost']);
-      if (!saleId || !editableFields.has(field)) return;
+      if (!saleId || !editableFields.has(field) || editingSaleId !== saleId) return;
       const rawValue = fieldInput.value.trim();
       const value = field === 'createdAt' ? dateInputToIso(rawValue) : field === 'quantity' || field === 'unitCost' ? Number(rawValue || 0) : rawValue;
       const sales = readSalesHistory();
@@ -2332,6 +2376,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (priceInput) {
       const priceRow = priceInput.closest('[data-sale-id]');
       const saleId = priceRow?.dataset.saleId;
+      if (editingSaleId !== saleId) return;
       const total = Math.max(0, Number(priceInput.value || 0));
       const sales = readSalesHistory();
       const sale = sales.find(item => item.id === saleId);
@@ -2353,6 +2398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (deliveryInput) {
       const deliveryRow = deliveryInput.closest('[data-sale-id]');
       const saleId = deliveryRow?.dataset.saleId;
+      if (editingSaleId !== saleId) return;
       const deliveryDetails = deliveryInput.value.trim();
       const sales = readSalesHistory();
       const sale = sales.find(item => item.id === saleId);
@@ -2410,6 +2456,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editPurchaseButton) {
       const row = editPurchaseButton.closest('[data-sale-id]');
       editingSalePurchaseId = row?.dataset.saleId || '';
+      renderSellerSales();
+      return;
+    }
+    const editRowButton = e.target.closest('[data-sale-edit-row]');
+    if (editRowButton) {
+      const row = editRowButton.closest('[data-sale-id]');
+      const saleId = row?.dataset.saleId || '';
+      editingSaleId = editingSaleId === saleId ? '' : saleId;
+      editingSalePurchaseId = '';
       renderSellerSales();
       return;
     }
