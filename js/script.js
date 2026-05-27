@@ -1206,7 +1206,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchCommunity(admin = false) {
     const url = admin ? '/api/community' : '/api/community';
-    const response = await fetch(url, communityApiOptions({ cache: 'no-store' }));
+    const response = await fetch(url, admin
+      ? communityApiOptions({ cache: 'no-store' })
+      : { cache: 'no-store' });
     if (!response.ok) throw new Error('community_fetch_failed');
     return response.json();
   }
@@ -1387,6 +1389,10 @@ document.addEventListener('DOMContentLoaded', () => {
     return patchSaleStatus(id, { deliveryDetails });
   }
 
+  async function patchSaleField(id, field, value) {
+    return patchSaleStatus(id, { [field]: value });
+  }
+
   async function patchSaleTotal(id, total) {
     const response = await fetch('/api/sales', salesApiOptions({
       method: 'PATCH',
@@ -1467,6 +1473,29 @@ document.addEventListener('DOMContentLoaded', () => {
       dateStyle: 'short',
       timeStyle: 'short'
     });
+  }
+
+  function formatSaleDateInput(sale) {
+    const timestamp = getSaleTimestamp(sale);
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    const pad = value => String(value).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function dateInputToIso(value) {
+    if (!value) return '';
+    const date = new Date(value);
+    return Number.isFinite(date.getTime()) ? date.toISOString() : '';
+  }
+
+  function saleEditableInput(sale, field, label, type = 'text') {
+    const value = field === 'createdAt' ? formatSaleDateInput(sale) : sale[field] ?? '';
+    return `
+      <label class="seller-sales__editable" data-label="${escapeHtml(label)}">
+        <input type="${type}" value="${escapeHtml(value)}" data-sale-field="${escapeHtml(field)}" aria-label="${escapeHtml(label)}">
+      </label>
+    `;
   }
 
   function getSaleDateKey(sale) {
@@ -1831,7 +1860,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="checkbox" data-sale-bulk="manufactured" ${allManufactured ? 'checked' : ''} aria-label="Marcar todas como fabricadas">
           <span>Fabricada</span>
         </label>
-        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Compra</span><span>Código</span><span>Venta</span><span>Coste</span><span>Beneficio</span>
+        <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Compra</span><span>Código</span><span>Drop</span><span>Uds</span><span>Venta</span><span>Coste</span><span>Beneficio</span>
         <label class="seller-sales__bulk">
           <input type="checkbox" data-sale-bulk="paid" ${allPaid ? 'checked' : ''} aria-label="Marcar todas como pagadas">
           <span>Pago</span>
@@ -1848,16 +1877,20 @@ document.addEventListener('DOMContentLoaded', () => {
             <input type="checkbox" data-sale-manufactured ${sale.manufactured ? 'checked' : ''}>
             <span>Fabricada</span>
           </label>
-          <span data-label="Modelo">${escapeHtml(sale.model)}${Number(sale.quantity) > 1 ? ` x${sale.quantity}` : ''}</span>
-          <span data-label="Color">${escapeHtml(sale.color)}</span>
-          <span data-label="Talla">${escapeHtml(sale.size)}</span>
-          <span data-label="Cliente">${escapeHtml(sale.client)}</span>
-          <span data-label="Compra">${escapeHtml(formatSaleDateTime(sale))}</span>
-          <span data-label="Código">${sale.code ? escapeHtml(sale.code) : '-'}</span>
+          ${saleEditableInput(sale, 'model', 'Modelo')}
+          ${saleEditableInput(sale, 'color', 'Color')}
+          ${saleEditableInput(sale, 'size', 'Talla')}
+          ${saleEditableInput(sale, 'client', 'Cliente')}
+          ${saleEditableInput(sale, 'createdAt', 'Compra', 'datetime-local')}
+          ${saleEditableInput(sale, 'code', 'Código')}
+          ${saleEditableInput(sale, 'drop', 'Drop')}
+          ${saleEditableInput(sale, 'quantity', 'Unidades', 'number')}
           <label class="seller-sales__price" data-label="Venta">
             <input type="number" min="0" step="0.01" value="${Number(sale.total || 0).toFixed(2)}" data-sale-total aria-label="Precio de venta">
           </label>
-          <span data-label="Coste">${formatCurrencyHtml(getSaleCost(sale))}</span>
+          <label class="seller-sales__price" data-label="Coste">
+            <input type="number" min="0" step="0.01" value="${Number(sale.unitCost ?? getSaleUnitCost(sale.model)).toFixed(2)}" data-sale-field="unitCost" aria-label="Coste unidad">
+          </label>
           <span data-label="Beneficio" class="${getSaleProfit(sale) < 0 ? 'seller-sales__loss' : 'seller-sales__profit'}">${formatCurrencyHtml(getSaleProfit(sale))}</span>
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
@@ -2231,9 +2264,10 @@ document.addEventListener('DOMContentLoaded', () => {
   sellerSalesTable?.addEventListener('change', async (e) => {
     const bulkCheckbox = e.target.closest('[data-sale-bulk]');
     const checkbox = e.target.closest('[data-sale-manufactured], [data-sale-paid], [data-sale-delivered]');
+    const fieldInput = e.target.closest('[data-sale-field]');
     const priceInput = e.target.closest('[data-sale-total]');
     const deliveryInput = e.target.closest('[data-sale-delivery-details]');
-    if (!bulkCheckbox && !checkbox && !priceInput && !deliveryInput) return;
+    if (!bulkCheckbox && !checkbox && !fieldInput && !priceInput && !deliveryInput) return;
     if (bulkCheckbox) {
       const field = bulkCheckbox.dataset.saleBulk;
       const checked = bulkCheckbox.checked;
@@ -2251,6 +2285,33 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadSellerSales();
       } catch (error) {
         renderSellerSales(readSalesHistory(), 'Columna actualizada en esta copia. No se pudo sincronizar todo con el ERP.');
+      }
+      return;
+    }
+    if (fieldInput) {
+      const fieldRow = fieldInput.closest('[data-sale-id]');
+      const saleId = fieldRow?.dataset.saleId;
+      const field = fieldInput.dataset.saleField;
+      const editableFields = new Set(['drop', 'createdAt', 'model', 'color', 'size', 'quantity', 'client', 'phone', 'email', 'code', 'unitCost']);
+      if (!saleId || !editableFields.has(field)) return;
+      const rawValue = fieldInput.value.trim();
+      const value = field === 'createdAt' ? dateInputToIso(rawValue) : field === 'quantity' || field === 'unitCost' ? Number(rawValue || 0) : rawValue;
+      const sales = readSalesHistory();
+      const sale = sales.find(item => item.id === saleId);
+      if (!sale) return;
+      sale[field] = value;
+      if (field === 'model') sale.unitCost = getSaleUnitCost(value);
+      if (field === 'quantity') sale.quantity = Math.max(1, Number(value || 1));
+      if (field === 'unitCost') sale.unitCost = Math.max(0, Number(value || 0));
+      sale.cost = getSaleCost(sale);
+      sale.netProfit = getSaleProfit(sale);
+      writeSalesHistory(sales);
+      renderSellerSales(sales, 'Venta actualizada.');
+      try {
+        await patchSaleField(saleId, field, sale[field]);
+        await loadSellerSales();
+      } catch (error) {
+        renderSellerSales(readSalesHistory(), 'Venta actualizada en esta copia. No se pudo sincronizar con el ERP.');
       }
       return;
     }

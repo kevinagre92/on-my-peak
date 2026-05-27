@@ -4194,7 +4194,8 @@ select:focus-visible {
 
 .seller-sales__manual input,
 .seller-sales__manual select,
-.seller-sales__price input {
+.seller-sales__price input,
+.seller-sales__editable input {
   width: 100%;
   min-height: 2.25rem;
   border: 1px solid rgba(255,255,255,0.14);
@@ -4557,7 +4558,7 @@ select:focus-visible {
 .seller-sales__head,
 .seller-sales__row {
   display: grid;
-  grid-template-columns: 0.78fr 0.78fr 0.72fr 0.34fr 0.88fr 0.82fr 0.58fr 0.62fr 0.62fr 0.68fr 0.72fr 0.68fr 0.55fr;
+  grid-template-columns: 0.72fr 0.78fr 0.72fr 0.34fr 0.9fr 0.82fr 0.58fr 0.72fr 0.42fr 0.62fr 0.62fr 0.68fr 0.72fr 0.68fr 0.55fr;
   gap: 0.55rem;
   align-items: center;
 }
@@ -4636,6 +4637,10 @@ select:focus-visible {
 }
 
 .seller-sales__price {
+  min-width: 0;
+}
+
+.seller-sales__editable {
   min-width: 0;
 }
 
@@ -5292,13 +5297,15 @@ select:focus-visible {
 
   .seller-sales__row > span::before,
   .seller-sales__price::before,
+  .seller-sales__editable::before,
   .seller-sales__delivery::before {
     content: attr(data-label);
     color: var(--text-muted);
     text-transform: uppercase;
   }
 
-  .seller-sales__price {
+  .seller-sales__price,
+  .seller-sales__editable {
     display: grid;
     grid-template-columns: 1fr minmax(0, 1fr);
     align-items: center;

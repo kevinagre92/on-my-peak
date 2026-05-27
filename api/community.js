@@ -19,7 +19,7 @@ function getStoreUrls() {
 
 function isAdminRequest(req) {
   const adminKey = process.env.OMP_ERP_ADMIN_KEY || '';
-  if (!adminKey) return true;
+  if (!adminKey) return false;
   const url = new URL(req.url, 'https://onmypeak.vercel.app');
   return req.headers['x-omp-admin-key'] === adminKey || url.searchParams.get('key') === adminKey;
 }

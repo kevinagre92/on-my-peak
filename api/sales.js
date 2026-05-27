@@ -195,6 +195,16 @@ function cleanSale(row = {}) {
   };
 }
 
+function refreshSaleMath(sale) {
+  const quantity = Math.max(1, Math.min(99, Number(sale.quantity || 1)));
+  sale.quantity = quantity;
+  sale.unitCost = Math.max(0, Number(sale.unitCost ?? getUnitCost(sale.model)));
+  sale.cost = Math.max(0, sale.unitCost * quantity);
+  sale.total = Math.max(0, Number(sale.total || 0));
+  sale.unitPrice = Math.max(0, quantity ? sale.total / quantity : sale.total);
+  sale.netProfit = sale.total - sale.cost;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return json(res, 204, {});
 
@@ -249,15 +259,43 @@ module.exports = async function handler(req, res) {
       if (Object.prototype.hasOwnProperty.call(body, 'deliveryDetails')) {
         sale.deliveryDetails = cleanText(body.deliveryDetails, 240);
       }
+      if (Object.prototype.hasOwnProperty.call(body, 'drop')) {
+        sale.drop = cleanText(body.drop, 40) || 'DROP 01/XX';
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'createdAt')) {
+        sale.createdAt = cleanText(body.createdAt, 60);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'model')) {
+        sale.model = cleanText(body.model, 80);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'color')) {
+        sale.color = cleanText(body.color, 80);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'size')) {
+        sale.size = cleanText(body.size, 20);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'quantity')) {
+        sale.quantity = Math.max(1, Math.min(99, Number(body.quantity || 1)));
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'client')) {
+        sale.client = cleanText(body.client, 120);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'phone')) {
+        sale.phone = cleanText(body.phone, 60);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'email')) {
+        sale.email = cleanText(body.email, 120);
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'code')) {
+        sale.code = cleanText(body.code, 40).toUpperCase();
+      }
       if (Object.prototype.hasOwnProperty.call(body, 'total')) {
         sale.total = Math.max(0, Number(body.total || 0));
-        sale.unitPrice = Math.max(0, Number(sale.quantity || 1) ? sale.total / Number(sale.quantity || 1) : sale.total);
       }
       if (Object.prototype.hasOwnProperty.call(body, 'unitCost')) {
         sale.unitCost = Math.max(0, Number(body.unitCost || 0));
       }
-      sale.cost = Math.max(0, Number(sale.unitCost ?? getUnitCost(sale.model)) * Number(sale.quantity || 1));
-      sale.netProfit = Number(sale.total || 0) - sale.cost;
+      refreshSaleMath(sale);
       await setSales(sales);
       return json(res, 200, { ok: true, sale });
     }
