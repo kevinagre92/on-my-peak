@@ -1987,6 +1987,55 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('lightbox-open');
   }
 
+  async function saveEditedSaleRow(row) {
+    const saleId = row?.dataset.saleId;
+    if (!saleId) return false;
+    const sales = readSalesHistory();
+    const sale = sales.find(item => item.id === saleId);
+    if (!sale) return false;
+    const payload = { id: saleId };
+    row.querySelectorAll('[data-sale-field]').forEach(input => {
+      const field = input.dataset.saleField;
+      if (!field) return;
+      const rawValue = input.value.trim();
+      const value = field === 'createdAt'
+        ? dateInputToIso(rawValue)
+        : field === 'quantity' || field === 'unitCost'
+          ? Number(rawValue || 0)
+          : rawValue;
+      payload[field] = value;
+      sale[field] = value;
+    });
+    const totalInput = row.querySelector('[data-sale-total]');
+    if (totalInput) {
+      payload.total = Math.max(0, Number(totalInput.value || 0));
+      sale.total = payload.total;
+      sale.unitPrice = payload.total / Number(sale.quantity || 1);
+    }
+    const deliveryInput = row.querySelector('[data-sale-delivery-details]');
+    if (deliveryInput) {
+      payload.deliveryDetails = deliveryInput.value.trim();
+      sale.deliveryDetails = payload.deliveryDetails;
+    }
+    if (Object.prototype.hasOwnProperty.call(payload, 'model') && !Object.prototype.hasOwnProperty.call(payload, 'unitCost')) {
+      sale.unitCost = getSaleUnitCost(sale.model);
+      payload.unitCost = sale.unitCost;
+    }
+    if (Object.prototype.hasOwnProperty.call(payload, 'quantity')) {
+      sale.quantity = Math.max(1, Number(sale.quantity || 1));
+      payload.quantity = sale.quantity;
+    }
+    if (Object.prototype.hasOwnProperty.call(payload, 'unitCost')) {
+      sale.unitCost = Math.max(0, Number(sale.unitCost || 0));
+      payload.unitCost = sale.unitCost;
+    }
+    sale.cost = getSaleCost(sale);
+    sale.netProfit = getSaleProfit(sale);
+    writeSalesHistory(sales);
+    await patchSaleStatus(saleId, payload);
+    return true;
+  }
+
   setTimeout(retryPendingSales, 1200);
 
   function readCart() {
@@ -2463,9 +2512,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (editRowButton) {
       const row = editRowButton.closest('[data-sale-id]');
       const saleId = row?.dataset.saleId || '';
-      editingSaleId = editingSaleId === saleId ? '' : saleId;
-      editingSalePurchaseId = '';
-      renderSellerSales();
+      if (editingSaleId === saleId) {
+        try {
+          await saveEditedSaleRow(row);
+          editingSaleId = '';
+          editingSalePurchaseId = '';
+          renderSellerSales(readSalesHistory(), 'Compra guardada.');
+          await loadSellerSales();
+        } catch (error) {
+          renderSellerSales(readSalesHistory(), 'No se pudo guardar ahora. Revisa la conexión antes de cerrar.');
+        }
+      } else {
+        editingSaleId = saleId;
+        editingSalePurchaseId = '';
+        renderSellerSales();
+      }
       return;
     }
     const deleteButton = e.target.closest('[data-sale-delete]');
