@@ -778,8 +778,12 @@
       <button class="seller-stats__close" type="button" id="sellerSalesClose" aria-label="Cerrar">×</button>
       <p class="section-label">Vendedor</p>
       <h2 class="seller-stats__title" id="sellerSalesTitle">Historial de ventas</h2>
-      <p class="seller-stats__note">ERP de pedidos confirmados por WhatsApp. Marca el check cuando hayas recibido el pago o borra una fila si fue un error.</p>
-      <form class="seller-sales__manual" id="sellerManualSaleForm" aria-label="Añadir venta manual">
+      <p class="seller-stats__note">ERP de pedidos confirmados por WhatsApp. Marca fabricación, pago y entrega; edita solo cuando necesites corregir una compra.</p>
+      <button class="seller-sales__manual-toggle" type="button" id="sellerManualToggle" aria-expanded="false" aria-controls="sellerManualSaleForm">
+        <span aria-hidden="true">+</span>
+        Añadir venta manual
+      </button>
+      <form class="seller-sales__manual" id="sellerManualSaleForm" aria-label="Añadir venta manual" hidden>
         <p class="seller-sales__manual-title">Añadir venta manual</p>
         <label>
           <span>Drop</span>

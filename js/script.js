@@ -336,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sellerSalesTable = document.getElementById('sellerSalesTable');
   const sellerSalesClose = document.getElementById('sellerSalesClose');
   const sellerSalesReset = document.getElementById('sellerSalesReset');
+  const sellerManualToggle = document.getElementById('sellerManualToggle');
   const sellerManualSaleForm = document.getElementById('sellerManualSaleForm');
   const sellerManualDrop = document.getElementById('sellerManualDrop');
   const sellerManualModel = document.getElementById('sellerManualModel');
@@ -1177,6 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let sellerSalesLoading = false;
   let sellerSalesDropFilter = getStoredValue('omp_seller_drop_filter', 'DROP 01/XX');
+  let editingSalePurchaseId = '';
 
   function getSellerApiKey() {
     const params = new URLSearchParams(window.location.search);
@@ -1495,6 +1497,18 @@ document.addEventListener('DOMContentLoaded', () => {
       <label class="seller-sales__editable" data-label="${escapeHtml(label)}">
         <input type="${type}" value="${escapeHtml(value)}" data-sale-field="${escapeHtml(field)}" aria-label="${escapeHtml(label)}">
       </label>
+    `;
+  }
+
+  function salePurchaseControl(sale) {
+    if (editingSalePurchaseId === sale.id) {
+      return saleEditableInput(sale, 'createdAt', 'Compra', 'datetime-local');
+    }
+    return `
+      <div class="seller-sales__purchase" data-label="Compra">
+        <span>${escapeHtml(formatSaleDateTime(sale))}</span>
+        <button type="button" data-sale-edit-purchase>Editar compra</button>
+      </div>
     `;
   }
 
@@ -1845,7 +1859,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="seller-inventory" aria-label="Resumen por modelo, color y talla">
         ${inventoryRows}
       </div>
-      ${salesCalendar}
       <section class="seller-code-usage" aria-label="Uso de códigos de descuento">
         <div class="seller-code-usage__head">
           <strong>Códigos usados</strong>
@@ -1858,30 +1871,29 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="seller-sales__head">
         <label class="seller-sales__bulk">
           <input type="checkbox" data-sale-bulk="manufactured" ${allManufactured ? 'checked' : ''} aria-label="Marcar todas como fabricadas">
-          <span>Fabricada</span>
+          <span>Fab.</span>
         </label>
         <span>Modelo</span><span>Color</span><span>Talla</span><span>Cliente</span><span>Compra</span><span>Código</span><span>Drop</span><span>Uds</span><span>Venta</span><span>Coste</span><span>Beneficio</span>
         <label class="seller-sales__bulk">
           <input type="checkbox" data-sale-bulk="paid" ${allPaid ? 'checked' : ''} aria-label="Marcar todas como pagadas">
-          <span>Pago</span>
+          <span>P</span>
         </label>
         <label class="seller-sales__bulk">
           <input type="checkbox" data-sale-bulk="delivered" ${allDelivered ? 'checked' : ''} aria-label="Marcar todas como entregadas">
-          <span>Entrega</span>
+          <span>E</span>
         </label>
         <span></span>
       </div>
       ${sortedSales.map(sale => `
         <article class="seller-sales__row ${sale.manufactured ? 'seller-sales__row--manufactured' : ''} ${sale.paid ? 'seller-sales__row--paid' : ''} ${sale.delivered ? 'seller-sales__row--delivered' : ''}" data-sale-id="${escapeHtml(sale.id)}">
-          <label class="seller-sales__paid seller-sales__paid--manufactured">
+          <label class="seller-sales__paid seller-sales__paid--manufactured seller-sales__paid--icon-only" aria-label="Fabricada">
             <input type="checkbox" data-sale-manufactured ${sale.manufactured ? 'checked' : ''}>
-            <span>Fabricada</span>
           </label>
           ${saleEditableInput(sale, 'model', 'Modelo')}
           ${saleEditableInput(sale, 'color', 'Color')}
           ${saleEditableInput(sale, 'size', 'Talla')}
           ${saleEditableInput(sale, 'client', 'Cliente')}
-          ${saleEditableInput(sale, 'createdAt', 'Compra', 'datetime-local')}
+          ${salePurchaseControl(sale)}
           ${saleEditableInput(sale, 'code', 'Código')}
           ${saleEditableInput(sale, 'drop', 'Drop')}
           ${saleEditableInput(sale, 'quantity', 'Unidades', 'number')}
@@ -1894,11 +1906,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <span data-label="Beneficio" class="${getSaleProfit(sale) < 0 ? 'seller-sales__loss' : 'seller-sales__profit'}">${formatCurrencyHtml(getSaleProfit(sale))}</span>
           <label class="seller-sales__paid">
             <input type="checkbox" data-sale-paid ${sale.paid ? 'checked' : ''}>
-            <span>Pago recibido</span>
+            <span>P</span>
           </label>
           <label class="seller-sales__paid seller-sales__paid--delivered">
             <input type="checkbox" data-sale-delivered ${sale.delivered ? 'checked' : ''}>
-            <span>Entregado</span>
+            <span>E</span>
           </label>
           <button class="seller-sales__delete" type="button" data-sale-delete aria-label="Eliminar venta">Eliminar</button>
           <label class="seller-sales__delivery" data-label="Dónde/cuándo entrega">
@@ -1907,6 +1919,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </label>
         </article>
       `).join('')}
+      ${salesCalendar}
     `;
   }
 
@@ -2306,6 +2319,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sale.cost = getSaleCost(sale);
       sale.netProfit = getSaleProfit(sale);
       writeSalesHistory(sales);
+      if (field === 'createdAt') editingSalePurchaseId = '';
       renderSellerSales(sales, 'Venta actualizada.');
       try {
         await patchSaleField(saleId, field, sale[field]);
@@ -2392,6 +2406,13 @@ document.addEventListener('DOMContentLoaded', () => {
       renderSellerSales();
       return;
     }
+    const editPurchaseButton = e.target.closest('[data-sale-edit-purchase]');
+    if (editPurchaseButton) {
+      const row = editPurchaseButton.closest('[data-sale-id]');
+      editingSalePurchaseId = row?.dataset.saleId || '';
+      renderSellerSales();
+      return;
+    }
     const deleteButton = e.target.closest('[data-sale-delete]');
     if (!deleteButton) return;
     const row = deleteButton.closest('[data-sale-id]');
@@ -2409,6 +2430,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   sellerSalesReset?.addEventListener('click', () => {
     loadSellerSales();
+  });
+  sellerManualToggle?.addEventListener('click', () => {
+    if (!sellerManualSaleForm) return;
+    const shouldOpen = sellerManualSaleForm.hidden;
+    sellerManualSaleForm.hidden = !shouldOpen;
+    sellerManualToggle.setAttribute('aria-expanded', String(shouldOpen));
+    sellerManualToggle.classList.toggle('is-open', shouldOpen);
+    if (shouldOpen) {
+      sellerManualClient?.focus();
+    }
   });
   sellerManualModel?.addEventListener('change', () => {
     if (!sellerManualTotal) return;
@@ -2459,6 +2490,9 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await createManualSale(sale);
       sellerManualSaleForm.reset();
+      sellerManualSaleForm.hidden = true;
+      sellerManualToggle?.setAttribute('aria-expanded', 'false');
+      sellerManualToggle?.classList.remove('is-open');
       if (sellerManualQuantity) sellerManualQuantity.value = '1';
       if (sellerManualTotal) sellerManualTotal.value = String(pricesByModel[sellerManualModel?.value || 'Oversized'] || 22);
       await loadSellerSales();
