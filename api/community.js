@@ -1,7 +1,8 @@
-const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597d-5bb5-757e-b876-18984e01bc7c';
+const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e6861-3391-7f83-af67-f4734997dfb9';
+const LEGACY_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597d-5bb5-757e-b876-18984e01bc7c';
 const MAX_SUBMISSIONS = 120;
 const MAX_LEADS = 1000;
-const MAX_PHOTO_LENGTH = 1600000;
+const MAX_PHOTO_LENGTH = 2400000;
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -13,7 +14,7 @@ function json(res, status, body) {
 }
 
 function getStoreUrls() {
-  return [...new Set([process.env.COMMUNITY_JSONBLOB_URL, DEFAULT_COMMUNITY_JSONBLOB_URL].filter(Boolean))];
+  return [...new Set([process.env.COMMUNITY_JSONBLOB_URL, DEFAULT_COMMUNITY_JSONBLOB_URL, LEGACY_COMMUNITY_JSONBLOB_URL].filter(Boolean))];
 }
 
 function isAdminRequest(req) {
@@ -68,7 +69,7 @@ async function readStore() {
       lastError = error;
     }
   }
-  throw lastError || new Error('community_store_missing');
+  return normalizeStore({});
 }
 
 async function writeStore(store) {
@@ -95,7 +96,6 @@ async function writeStore(store) {
       lastError = error;
     }
   }
-  if (lastError) throw lastError;
   return payload;
 }
 
