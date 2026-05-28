@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260528-drop02urgency1">
+  <link rel="stylesheet" href="css/style.css?v=20260528-drop02hero1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -204,10 +204,18 @@
         OM<span class="paren">(</span><span class="fucking" data-typewriter-words="fucking,next,gymnastic,fleje">fucking</span><span class="paren">)</span>P
       </h1>
       <p class="hero__claim" data-i18n="heroClaim">Nothing given. Everything earned.</p>
-      <div class="hero__drop-mark" aria-label="Drop 01/XX prórroga">
-        <span class="hero__drop-title">DROP</span>
-        <span class="hero__drop-code">01/XX</span>
-        <span class="hero__drop-live">prórroga</span>
+      <div class="hero__drops" aria-label="Drops activos">
+        <div class="hero__drop-mark" aria-label="Drop 01/XX prórroga">
+          <span class="hero__drop-title">DROP</span>
+          <span class="hero__drop-code">01/XX</span>
+          <span class="hero__drop-live" data-drop01-status>prórroga</span>
+        </div>
+        <div class="hero__drop-mark hero__drop-mark--next" aria-label="Drop 02/XX al golpito">
+          <span class="hero__drop-title">DROP</span>
+          <span class="hero__drop-code">02/XX</span>
+          <span class="hero__drop-live hero__drop-live--yellow">al golpito</span>
+          <strong class="hero__drop-countdown hero__drop-countdown--yellow" data-drop2-hero-countdown>00D 00H 00M 00S</strong>
+        </div>
       </div>
       <a href="#waitlist" class="hero__btn">
         <span data-i18n="heroCta">consiguelo ya</span>
@@ -312,7 +320,7 @@
           <span>DROP 01/XX</span>
           <small data-drop01-status>Prórroga</small>
         </button>
-        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02" data-drop-code="02/XX" data-drop-status="29 may" data-drop-copy="Drop 2 mira hacia casa: acento canario, herencia y mesa compartida. Lo que llevas dentro también se entrena.">
+        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02" data-drop-code="02/XX" data-drop-status="al golpito" data-drop-copy="Drop 2 mira hacia casa: acento canario, herencia y mesa compartida. Lo que llevas dentro también se entrena.">
           <span>DROP 02/XX</span>
           <small data-drop2-tab-countdown>29 MAY · 12:00</small>
         </button>
@@ -922,6 +930,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260528-drop02urgency1" defer></script>
+  <script src="js/script.js?v=20260528-drop02hero1" defer></script>
 </body>
 </html>

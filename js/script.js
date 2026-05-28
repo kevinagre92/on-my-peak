@@ -958,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const drop2TabCountdown = document.querySelector('[data-drop2-tab-countdown]');
   const drop2CountdownNodes = document.querySelectorAll('[data-drop2-countdown]');
+  const drop2HeroCountdown = document.querySelector('[data-drop2-hero-countdown]');
   const drop2Locked = document.querySelector('[data-drop2-locked]');
   const drop2Gallery = document.querySelector('[data-drop2-gallery]');
 
@@ -989,6 +990,9 @@ document.addEventListener('DOMContentLoaded', () => {
     drop2CountdownNodes.forEach(node => {
       node.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
     });
+    if (drop2HeroCountdown) {
+      drop2HeroCountdown.textContent = live ? 'AL GOLPITO' : formatCompactCountdown(parts);
+    }
     if (drop2Locked) drop2Locked.hidden = live;
     if (drop2Gallery) drop2Gallery.hidden = !live;
     document.querySelectorAll('[data-unlock-at]').forEach(card => {
@@ -1074,7 +1078,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Drop 01 Deadline Countdown --- */
   const dropDeadlineTarget = new Date('2026-05-31T20:00:00+01:00').getTime();
   const dropDeadlineNodes = document.querySelectorAll('[data-drop-deadline-countdown]');
-  const drop01StatusNodes = document.querySelectorAll('[data-drop01-status], .hero__drop-live');
+  const drop01StatusNodes = document.querySelectorAll('[data-drop01-status]');
 
   function updateDropDeadlineCountdown() {
     if (!dropDeadlineNodes.length) return;
@@ -1304,7 +1308,14 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderApprovedCommunity(submissions = []) {
     if (!approvedCommunityGrid) return;
     const approved = submissions.filter(item => item.photo).slice(0, 6);
-    approvedCommunityGrid.innerHTML = approved.map(item => `
+    const fallbackCommunity = [
+      { name: 'OMP community', photo: 'assets/collection/drop-current/thumbs/drop-current-01.jpg' },
+      { name: 'OMP community', photo: 'assets/collection/drop-current/thumbs/drop-current-06.jpg' },
+      { name: 'OMP community', photo: 'assets/collection/drop-current/thumbs/drop-current-08.jpg' }
+    ];
+    const items = approved.length ? approved : fallbackCommunity;
+    approvedCommunityGrid.dataset.source = approved.length ? 'approved' : 'fallback';
+    approvedCommunityGrid.innerHTML = items.map(item => `
       <article>
         <img src="${escapeHtml(item.photo)}" alt="Foto aprobada de la comunidad OMP subida por ${escapeHtml(item.name || item.handle || 'cliente')}" loading="lazy" decoding="async">
         <span>${escapeHtml(item.handle || item.name || 'OMP')}</span>
@@ -2990,6 +3001,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!instagramFeed) return;
     const idle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 900));
 
+    renderInstagramFallback();
     idle(() => hydrateInstagramFeed());
     window.setTimeout(() => hydrateInstagramFeed(), 2500);
 

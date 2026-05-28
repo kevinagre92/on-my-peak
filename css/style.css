@@ -722,15 +722,27 @@ select:focus-visible {
   padding: 0 1.5rem;
 }
 
+.hero__drops {
+  position: relative;
+  display: inline-flex;
+  align-items: end;
+  justify-content: center;
+  gap: clamp(1.6rem, 4vw, 4.5rem);
+  margin: clamp(3.8rem, 11vh, 8rem) auto clamp(1.6rem, 3.4vh, 2.6rem);
+  opacity: 0;
+  animation: fadeInUp 1s 1.45s forwards;
+}
+
 .hero__drop-mark {
   position: relative;
   display: grid;
   justify-items: center;
   width: max-content;
-  margin: clamp(3.8rem, 11vh, 8rem) auto clamp(1.6rem, 3.4vh, 2.6rem);
   color: var(--text-primary);
-  opacity: 0;
-  animation: fadeInUp 1s 1.45s forwards;
+}
+
+.hero__drop-mark--next {
+  color: #ffd32a;
 }
 
 .hero__drop-title,
@@ -774,6 +786,30 @@ select:focus-visible {
   transform: rotate(-10deg);
   transform-origin: center;
   box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+}
+
+.hero__drop-live--yellow {
+  background: #ffd32a;
+  color: #050505;
+}
+
+.hero__drop-countdown {
+  display: inline-flex;
+  gap: 0.26rem;
+  margin-top: 0.72rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid currentColor;
+  background: rgba(0,0,0,0.42);
+  color: var(--accent-lava);
+  font-family: var(--font-logo);
+  font-size: clamp(0.54rem, 1.1vw, 0.78rem);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.hero__drop-countdown--yellow {
+  color: #ffd32a;
+  box-shadow: 0 0 28px rgba(255,211,42,0.12);
 }
 
 .hero__logo {
@@ -5101,6 +5137,22 @@ select:focus-visible {
     right: -2.8rem;
     bottom: -0.3rem;
     letter-spacing: 0.1em;
+  }
+
+  .hero__drops {
+    display: grid;
+    gap: 1.15rem;
+    margin-top: clamp(2.4rem, 8vh, 4.2rem);
+    margin-bottom: clamp(1.1rem, 2.6vh, 1.8rem);
+  }
+
+  .hero__drop-mark--next .hero__drop-live {
+    right: -3.2rem;
+  }
+
+  .hero__drop-countdown {
+    font-size: 0.5rem;
+    padding: 0.38rem 0.46rem;
   }
 
   .hero__logo { font-size: clamp(2rem, 12vw, 3.5rem); }
