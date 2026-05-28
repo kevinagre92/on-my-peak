@@ -996,7 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.toggle('is-unlocked', unlocked);
       const flipButton = card.querySelector('.drop-calendar__flip');
       flipButton?.classList.toggle('drop-calendar__flip--locked', !unlocked);
-      flipButton?.setAttribute('aria-disabled', String(!unlocked));
+      flipButton?.setAttribute('aria-label', unlocked ? 'Girar portada DROP 02/XX' : 'DROP 02/XX bloqueado hasta el 29 de mayo a las 12:00');
     });
   }
 
@@ -3060,6 +3060,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropTitleCode = document.getElementById('dropTitleCode');
   const dropTitleStatus = document.getElementById('dropTitleStatus');
   const dropNarrative = document.getElementById('dropNarrative');
+  const dropUrgencyLine = document.getElementById('dropUrgencyLine');
+
+  function syncDropCollectionUi(activeButton) {
+    const isDrop01 = activeButton?.id === 'dropTab01';
+    if (dropUrgencyLine) dropUrgencyLine.hidden = !isDrop01;
+    if (dropTitleCode && activeButton?.dataset.dropCode) dropTitleCode.textContent = activeButton.dataset.dropCode;
+    if (dropTitleStatus && activeButton?.dataset.dropStatus) {
+      const drop01SoldOut = Date.now() >= dropDeadlineTarget;
+      dropTitleStatus.textContent = isDrop01 && drop01SoldOut ? 'Sold out' : activeButton.dataset.dropStatus;
+    }
+    if (dropNarrative && activeButton?.dataset.dropCopy) dropNarrative.textContent = activeButton.dataset.dropCopy;
+  }
+
   dropTabButtons.forEach(button => {
     button.addEventListener('click', () => {
       const targetId = button.dataset.dropTab;
@@ -3073,15 +3086,10 @@ document.addEventListener('DOMContentLoaded', () => {
         panel.classList.toggle('is-active', active);
         panel.hidden = !active;
       });
-      if (dropTitleCode && button.dataset.dropCode) dropTitleCode.textContent = button.dataset.dropCode;
-      if (dropTitleStatus && button.dataset.dropStatus) {
-        const isDrop01 = button.id === 'dropTab01';
-        const drop01SoldOut = Date.now() >= dropDeadlineTarget;
-        dropTitleStatus.textContent = isDrop01 && drop01SoldOut ? 'Sold out' : button.dataset.dropStatus;
-      }
-      if (dropNarrative && button.dataset.dropCopy) dropNarrative.textContent = button.dataset.dropCopy;
+      syncDropCollectionUi(button);
     });
   });
+  syncDropCollectionUi(dropTabButtons.find(button => button.classList.contains('is-active')));
 
   const lightbox = document.getElementById('imageLightbox');
   const lightboxStage = lightbox?.querySelector('.image-lightbox__stage');
@@ -3187,8 +3195,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const flipButton = card.querySelector('.drop-calendar__flip');
     flipButton?.addEventListener('click', () => {
       if (card.dataset.unlockAt && Date.now() < new Date(card.dataset.unlockAt).getTime()) {
-        card.classList.add('show-hint');
-        window.setTimeout(() => card.classList.remove('show-hint'), 1800);
+        card.classList.add('show-locked');
+        window.setTimeout(() => card.classList.remove('show-locked'), 2200);
         return;
       }
       card.classList.toggle('is-flipped');

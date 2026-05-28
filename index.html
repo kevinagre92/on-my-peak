@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260528-drop02tab1">
+  <link rel="stylesheet" href="css/style.css?v=20260528-drop02lock1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -327,7 +327,7 @@
       <p class="section-subtitle reveal reveal-delay-2" data-i18n="dropText" id="dropNarrative">
         Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.
       </p>
-      <p class="drop__urgency reveal reveal-delay-2"><span data-i18n="dropUrgency">Disponible durante</span> <strong class="deadline-countdown" data-drop-deadline-countdown>00D 00H 00M 00S</strong></p>
+      <p class="drop__urgency reveal reveal-delay-2" id="dropUrgencyLine"><span data-i18n="dropUrgency">Disponible durante</span> <strong class="deadline-countdown" data-drop-deadline-countdown>00D 00H 00M 00S</strong></p>
       <p class="drop__hint reveal reveal-delay-2" data-i18n="dropHint"><span>←→</span> Desliza lateralmente para ver más</p>
 
       <div class="drop-panel is-active" id="dropPanel01" role="tabpanel" aria-labelledby="dropTab01">
@@ -545,7 +545,7 @@
           <figcaption>DROP 01/XX · 04 MAY - 31 MAY</figcaption>
         </figure>
         <figure class="drop-calendar__card drop-calendar__card--two" data-flip-card data-unlock-at="2026-05-29T12:00:00+01:00">
-          <button class="drop-calendar__flip drop-calendar__flip--locked" type="button" aria-label="Girar portada DROP 02/XX" aria-disabled="true">
+          <button class="drop-calendar__flip drop-calendar__flip--locked" type="button" aria-label="Girar portada DROP 02/XX">
             <span class="drop-calendar__flip-inner">
               <span class="drop-calendar__face drop-calendar__face--front">
                 <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
@@ -555,6 +555,7 @@
               </span>
             </span>
             <span class="drop-calendar__hint">pulsa y descúbrela</span>
+            <span class="drop-calendar__locked" data-drop2-locked-message>bloqueado hasta 29 may · 12:00</span>
           </button>
           <div class="drop-calendar__next-action">
             <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
@@ -921,6 +922,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260528-drop02tab1" defer></script>
+  <script src="js/script.js?v=20260528-drop02lock1" defer></script>
 </body>
 </html>

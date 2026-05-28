@@ -2353,7 +2353,41 @@ select:focus-visible {
   transition: opacity 0.24s ease, transform 0.24s ease;
 }
 
+.drop-calendar__locked {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100% - 1.6rem);
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(255,211,42,0.58);
+  background: rgba(255,211,42,0.96);
+  color: #050505;
+  font-family: var(--font-logo);
+  font-size: clamp(0.64rem, 1.3vw, 0.78rem);
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) scale(0.96);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
 .drop-calendar__card.show-hint .drop-calendar__hint {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.drop-calendar__card.show-locked .drop-calendar__flip::after {
+  opacity: 1;
+}
+
+.drop-calendar__card.show-locked .drop-calendar__locked {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
