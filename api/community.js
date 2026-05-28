@@ -1,4 +1,4 @@
-const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e6861-3391-7f83-af67-f4734997dfb9';
+const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e6e3c-e6af-7a24-9856-d50147b4b072';
 const LEGACY_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597d-5bb5-757e-b876-18984e01bc7c';
 const COMMUNITY_KEY = 'omp:community:v1';
 const MAX_SUBMISSIONS = 120;
