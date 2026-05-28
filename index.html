@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260528-chrometabs1">
+  <link rel="stylesheet" href="css/style.css?v=20260528-drop02launch1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -306,15 +306,15 @@
   <!-- Drop 01/XX -->
   <section class="section drop" id="drop">
     <div class="container">
-      <p class="section-label reveal" data-i18n="collectionLabel">Colección actual</p>
+      <p class="section-label reveal" data-i18n="collectionLabel">Colecciones</p>
       <div class="drop-tabs reveal reveal-delay-1" role="tablist" aria-label="Colecciones por drop">
         <button class="drop-tabs__button is-active" type="button" role="tab" aria-selected="true" aria-controls="dropPanel01" id="dropTab01" data-drop-tab="dropPanel01" data-drop-code="01/XX" data-drop-status="prórroga" data-drop-copy="Drop 1, nuestra base, &quot;No one is coming&quot;, nadie va a venir a hacerlo por ti, te va a tocar currártelo.">
           <span>DROP 01/XX</span>
-          <small>Prórroga</small>
+          <small data-drop01-status>Prórroga</small>
         </button>
-        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02" data-drop-code="02/XX" data-drop-status="30 may" data-drop-copy="Drop 2 mira hacia casa: acento canario, herencia y mesa compartida. Lo que llevas dentro también se entrena.">
+        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02" data-drop-code="02/XX" data-drop-status="29 may" data-drop-copy="Drop 2 mira hacia casa: acento canario, herencia y mesa compartida. Lo que llevas dentro también se entrena.">
           <span>DROP 02/XX</span>
-          <small>30 MAY</small>
+          <small data-drop2-tab-countdown>29 MAY · 12:00</small>
         </button>
       </div>
       <div class="drop__header">
@@ -461,11 +461,40 @@
       </div>
 
       <div class="drop-panel" id="dropPanel02" role="tabpanel" aria-labelledby="dropTab02" hidden>
-        <div class="drop-panel__empty">
+        <div class="drop-panel__locked" data-drop2-locked>
           <span>DROP 02/XX</span>
           <strong>No es de donde eres, es lo que llevas dentro.</strong>
-          <p>La segunda ventana está preparada. Cuando entren las primeras piezas, aparecerán aquí con el mismo sistema de scroll lateral, etiquetas y compra rápida.</p>
-          <a href="#calendario">Ver calendario</a>
+          <p>El drop se abre el 29 de mayo a las 12:00. Hasta entonces, la galería queda cerrada.</p>
+          <div class="drop-panel__countdown" data-drop2-countdown>00D 00H 00M 00S</div>
+        </div>
+        <div class="drop__scroll-wrap drop-panel__gallery" data-drop2-gallery hidden aria-label="Galería horizontal DROP 02/XX">
+          <div class="drop__grid">
+            <article class="product-card">
+              <button class="product-card__media" type="button" data-lightbox-src="assets/collection/drop-02/drop-02-01.jpg" aria-label="Abrir imagen DROP 02/XX">
+                <img class="product-card__img" src="assets/collection/drop-02/thumbs/drop-02-01.jpg" width="607" height="760" alt="DROP 02/XX — camiseta negra OMP con gofio La Piña" loading="lazy" decoding="async">
+              </button>
+            </article>
+            <article class="product-card">
+              <button class="product-card__media" type="button" data-lightbox-src="assets/collection/drop-02/drop-02-02.jpg" aria-label="Abrir imagen DROP 02/XX">
+                <img class="product-card__img" src="assets/collection/drop-02/thumbs/drop-02-02.jpg" width="607" height="760" alt="DROP 02/XX — caja Gofio La Piña con camiseta OMP" loading="lazy" decoding="async">
+              </button>
+            </article>
+            <article class="product-card">
+              <button class="product-card__media" type="button" data-lightbox-src="assets/collection/drop-02/drop-02-03.jpg" aria-label="Abrir imagen DROP 02/XX">
+                <img class="product-card__img" src="assets/collection/drop-02/thumbs/drop-02-03.jpg" width="607" height="760" alt="DROP 02/XX — camiseta negra OMP sobre cajas de gofio" loading="lazy" decoding="async">
+              </button>
+            </article>
+            <article class="product-card">
+              <button class="product-card__media" type="button" data-lightbox-src="assets/collection/drop-02/drop-02-04.jpg" aria-label="Abrir imagen DROP 02/XX">
+                <img class="product-card__img" src="assets/collection/drop-02/thumbs/drop-02-04.jpg" width="607" height="760" alt="DROP 02/XX — espalda de camiseta negra OMP" loading="lazy" decoding="async">
+              </button>
+            </article>
+            <article class="product-card">
+              <button class="product-card__media" type="button" data-lightbox-src="assets/collection/drop-02/drop-02-05.jpg" aria-label="Abrir imagen DROP 02/XX">
+                <img class="product-card__img" src="assets/collection/drop-02/thumbs/drop-02-05.jpg" width="607" height="760" alt="DROP 02/XX — atleta con camiseta negra OMP y gofio" loading="lazy" decoding="async">
+              </button>
+            </article>
+          </div>
         </div>
       </div>
       <div class="product-proof reveal reveal-delay-4" aria-label="Detalles de producto premium">
@@ -515,24 +544,32 @@
           </button>
           <figcaption>DROP 01/XX · 04 MAY - 31 MAY</figcaption>
         </figure>
-        <figure class="drop-calendar__card drop-calendar__card--two">
-          <div class="drop-calendar__cover">
-            <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
-            <div class="drop-calendar__next-action">
-              <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
-                <div class="drop-countdown__grid">
-                  <span><strong id="countDays">00</strong><small>Días</small></span>
-                  <span><strong id="countHours">00</strong><small>Horas</small></span>
-                  <span><strong id="countMinutes">00</strong><small>Min</small></span>
-                  <span><strong id="countSeconds">00</strong><small>Seg</small></span>
-                </div>
+        <figure class="drop-calendar__card drop-calendar__card--two" data-flip-card data-unlock-at="2026-05-29T12:00:00+01:00">
+          <button class="drop-calendar__flip drop-calendar__flip--locked" type="button" aria-label="Girar portada DROP 02/XX" aria-disabled="true">
+            <span class="drop-calendar__flip-inner">
+              <span class="drop-calendar__face drop-calendar__face--front">
+                <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
+              </span>
+              <span class="drop-calendar__face drop-calendar__face--back">
+                <img src="assets/drops/drop-02-back.jpg" width="833" height="1043" alt="Prendas DROP 02/XX de On My Peak con La Piña" loading="lazy" decoding="async">
+              </span>
+            </span>
+            <span class="drop-calendar__hint">pulsa y descúbrela</span>
+          </button>
+          <div class="drop-calendar__next-action">
+            <div class="drop-countdown" id="dropCountdown" aria-label="Cuenta atrás para el próximo drop">
+              <div class="drop-countdown__grid">
+                <span><strong id="countDays">00</strong><small>Días</small></span>
+                <span><strong id="countHours">00</strong><small>Horas</small></span>
+                <span><strong id="countMinutes">00</strong><small>Min</small></span>
+                <span><strong id="countSeconds">00</strong><small>Seg</small></span>
               </div>
-              <a class="calendar-btn" id="calendarButton" href="assets/calendar/next-drop-omp.ics" data-i18n="calendarButton">
-                MARCAR EN TU CALENDARIO
-              </a>
             </div>
+            <a class="calendar-btn" id="calendarButton" href="assets/calendar/next-drop-omp.ics" data-i18n="calendarButton">
+              MARCAR EN TU CALENDARIO
+            </a>
           </div>
-          <figcaption>DROP 02/XX · 30 MAY - 28 JUN</figcaption>
+          <figcaption>DROP 02/XX · 29 MAY - 28 JUN</figcaption>
         </figure>
         <figure class="drop-calendar__card drop-calendar__card--three">
           <div class="drop-calendar__cover drop-calendar__cover--empty" aria-hidden="true"></div>
@@ -884,6 +921,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260528-chrometabs1" defer></script>
+  <script src="js/script.js?v=20260528-drop02launch1" defer></script>
 </body>
 </html>

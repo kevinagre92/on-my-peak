@@ -1559,7 +1559,8 @@ select:focus-visible {
   display: none;
 }
 
-.drop-panel__empty {
+.drop-panel__empty,
+.drop-panel__locked {
   max-width: 720px;
   margin-top: 2.5rem;
   padding: clamp(1rem, 3vw, 1.6rem);
@@ -1571,13 +1572,15 @@ select:focus-visible {
   text-transform: uppercase;
 }
 
-.drop-panel__empty span {
+.drop-panel__empty span,
+.drop-panel__locked span {
   color: #ffd32e;
   font-size: 0.62rem;
   letter-spacing: 0.18em;
 }
 
-.drop-panel__empty strong {
+.drop-panel__empty strong,
+.drop-panel__locked strong {
   display: block;
   max-width: 18ch;
   margin-top: 0.75rem;
@@ -1588,7 +1591,8 @@ select:focus-visible {
   line-height: 1.15;
 }
 
-.drop-panel__empty p {
+.drop-panel__empty p,
+.drop-panel__locked p {
   max-width: 58ch;
   margin: 1rem 0 0;
   color: var(--text-secondary);
@@ -2276,6 +2280,10 @@ select:focus-visible {
   overflow: hidden;
 }
 
+.drop-calendar__flip--locked {
+  cursor: default;
+}
+
 .drop-calendar__flip::after {
   content: "";
   position: absolute;
@@ -2348,6 +2356,10 @@ select:focus-visible {
 .drop-calendar__card.show-hint .drop-calendar__hint {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
+}
+
+.drop-calendar__card--two:not(.is-unlocked) .drop-calendar__hint {
+  background: rgba(255,211,42,0.94);
 }
 
 .drop-calendar__cover--empty {
@@ -3278,6 +3290,23 @@ select:focus-visible {
 .cart-item:hover {
   border-color: rgba(255,255,255,0.16);
   background: rgba(255,255,255,0.048);
+}
+
+.drop-panel__locked[hidden],
+.drop-panel__gallery[hidden] {
+  display: none;
+}
+
+.drop-panel__countdown {
+  display: inline-flex;
+  margin-top: 1.1rem;
+  padding: 0.72rem 0.9rem;
+  border: 1px solid rgba(255,211,46,0.38);
+  color: var(--text-primary);
+  font-family: var(--font-logo);
+  font-size: clamp(0.82rem, 1.8vw, 1.08rem);
+  letter-spacing: 0.12em;
+  background: rgba(0,0,0,0.26);
 }
 
 .cart-item__top,

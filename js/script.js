@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
       manifestoText1: 'No hacemos ropa para que te veas bien. Hacemos <strong>armaduras</strong> para los que se presentan cada día sin excusas. Para los que nadie esperaba. Para los que <strong>siguen aquí</strong> cuando todos se han ido.',
       manifestoText2: 'Si necesitas que alguien te motive, esto no es para ti. Si ya estás dentro, <strong>lo sabes</strong>.',
-      collectionLabel: 'Colección actual',
+      collectionLabel: 'Colecciones',
       dropText: 'Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.',
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
       dropUrgency: 'Disponible durante',
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
       manifestoText1: 'We do not make clothes so you look good. We make <strong>armor</strong> for those who show up every day with no excuses. For those nobody expected. For those who are <strong>still here</strong> when everyone else is gone.',
       manifestoText2: 'If you need someone to motivate you, this is not for you. If you are already in, <strong>you know</strong>.',
-      collectionLabel: 'Collection',
+      collectionLabel: 'Collections',
       dropText: 'Drop 1, our foundation, "No one is coming": nobody is coming to do it for you, you will have to earn it.',
       dropHint: '<span>←→</span> Scroll sideways to see more',
       dropUrgency: 'Available during',
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
       manifestoText1: 'Não fazemos roupa só para ficares bem. Fazemos <strong>armadura</strong> para quem aparece todos os dias sem desculpas. Para quem ninguém esperava. Para quem <strong>continua aqui</strong> quando todos já foram embora.',
       manifestoText2: 'Se precisas que alguém te motive, isto não é para ti. Se já estás dentro, <strong>tu sabes</strong>.',
-      collectionLabel: 'Coleção',
+      collectionLabel: 'Coleções',
       dropText: 'Drop 1, a nossa base, "No one is coming": ninguém vai vir fazer isto por ti, vais ter de trabalhar por isso.',
       dropHint: '<span>←→</span> Desliza para o lado para ver mais',
       dropUrgency: 'Disponível durante',
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     es: {
       faq: {
         title: 'Preguntas Frecuentes',
-        body: '<h3>¿Cómo reservo mi prenda?</h3><p>Elige modelo, color y talla, añade la prenda al carrito y escríbenos por WhatsApp para cerrar disponibilidad y entrega.</p><h3>¿Cuándo sale el próximo drop?</h3><p>DROP 02/XX está marcado para el 30 de mayo a las 12:00, hora de Canarias.</p><h3>¿Hay muchas unidades?</h3><p>No. OMP trabaja por drops limitados para mantener intención, calidad y exclusividad.</p>'
+        body: '<h3>¿Cómo reservo mi prenda?</h3><p>Elige modelo, color y talla, añade la prenda al carrito y escríbenos por WhatsApp para cerrar disponibilidad y entrega.</p><h3>¿Cuándo sale el próximo drop?</h3><p>DROP 02/XX está marcado para el 29 de mayo a las 12:00, hora de Canarias.</p><h3>¿Hay muchas unidades?</h3><p>No. OMP trabaja por drops limitados para mantener intención, calidad y exclusividad.</p>'
       },
       returns: {
         title: 'Cambios y Devoluciones',
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     en: {
       faq: {
         title: 'Frequently Asked Questions',
-        body: '<h3>How do I reserve a piece?</h3><p>Choose model, color and size, add it to the cart and contact us on WhatsApp to confirm stock and delivery.</p><h3>When is the next drop?</h3><p>DROP 02/XX is scheduled for May 30 at 12:00, Canary Islands time.</p><h3>Are units limited?</h3><p>Yes. OMP works through limited drops to keep intention, quality and exclusivity.</p>'
+        body: '<h3>How do I reserve a piece?</h3><p>Choose model, color and size, add it to the cart and contact us on WhatsApp to confirm stock and delivery.</p><h3>When is the next drop?</h3><p>DROP 02/XX is scheduled for May 29 at 12:00, Canary Islands time.</p><h3>Are units limited?</h3><p>Yes. OMP works through limited drops to keep intention, quality and exclusivity.</p>'
       },
       returns: {
         title: 'Exchanges and Returns',
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pt: {
       faq: {
         title: 'Perguntas Frequentes',
-        body: '<h3>Como reservo a minha peça?</h3><p>Escolhe modelo, cor e tamanho, adiciona ao carrinho e fala connosco no WhatsApp para confirmar stock e entrega.</p><h3>Quando sai o próximo drop?</h3><p>DROP 02/XX está marcado para 30 de maio às 12:00, hora das Canárias.</p><h3>As unidades são limitadas?</h3><p>Sim. A OMP trabalha por drops limitados para manter intenção, qualidade e exclusividade.</p>'
+        body: '<h3>Como reservo a minha peça?</h3><p>Escolhe modelo, cor e tamanho, adiciona ao carrinho e fala connosco no WhatsApp para confirmar stock e entrega.</p><h3>Quando sai o próximo drop?</h3><p>DROP 02/XX está marcado para 29 de maio às 12:00, hora das Canárias.</p><h3>As unidades são limitadas?</h3><p>Sim. A OMP trabalha por drops limitados para manter intenção, qualidade e exclusividade.</p>'
       },
       returns: {
         title: 'Trocas e Devoluções',
@@ -924,7 +924,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --- Next Drop Countdown --- */
-  const countdownTarget = new Date('2026-05-30T12:00:00+01:00').getTime();
+  const drop2LaunchTarget = new Date('2026-05-29T12:00:00+01:00').getTime();
+  const countdownTarget = drop2LaunchTarget;
   const countdownParts = {
     days: document.getElementById('countDays'),
     hours: document.getElementById('countHours'),
@@ -954,6 +955,53 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCountdown();
   window.setInterval(updateCountdown, 1000);
 
+  const drop2TabCountdown = document.querySelector('[data-drop2-tab-countdown]');
+  const drop2CountdownNodes = document.querySelectorAll('[data-drop2-countdown]');
+  const drop2Locked = document.querySelector('[data-drop2-locked]');
+  const drop2Gallery = document.querySelector('[data-drop2-gallery]');
+
+  function getCountdownParts(target) {
+    const distance = Math.max(0, target - Date.now());
+    return {
+      distance,
+      days: Math.floor(distance / 86400000),
+      hours: Math.floor((distance % 86400000) / 3600000),
+      minutes: Math.floor((distance % 3600000) / 60000),
+      seconds: Math.floor((distance % 60000) / 1000)
+    };
+  }
+
+  function formatCompactCountdown(parts) {
+    return `${padTime(parts.days)}D ${padTime(parts.hours)}H ${padTime(parts.minutes)}M ${padTime(parts.seconds)}S`;
+  }
+
+  function isDrop2Live() {
+    return Date.now() >= drop2LaunchTarget;
+  }
+
+  function updateDrop2LaunchState() {
+    const parts = getCountdownParts(drop2LaunchTarget);
+    const live = parts.distance <= 0;
+    if (drop2TabCountdown) {
+      drop2TabCountdown.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
+    }
+    drop2CountdownNodes.forEach(node => {
+      node.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
+    });
+    if (drop2Locked) drop2Locked.hidden = live;
+    if (drop2Gallery) drop2Gallery.hidden = !live;
+    document.querySelectorAll('[data-unlock-at]').forEach(card => {
+      const unlocked = Date.now() >= new Date(card.dataset.unlockAt).getTime();
+      card.classList.toggle('is-unlocked', unlocked);
+      const flipButton = card.querySelector('.drop-calendar__flip');
+      flipButton?.classList.toggle('drop-calendar__flip--locked', !unlocked);
+      flipButton?.setAttribute('aria-disabled', String(!unlocked));
+    });
+  }
+
+  updateDrop2LaunchState();
+  window.setInterval(updateDrop2LaunchState, 1000);
+
   /* --- Drop Calendar Month Navigation --- */
   const calendarMonthLabel = document.getElementById('calendarMonthLabel');
   const calendarYearLabel = document.getElementById('calendarYearLabel');
@@ -963,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const calendarMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const dropRanges = [
     { start: '2026-05-04', end: '2026-05-31', className: 'drop-day--one' },
-    { start: '2026-05-30', end: '2026-06-28', className: 'drop-day--two' }
+    { start: '2026-05-29', end: '2026-06-28', className: 'drop-day--two' }
   ];
   let visibleCalendarMonth = new Date(2026, 4, 1);
 
@@ -1025,6 +1073,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Drop 01 Deadline Countdown --- */
   const dropDeadlineTarget = new Date('2026-05-31T20:00:00+01:00').getTime();
   const dropDeadlineNodes = document.querySelectorAll('[data-drop-deadline-countdown]');
+  const drop01StatusNodes = document.querySelectorAll('[data-drop01-status], .hero__drop-live');
 
   function updateDropDeadlineCountdown() {
     if (!dropDeadlineNodes.length) return;
@@ -1042,6 +1091,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dropDeadlineNodes.forEach(node => {
       node.innerHTML = label;
     });
+    const soldOut = distance <= 0;
+    drop01StatusNodes.forEach(node => {
+      node.textContent = soldOut ? 'Sold out' : 'prórroga';
+    });
+    const activeDropStatus = document.getElementById('dropTitleStatus');
+    if (activeDropStatus && document.getElementById('dropTab01')?.classList.contains('is-active')) {
+      activeDropStatus.textContent = soldOut ? 'Sold out' : 'prórroga';
+    }
   }
 
   updateDropDeadlineCountdown();
@@ -2657,9 +2714,9 @@ document.addEventListener('DOMContentLoaded', () => {
       image.onerror = reject;
       image.src = source;
     });
-    const maxPayloadLength = 1900000;
-    let maxSide = 1800;
-    let quality = 0.86;
+    const maxPayloadLength = 2900000;
+    let maxSide = 2200;
+    let quality = 0.88;
     let output = '';
 
     for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -2671,11 +2728,11 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       output = canvas.toDataURL('image/jpeg', quality);
       if (output.length <= maxPayloadLength) return output;
-      quality = Math.max(0.52, quality - 0.08);
-      maxSide = Math.max(880, Math.round(maxSide * 0.84));
+      quality = Math.max(0.56, quality - 0.07);
+      maxSide = Math.max(980, Math.round(maxSide * 0.86));
     }
 
-    if (output && output.length <= 2200000) return output;
+    if (output && output.length <= 3400000) return output;
     throw new Error('image_too_large_after_compression');
   }
 
@@ -3016,7 +3073,11 @@ document.addEventListener('DOMContentLoaded', () => {
         panel.hidden = !active;
       });
       if (dropTitleCode && button.dataset.dropCode) dropTitleCode.textContent = button.dataset.dropCode;
-      if (dropTitleStatus && button.dataset.dropStatus) dropTitleStatus.textContent = button.dataset.dropStatus;
+      if (dropTitleStatus && button.dataset.dropStatus) {
+        const isDrop01 = button.id === 'dropTab01';
+        const drop01SoldOut = Date.now() >= dropDeadlineTarget;
+        dropTitleStatus.textContent = isDrop01 && drop01SoldOut ? 'Sold out' : button.dataset.dropStatus;
+      }
       if (dropNarrative && button.dataset.dropCopy) dropNarrative.textContent = button.dataset.dropCopy;
     });
   });
@@ -3032,10 +3093,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const lightboxItems = Array.from(document.querySelectorAll('[data-lightbox-src]'));
   let lightboxIndex = 0;
 
+  function getVisibleLightboxItems() {
+    return lightboxItems.filter(item => !item.closest('[hidden]'));
+  }
+
   function showLightboxImage(index) {
     if (!lightbox || !lightboxImg || !lightboxItems.length) return;
-    lightboxIndex = (index + lightboxItems.length) % lightboxItems.length;
-    const button = lightboxItems[lightboxIndex];
+    const visibleItems = getVisibleLightboxItems();
+    if (!visibleItems.length) return;
+    const requestedButton = lightboxItems[index];
+    const requestedVisibleIndex = requestedButton ? visibleItems.indexOf(requestedButton) : -1;
+    lightboxIndex = requestedVisibleIndex >= 0
+      ? requestedVisibleIndex
+      : (index + visibleItems.length) % visibleItems.length;
+    const button = visibleItems[lightboxIndex];
     const img = button.querySelector('img');
     lightboxImg.src = button.dataset.lightboxSrc;
     lightboxImg.alt = img?.alt || 'Imagen DROP 01/XX';
@@ -3114,6 +3185,11 @@ document.addEventListener('DOMContentLoaded', () => {
   flipCards.forEach(card => {
     const flipButton = card.querySelector('.drop-calendar__flip');
     flipButton?.addEventListener('click', () => {
+      if (card.dataset.unlockAt && Date.now() < new Date(card.dataset.unlockAt).getTime()) {
+        card.classList.add('show-hint');
+        window.setTimeout(() => card.classList.remove('show-hint'), 1800);
+        return;
+      }
       card.classList.toggle('is-flipped');
       card.classList.remove('show-hint');
     });

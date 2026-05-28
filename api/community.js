@@ -2,7 +2,7 @@ const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e68
 const LEGACY_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597d-5bb5-757e-b876-18984e01bc7c';
 const MAX_SUBMISSIONS = 120;
 const MAX_LEADS = 1000;
-const MAX_PHOTO_LENGTH = 2400000;
+const MAX_PHOTO_LENGTH = 3600000;
 
 function json(res, status, body) {
   res.statusCode = status;
@@ -56,20 +56,36 @@ function normalizeStore(data) {
 }
 
 async function readStore() {
-  let lastError = null;
+  const merged = normalizeStore({});
+  let readAny = false;
   for (const url of getStoreUrls()) {
     try {
       const response = await fetch(url, { headers: { Accept: 'application/json' } });
       if (!response.ok) {
-        lastError = new Error(`community_store_${response.status}`);
         continue;
       }
-      return normalizeStore(await response.json());
+      const store = normalizeStore(await response.json());
+      readAny = true;
+      const seenSubmissions = new Set(merged.submissions.map(item => item.id).filter(Boolean));
+      const seenLeads = new Set(merged.leads.map(item => item.id).filter(Boolean));
+      store.submissions.forEach(item => {
+        if (!item?.id || seenSubmissions.has(item.id)) return;
+        seenSubmissions.add(item.id);
+        merged.submissions.push(item);
+      });
+      store.leads.forEach(item => {
+        if (!item?.id || seenLeads.has(item.id)) return;
+        seenLeads.add(item.id);
+        merged.leads.push(item);
+      });
+      if (store.updatedAt && store.updatedAt > merged.updatedAt) merged.updatedAt = store.updatedAt;
     } catch (error) {
-      lastError = error;
+      // Keep trying the remaining stores so older approved photos are not hidden by an empty store.
     }
   }
-  return normalizeStore({});
+  merged.submissions.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  merged.leads.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  return readAny ? merged : normalizeStore({});
 }
 
 async function writeStore(store) {
@@ -79,7 +95,7 @@ async function writeStore(store) {
     submissions: store.submissions.slice(0, MAX_SUBMISSIONS),
     leads: store.leads.slice(0, MAX_LEADS)
   });
-  let lastError = null;
+  let wroteAny = false;
   for (const url of getStoreUrls()) {
     try {
       const response = await fetch(url, {
@@ -88,14 +104,14 @@ async function writeStore(store) {
         body: JSON.stringify(payload)
       });
       if (!response.ok) {
-        lastError = new Error(`community_store_put_${response.status}`);
         continue;
       }
-      return payload;
+      wroteAny = true;
     } catch (error) {
-      lastError = error;
+      // Best effort sync across all configured stores.
     }
   }
+  if (wroteAny) return payload;
   return payload;
 }
 
