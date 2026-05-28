@@ -977,6 +977,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${padTime(parts.days)}D ${padTime(parts.hours)}H ${padTime(parts.minutes)}M ${padTime(parts.seconds)}S`;
   }
 
+  function formatSegmentedCountdown(parts) {
+    return [
+      ['D', parts.days],
+      ['H', parts.hours],
+      ['M', parts.minutes],
+      ['S', parts.seconds]
+    ].map(([unit, value]) => `<span><b>${padTime(value)}</b><small>${unit}</small></span>`).join('');
+  }
+
   function isDrop2Live() {
     return Date.now() >= drop2LaunchTarget;
   }
@@ -991,7 +1000,11 @@ document.addEventListener('DOMContentLoaded', () => {
       node.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
     });
     if (drop2HeroCountdown) {
-      drop2HeroCountdown.textContent = live ? 'AL GOLPITO' : formatCompactCountdown(parts);
+      if (live) {
+        drop2HeroCountdown.textContent = 'AL GOLPITO';
+      } else {
+        drop2HeroCountdown.innerHTML = formatSegmentedCountdown(parts);
+      }
     }
     if (drop2Locked) drop2Locked.hidden = live;
     if (drop2Gallery) drop2Gallery.hidden = !live;
