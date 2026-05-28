@@ -759,16 +759,16 @@ select:focus-visible {
 
 .hero__drop-live {
   position: absolute;
-  right: clamp(-5.2rem, -6.2vw, -3.2rem);
+  right: clamp(-6.8rem, -7.5vw, -4.2rem);
   bottom: clamp(-0.7rem, -0.9vw, -0.25rem);
   display: inline-block;
   padding: 0.16em 0.9em 0.22em;
   background: var(--text-primary);
   color: var(--bg-primary);
   font-family: var(--font-logo);
-  font-size: clamp(0.78rem, 1.7vw, 1.45rem);
+  font-size: clamp(0.66rem, 1.35vw, 1.12rem);
   font-weight: 400;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.14em;
   line-height: 1.15;
   text-transform: lowercase;
   transform: rotate(-10deg);
@@ -1412,16 +1412,16 @@ select:focus-visible {
 
 .drop__title-live {
   position: absolute;
-  right: clamp(-5.2rem, -6.2vw, -3.2rem);
+  right: clamp(-6.8rem, -7.5vw, -4.2rem);
   bottom: clamp(-0.7rem, -0.9vw, -0.25rem);
   display: inline-block;
   padding: 0.16em 0.9em 0.22em;
   background: var(--text-primary);
   color: var(--bg-primary);
   font-family: var(--font-logo);
-  font-size: clamp(0.78rem, 1.7vw, 1.45rem);
+  font-size: clamp(0.66rem, 1.35vw, 1.12rem);
   font-weight: 400;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.14em;
   line-height: 1.15;
   text-transform: lowercase;
   transform: rotate(-10deg);
@@ -4914,9 +4914,9 @@ select:focus-visible {
   }
 
   .hero__drop-live {
-    right: -1.7rem;
+    right: -2.8rem;
     bottom: -0.3rem;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.1em;
   }
 
   .hero__logo { font-size: clamp(2rem, 12vw, 3.5rem); }

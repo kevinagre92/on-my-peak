@@ -2374,6 +2374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const priceInput = e.target.closest('[data-sale-total]');
     const deliveryInput = e.target.closest('[data-sale-delivery-details]');
     if (!bulkCheckbox && !checkbox && !fieldInput && !priceInput && !deliveryInput) return;
+    if (fieldInput || priceInput || deliveryInput) return;
     if (bulkCheckbox) {
       const field = bulkCheckbox.dataset.saleBulk;
       const checked = bulkCheckbox.checked;
@@ -2388,78 +2389,9 @@ document.addEventListener('DOMContentLoaded', () => {
       renderSellerSales(sales, `${checked ? 'Columna marcada' : 'Columna desmarcada'}.`);
       try {
         await Promise.all(affectedSales.map(sale => patchSaleStatus(sale.id, { [field]: checked })));
-        await loadSellerSales();
+        renderSellerSales(readSalesHistory(), `${checked ? 'Columna marcada' : 'Columna desmarcada'}.`);
       } catch (error) {
         renderSellerSales(readSalesHistory(), 'Columna actualizada en esta copia. No se pudo sincronizar todo con el ERP.');
-      }
-      return;
-    }
-    if (fieldInput) {
-      const fieldRow = fieldInput.closest('[data-sale-id]');
-      const saleId = fieldRow?.dataset.saleId;
-      const field = fieldInput.dataset.saleField;
-      const editableFields = new Set(['drop', 'createdAt', 'model', 'color', 'size', 'quantity', 'client', 'phone', 'email', 'code', 'unitCost']);
-      if (!saleId || !editableFields.has(field) || editingSaleId !== saleId) return;
-      const rawValue = fieldInput.value.trim();
-      const value = field === 'createdAt' ? dateInputToIso(rawValue) : field === 'quantity' || field === 'unitCost' ? Number(rawValue || 0) : rawValue;
-      const sales = readSalesHistory();
-      const sale = sales.find(item => item.id === saleId);
-      if (!sale) return;
-      sale[field] = value;
-      if (field === 'model') sale.unitCost = getSaleUnitCost(value);
-      if (field === 'quantity') sale.quantity = Math.max(1, Number(value || 1));
-      if (field === 'unitCost') sale.unitCost = Math.max(0, Number(value || 0));
-      sale.cost = getSaleCost(sale);
-      sale.netProfit = getSaleProfit(sale);
-      writeSalesHistory(sales);
-      if (field === 'createdAt') editingSalePurchaseId = '';
-      renderSellerSales(sales, 'Venta actualizada.');
-      try {
-        await patchSaleField(saleId, field, sale[field]);
-        await loadSellerSales();
-      } catch (error) {
-        renderSellerSales(readSalesHistory(), 'Venta actualizada en esta copia. No se pudo sincronizar con el ERP.');
-      }
-      return;
-    }
-    if (priceInput) {
-      const priceRow = priceInput.closest('[data-sale-id]');
-      const saleId = priceRow?.dataset.saleId;
-      if (editingSaleId !== saleId) return;
-      const total = Math.max(0, Number(priceInput.value || 0));
-      const sales = readSalesHistory();
-      const sale = sales.find(item => item.id === saleId);
-      if (!sale) return;
-      sale.total = total;
-      sale.unitPrice = total / Number(sale.quantity || 1);
-      sale.cost = getSaleCost(sale);
-      sale.netProfit = getSaleProfit(sale);
-      writeSalesHistory(sales);
-      renderSellerSales(sales, 'Precio actualizado.');
-      try {
-        await patchSaleTotal(saleId, total);
-        await loadSellerSales();
-      } catch (error) {
-        renderSellerSales(readSalesHistory(), 'Precio actualizado en esta copia. No se pudo sincronizar con el ERP.');
-      }
-      return;
-    }
-    if (deliveryInput) {
-      const deliveryRow = deliveryInput.closest('[data-sale-id]');
-      const saleId = deliveryRow?.dataset.saleId;
-      if (editingSaleId !== saleId) return;
-      const deliveryDetails = deliveryInput.value.trim();
-      const sales = readSalesHistory();
-      const sale = sales.find(item => item.id === saleId);
-      if (!sale) return;
-      sale.deliveryDetails = deliveryDetails;
-      writeSalesHistory(sales);
-      renderSellerSales(sales, 'Entrega actualizada.');
-      try {
-        await patchSaleDeliveryDetails(saleId, deliveryDetails);
-        await loadSellerSales();
-      } catch (error) {
-        renderSellerSales(readSalesHistory(), 'Entrega actualizada en esta copia. No se pudo sincronizar con el ERP.');
       }
       return;
     }
@@ -2487,7 +2419,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         await patchSalePaid(saleId, checkbox.checked);
       }
-      await loadSellerSales();
+      renderSellerSales(readSalesHistory());
     } catch (error) {
       const statusLabel = isManufacturedToggle ? 'Fabricación' : isDeliveryToggle ? 'Entrega' : 'Pago';
       renderSellerSales(readSalesHistory(), `${statusLabel} marcada en esta copia. No se pudo sincronizar con el ERP.`);
@@ -2518,7 +2450,6 @@ document.addEventListener('DOMContentLoaded', () => {
           editingSaleId = '';
           editingSalePurchaseId = '';
           renderSellerSales(readSalesHistory(), 'Compra guardada.');
-          await loadSellerSales();
         } catch (error) {
           renderSellerSales(readSalesHistory(), 'No se pudo guardar ahora. Revisa la conexión antes de cerrar.');
         }
@@ -2539,7 +2470,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSellerSales(sales, 'Venta eliminada.');
     try {
       await deleteSaleRow(saleId);
-      await loadSellerSales();
+      renderSellerSales(readSalesHistory(), 'Venta eliminada.');
     } catch (error) {
       renderSellerSales(readSalesHistory(), 'Venta eliminada de esta copia. No se pudo sincronizar con el ERP.');
     }
@@ -2611,7 +2542,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sellerManualToggle?.classList.remove('is-open');
       if (sellerManualQuantity) sellerManualQuantity.value = '1';
       if (sellerManualTotal) sellerManualTotal.value = String(pricesByModel[sellerManualModel?.value || 'Oversized'] || 22);
-      await loadSellerSales();
+      renderSellerSales(readSalesHistory(), 'Venta manual añadida.');
     } catch (error) {
       renderSellerSales(readSalesHistory(), 'Venta añadida en esta copia. No se pudo sincronizar con el ERP.');
     }
