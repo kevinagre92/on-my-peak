@@ -962,7 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const calendarNext = document.querySelector('[data-calendar-next]');
   const calendarMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const dropRanges = [
-    { start: '2026-05-04', end: '2026-05-26', className: 'drop-day--one' },
+    { start: '2026-05-04', end: '2026-05-31', className: 'drop-day--one' },
     { start: '2026-05-30', end: '2026-06-28', className: 'drop-day--two' }
   ];
   let visibleCalendarMonth = new Date(2026, 4, 1);
@@ -1023,7 +1023,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDropCalendar();
 
   /* --- Drop 01 Deadline Countdown --- */
-  const dropDeadlineTarget = new Date('2026-05-26T19:00:00+01:00').getTime();
+  const dropDeadlineTarget = new Date('2026-05-31T20:00:00+01:00').getTime();
   const dropDeadlineNodes = document.querySelectorAll('[data-drop-deadline-countdown]');
 
   function updateDropDeadlineCountdown() {
