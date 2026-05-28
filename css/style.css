@@ -1494,29 +1494,39 @@ select:focus-visible {
 
 .drop-tabs {
   display: inline-flex;
-  gap: 0.5rem;
-  margin-top: 1.2rem;
-  padding: 0.28rem;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.025);
+  align-items: flex-end;
+  gap: 0;
+  margin: 0.75rem 0 1.2rem;
+  padding: 0 0.65rem;
+  border-bottom: 1px solid rgba(255,255,255,0.14);
+  background: transparent;
   overflow-x: auto;
   max-width: 100%;
 }
 
 .drop-tabs__button {
-  min-width: 9.4rem;
-  min-height: 3rem;
+  position: relative;
+  min-width: 9.6rem;
+  min-height: 2.85rem;
   display: grid;
   align-content: center;
-  gap: 0.18rem;
-  border: 1px solid transparent;
-  background: transparent;
+  gap: 0.12rem;
+  margin: 0 0 -1px -0.45rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-bottom-color: rgba(255,255,255,0.14);
+  border-radius: 12px 12px 0 0;
+  background: rgba(255,255,255,0.035);
   color: var(--text-muted);
   font-family: var(--font-mono);
   text-align: left;
   text-transform: uppercase;
   cursor: pointer;
-  padding: 0 0.72rem;
+  padding: 0 1rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.drop-tabs__button:first-child {
+  margin-left: 0;
 }
 
 .drop-tabs__button span {
@@ -1532,8 +1542,12 @@ select:focus-visible {
 }
 
 .drop-tabs__button.is-active {
-  border-color: rgba(232,83,30,0.5);
-  background: rgba(232,83,30,0.1);
+  z-index: 2;
+  border-color: rgba(232,83,30,0.55);
+  border-bottom-color: var(--bg-secondary);
+  background:
+    linear-gradient(180deg, rgba(232,83,30,0.12), rgba(255,255,255,0.035)),
+    var(--bg-secondary);
 }
 
 .drop-tabs__button.is-active span,

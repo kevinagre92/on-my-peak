@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260528-droptabs1">
+  <link rel="stylesheet" href="css/style.css?v=20260528-chrometabs1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -307,27 +307,27 @@
   <section class="section drop" id="drop">
     <div class="container">
       <p class="section-label reveal" data-i18n="collectionLabel">Colección actual</p>
-      <div class="drop__header">
-        <h2 class="drop__title reveal reveal-delay-1">
-          <span class="drop__title-main">DROP</span>
-          <span class="drop__title-code">01/XX</span>
-          <span class="drop__title-live">prórroga</span>
-        </h2>
-      </div>
-      <p class="section-subtitle reveal reveal-delay-2" data-i18n="dropText">
-        Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.
-      </p>
-      <p class="drop__urgency reveal reveal-delay-2"><span data-i18n="dropUrgency">Disponible durante</span> <strong class="deadline-countdown" data-drop-deadline-countdown>00D 00H 00M 00S</strong></p>
-      <div class="drop-tabs reveal reveal-delay-2" role="tablist" aria-label="Colecciones por drop">
-        <button class="drop-tabs__button is-active" type="button" role="tab" aria-selected="true" aria-controls="dropPanel01" id="dropTab01" data-drop-tab="dropPanel01">
+      <div class="drop-tabs reveal reveal-delay-1" role="tablist" aria-label="Colecciones por drop">
+        <button class="drop-tabs__button is-active" type="button" role="tab" aria-selected="true" aria-controls="dropPanel01" id="dropTab01" data-drop-tab="dropPanel01" data-drop-code="01/XX" data-drop-status="prórroga" data-drop-copy="Drop 1, nuestra base, &quot;No one is coming&quot;, nadie va a venir a hacerlo por ti, te va a tocar currártelo.">
           <span>DROP 01/XX</span>
           <small>Prórroga</small>
         </button>
-        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02">
+        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02" data-drop-code="02/XX" data-drop-status="30 may" data-drop-copy="Drop 2 mira hacia casa: acento canario, herencia y mesa compartida. Lo que llevas dentro también se entrena.">
           <span>DROP 02/XX</span>
           <small>30 MAY</small>
         </button>
       </div>
+      <div class="drop__header">
+        <h2 class="drop__title reveal reveal-delay-1">
+          <span class="drop__title-main">DROP</span>
+          <span class="drop__title-code" id="dropTitleCode">01/XX</span>
+          <span class="drop__title-live" id="dropTitleStatus">prórroga</span>
+        </h2>
+      </div>
+      <p class="section-subtitle reveal reveal-delay-2" data-i18n="dropText" id="dropNarrative">
+        Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.
+      </p>
+      <p class="drop__urgency reveal reveal-delay-2"><span data-i18n="dropUrgency">Disponible durante</span> <strong class="deadline-countdown" data-drop-deadline-countdown>00D 00H 00M 00S</strong></p>
       <p class="drop__hint reveal reveal-delay-2" data-i18n="dropHint"><span>←→</span> Desliza lateralmente para ver más</p>
 
       <div class="drop-panel is-active" id="dropPanel01" role="tabpanel" aria-labelledby="dropTab01">
@@ -884,6 +884,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260528-droptabs1" defer></script>
+  <script src="js/script.js?v=20260528-chrometabs1" defer></script>
 </body>
 </html>

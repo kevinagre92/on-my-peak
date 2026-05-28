@@ -2999,6 +2999,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const dropTabButtons = Array.from(document.querySelectorAll('[data-drop-tab]'));
   const dropPanels = Array.from(document.querySelectorAll('.drop-panel'));
+  const dropTitleCode = document.getElementById('dropTitleCode');
+  const dropTitleStatus = document.getElementById('dropTitleStatus');
+  const dropNarrative = document.getElementById('dropNarrative');
   dropTabButtons.forEach(button => {
     button.addEventListener('click', () => {
       const targetId = button.dataset.dropTab;
@@ -3012,6 +3015,9 @@ document.addEventListener('DOMContentLoaded', () => {
         panel.classList.toggle('is-active', active);
         panel.hidden = !active;
       });
+      if (dropTitleCode && button.dataset.dropCode) dropTitleCode.textContent = button.dataset.dropCode;
+      if (dropTitleStatus && button.dataset.dropStatus) dropTitleStatus.textContent = button.dataset.dropStatus;
+      if (dropNarrative && button.dataset.dropCopy) dropNarrative.textContent = button.dataset.dropCopy;
     });
   });
 
