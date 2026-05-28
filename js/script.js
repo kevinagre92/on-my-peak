@@ -2969,31 +2969,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --- Collection Horizontal Scroll & Lightbox --- */
-  const dropScroll = document.querySelector('.drop__scroll-wrap');
-  if (dropScroll) {
+  function initHorizontalDrag(scrollElement) {
+    if (!scrollElement) return;
     let isDraggingDrop = false;
     let dropStartX = 0;
     let dropScrollLeft = 0;
 
-    dropScroll.addEventListener('mousedown', (e) => {
+    scrollElement.addEventListener('mousedown', (e) => {
       isDraggingDrop = true;
-      dropScroll.classList.add('is-dragging');
-      dropStartX = e.pageX - dropScroll.offsetLeft;
-      dropScrollLeft = dropScroll.scrollLeft;
+      scrollElement.classList.add('is-dragging');
+      dropStartX = e.pageX - scrollElement.offsetLeft;
+      dropScrollLeft = scrollElement.scrollLeft;
     });
 
     document.addEventListener('mouseup', () => {
       isDraggingDrop = false;
-      dropScroll.classList.remove('is-dragging');
+      scrollElement.classList.remove('is-dragging');
     });
 
     document.addEventListener('mousemove', (e) => {
       if (!isDraggingDrop) return;
       e.preventDefault();
-      const x = e.pageX - dropScroll.offsetLeft;
-      dropScroll.scrollLeft = dropScrollLeft - (x - dropStartX) * 1.2;
+      const x = e.pageX - scrollElement.offsetLeft;
+      scrollElement.scrollLeft = dropScrollLeft - (x - dropStartX) * 1.2;
     });
   }
+
+  document.querySelectorAll('.drop__scroll-wrap').forEach(initHorizontalDrag);
+
+  const dropTabButtons = Array.from(document.querySelectorAll('[data-drop-tab]'));
+  const dropPanels = Array.from(document.querySelectorAll('.drop-panel'));
+  dropTabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetId = button.dataset.dropTab;
+      dropTabButtons.forEach(tab => {
+        const active = tab === button;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', String(active));
+      });
+      dropPanels.forEach(panel => {
+        const active = panel.id === targetId;
+        panel.classList.toggle('is-active', active);
+        panel.hidden = !active;
+      });
+    });
+  });
 
   const lightbox = document.getElementById('imageLightbox');
   const lightboxStage = lightbox?.querySelector('.image-lightbox__stage');

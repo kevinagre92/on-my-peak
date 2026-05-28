@@ -1492,6 +1492,109 @@ select:focus-visible {
   color: rgba(232,83,30,0.72);
 }
 
+.drop-tabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
+  padding: 0.28rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.025);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.drop-tabs__button {
+  min-width: 9.4rem;
+  min-height: 3rem;
+  display: grid;
+  align-content: center;
+  gap: 0.18rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0 0.72rem;
+}
+
+.drop-tabs__button span {
+  color: var(--text-secondary);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+}
+
+.drop-tabs__button small {
+  color: var(--text-muted);
+  font-size: 0.48rem;
+  letter-spacing: 0.14em;
+}
+
+.drop-tabs__button.is-active {
+  border-color: rgba(232,83,30,0.5);
+  background: rgba(232,83,30,0.1);
+}
+
+.drop-tabs__button.is-active span,
+.drop-tabs__button.is-active small {
+  color: var(--text-primary);
+}
+
+.drop-panel[hidden] {
+  display: none;
+}
+
+.drop-panel__empty {
+  max-width: 720px;
+  margin-top: 2.5rem;
+  padding: clamp(1rem, 3vw, 1.6rem);
+  border: 1px solid rgba(255,211,46,0.42);
+  background:
+    linear-gradient(135deg, rgba(255,211,46,0.08), transparent 42%),
+    rgba(255,255,255,0.026);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.drop-panel__empty span {
+  color: #ffd32e;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+}
+
+.drop-panel__empty strong {
+  display: block;
+  max-width: 18ch;
+  margin-top: 0.75rem;
+  color: var(--text-primary);
+  font-family: var(--font-logo);
+  font-size: clamp(1.15rem, 3vw, 2rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.drop-panel__empty p {
+  max-width: 58ch;
+  margin: 1rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  line-height: 1.8;
+  letter-spacing: 0.06em;
+}
+
+.drop-panel__empty a {
+  display: inline-flex;
+  margin-top: 1.2rem;
+  min-height: 2.35rem;
+  align-items: center;
+  border: 1px solid rgba(255,211,46,0.5);
+  color: #ffd32e;
+  padding: 0 0.82rem;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+}
+
 .drop__grid {
   display: flex;
   gap: 1.5rem;

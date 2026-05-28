@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260528-prorroga1">
+  <link rel="stylesheet" href="css/style.css?v=20260528-droptabs1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -318,9 +318,20 @@
         Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.
       </p>
       <p class="drop__urgency reveal reveal-delay-2"><span data-i18n="dropUrgency">Disponible durante</span> <strong class="deadline-countdown" data-drop-deadline-countdown>00D 00H 00M 00S</strong></p>
+      <div class="drop-tabs reveal reveal-delay-2" role="tablist" aria-label="Colecciones por drop">
+        <button class="drop-tabs__button is-active" type="button" role="tab" aria-selected="true" aria-controls="dropPanel01" id="dropTab01" data-drop-tab="dropPanel01">
+          <span>DROP 01/XX</span>
+          <small>Prórroga</small>
+        </button>
+        <button class="drop-tabs__button" type="button" role="tab" aria-selected="false" aria-controls="dropPanel02" id="dropTab02" data-drop-tab="dropPanel02">
+          <span>DROP 02/XX</span>
+          <small>30 MAY</small>
+        </button>
+      </div>
       <p class="drop__hint reveal reveal-delay-2" data-i18n="dropHint"><span>←→</span> Desliza lateralmente para ver más</p>
 
-      <div class="drop__scroll-wrap reveal reveal-delay-3" aria-label="Galería horizontal DROP 01/XX">
+      <div class="drop-panel is-active" id="dropPanel01" role="tabpanel" aria-labelledby="dropTab01">
+        <div class="drop__scroll-wrap reveal reveal-delay-3" aria-label="Galería horizontal DROP 01/XX">
         <div class="drop__grid">
           <article class="product-card">
             <button class="product-card__media" type="button" data-lightbox-src="assets/collection/drop-current/drop-current-01.jpg" aria-label="Abrir imagen DROP 01/XX">
@@ -445,6 +456,16 @@
             <div class="product-card__size-panel" aria-hidden="true"></div>
             <div class="product-card__info"><span class="product-card__name">DROP 01/XX</span></div>
           </article>
+        </div>
+      </div>
+      </div>
+
+      <div class="drop-panel" id="dropPanel02" role="tabpanel" aria-labelledby="dropTab02" hidden>
+        <div class="drop-panel__empty">
+          <span>DROP 02/XX</span>
+          <strong>No es de donde eres, es lo que llevas dentro.</strong>
+          <p>La segunda ventana está preparada. Cuando entren las primeras piezas, aparecerán aquí con el mismo sistema de scroll lateral, etiquetas y compra rápida.</p>
+          <a href="#calendario">Ver calendario</a>
         </div>
       </div>
       <div class="product-proof reveal reveal-delay-4" aria-label="Detalles de producto premium">
@@ -863,6 +884,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260528-prorroga1" defer></script>
+  <script src="js/script.js?v=20260528-droptabs1" defer></script>
 </body>
 </html>
