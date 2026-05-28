@@ -925,6 +925,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Next Drop Countdown --- */
   const drop2LaunchTarget = new Date('2026-05-29T12:00:00+01:00').getTime();
+  const drop2TabCountdownTarget = new Date('2027-04-30T20:00:00+01:00').getTime();
   const countdownTarget = drop2LaunchTarget;
   const countdownParts = {
     days: document.getElementById('countDays'),
@@ -983,7 +984,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const parts = getCountdownParts(drop2LaunchTarget);
     const live = parts.distance <= 0;
     if (drop2TabCountdown) {
-      drop2TabCountdown.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
+      drop2TabCountdown.textContent = live ? formatCompactCountdown(getCountdownParts(drop2TabCountdownTarget)) : '29 MAY · 12:00';
     }
     drop2CountdownNodes.forEach(node => {
       node.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
