@@ -1,5 +1,6 @@
 const DEFAULT_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e6861-3391-7f83-af67-f4734997dfb9';
 const LEGACY_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597d-5bb5-757e-b876-18984e01bc7c';
+const COMMUNITY_KEY = 'omp:community:v1';
 const MAX_SUBMISSIONS = 120;
 const MAX_LEADS = 1000;
 const MAX_PHOTO_LENGTH = 3600000;
@@ -15,6 +16,22 @@ function json(res, status, body) {
 
 function getStoreUrls() {
   return [...new Set([process.env.COMMUNITY_JSONBLOB_URL, DEFAULT_COMMUNITY_JSONBLOB_URL, LEGACY_COMMUNITY_JSONBLOB_URL].filter(Boolean))];
+}
+
+async function kvFetch(path, options = {}) {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  const response = await fetch(`${url}${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  if (!response.ok) throw new Error(`community_kv_${response.status}`);
+  return response.json();
 }
 
 function isAdminRequest(req) {
@@ -55,9 +72,37 @@ function normalizeStore(data) {
   };
 }
 
+function mergeIntoStore(target, source) {
+  const store = normalizeStore(source);
+  const seenSubmissions = new Set(target.submissions.map(item => item.id).filter(Boolean));
+  const seenLeads = new Set(target.leads.map(item => item.id).filter(Boolean));
+  store.submissions.forEach(item => {
+    if (!item?.id || seenSubmissions.has(item.id)) return;
+    seenSubmissions.add(item.id);
+    target.submissions.push(item);
+  });
+  store.leads.forEach(item => {
+    if (!item?.id || seenLeads.has(item.id)) return;
+    seenLeads.add(item.id);
+    target.leads.push(item);
+  });
+  if (store.updatedAt && store.updatedAt > target.updatedAt) target.updatedAt = store.updatedAt;
+}
+
 async function readStore() {
   const merged = normalizeStore({});
   let readAny = false;
+  try {
+    const data = await kvFetch(`/get/${encodeURIComponent(COMMUNITY_KEY)}`);
+    const value = data?.result;
+    if (value) {
+      const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+      mergeIntoStore(merged, parsed);
+      readAny = true;
+    }
+  } catch (error) {
+    // Continue with JSONBlob fallbacks.
+  }
   for (const url of getStoreUrls()) {
     try {
       const response = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -66,19 +111,7 @@ async function readStore() {
       }
       const store = normalizeStore(await response.json());
       readAny = true;
-      const seenSubmissions = new Set(merged.submissions.map(item => item.id).filter(Boolean));
-      const seenLeads = new Set(merged.leads.map(item => item.id).filter(Boolean));
-      store.submissions.forEach(item => {
-        if (!item?.id || seenSubmissions.has(item.id)) return;
-        seenSubmissions.add(item.id);
-        merged.submissions.push(item);
-      });
-      store.leads.forEach(item => {
-        if (!item?.id || seenLeads.has(item.id)) return;
-        seenLeads.add(item.id);
-        merged.leads.push(item);
-      });
-      if (store.updatedAt && store.updatedAt > merged.updatedAt) merged.updatedAt = store.updatedAt;
+      mergeIntoStore(merged, store);
     } catch (error) {
       // Keep trying the remaining stores so older approved photos are not hidden by an empty store.
     }
@@ -96,6 +129,15 @@ async function writeStore(store) {
     leads: store.leads.slice(0, MAX_LEADS)
   });
   let wroteAny = false;
+  try {
+    await kvFetch(`/set/${encodeURIComponent(COMMUNITY_KEY)}`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    wroteAny = true;
+  } catch (error) {
+    // Continue with JSONBlob fallback sync.
+  }
   for (const url of getStoreUrls()) {
     try {
       const response = await fetch(url, {
@@ -112,7 +154,7 @@ async function writeStore(store) {
     }
   }
   if (wroteAny) return payload;
-  return payload;
+  throw new Error('community_store_write_failed');
 }
 
 module.exports = async function handler(req, res) {
