@@ -1465,6 +1465,10 @@ select:focus-visible {
   white-space: nowrap;
 }
 
+.drop__urgency[hidden] {
+  display: none !important;
+}
+
 .drop__urgency strong {
   color: var(--accent-lava);
   font-weight: 400;
