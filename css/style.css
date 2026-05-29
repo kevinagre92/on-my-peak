@@ -1655,6 +1655,28 @@ select:focus-visible {
   color: rgba(232,83,30,0.72);
 }
 
+.drop__urgency--yellow {
+  border-color: rgba(255,211,42,0.48);
+  background: rgba(255,211,42,0.12);
+}
+
+.drop__urgency--yellow strong {
+  color: #ffd32a;
+}
+
+.drop__urgency--yellow .deadline-countdown span {
+  border-color: rgba(255,211,42,0.42);
+  background: rgba(255,211,42,0.1);
+}
+
+.drop__urgency--yellow .deadline-countdown b {
+  color: #ffd32a;
+}
+
+.drop__urgency--yellow .deadline-countdown small {
+  color: rgba(255,211,42,0.72);
+}
+
 .drop-tabs {
   display: inline-flex;
   align-items: flex-end;
@@ -2565,6 +2587,38 @@ select:focus-visible {
     linear-gradient(135deg, rgba(255,255,255,0.08), transparent 34%),
     radial-gradient(circle at 50% 50%, rgba(55,213,197,0.12), transparent 34%),
     #030303;
+}
+
+.drop-calendar__card--three .drop-calendar__cover--empty::before,
+.drop-calendar__card--three .drop-calendar__cover--empty::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.drop-calendar__card--three .drop-calendar__cover--empty::before {
+  inset: 11% 13%;
+  border: 1px solid rgba(55,213,197,0.48);
+  background:
+    linear-gradient(90deg, transparent 61.8%, rgba(55,213,197,0.3) 61.8%, rgba(55,213,197,0.3) calc(61.8% + 1px), transparent calc(61.8% + 1px)),
+    linear-gradient(0deg, transparent 61.8%, rgba(55,213,197,0.24) 61.8%, rgba(55,213,197,0.24) calc(61.8% + 1px), transparent calc(61.8% + 1px));
+  opacity: 0.55;
+}
+
+.drop-calendar__card--three .drop-calendar__cover--empty::after {
+  left: 50%;
+  top: 50%;
+  width: 62%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255,255,255,0.24);
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(18deg);
+  box-shadow:
+    0 0 0 13vw rgba(55,213,197,0.025),
+    0 0 44px rgba(55,213,197,0.16);
+  opacity: 0.72;
 }
 
 .drop-calendar__card--two .drop-calendar__cover::after {

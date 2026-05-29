@@ -925,8 +925,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --- Next Drop Countdown --- */
-  const drop2LaunchTarget = new Date('2026-05-29T12:00:00+01:00').getTime();
-  const drop2TabCountdownTarget = new Date('2027-04-30T20:00:00+01:00').getTime();
+  const drop2LaunchTarget = new Date('2026-05-29T00:00:00+01:00').getTime();
+  const drop2EndTarget = new Date('2026-05-31T23:59:00+01:00').getTime();
   const countdownTarget = drop2LaunchTarget;
   const countdownParts = {
     days: document.getElementById('countDays'),
@@ -960,6 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const drop2TabCountdown = document.querySelector('[data-drop2-tab-countdown]');
   const drop2CountdownNodes = document.querySelectorAll('[data-drop2-countdown]');
   const drop2HeroCountdown = document.querySelector('[data-drop2-hero-countdown]');
+  const dropCollectionCountdown = document.querySelector('[data-drop-collection-countdown]');
   const drop2Locked = document.querySelector('[data-drop2-locked]');
   const drop2Gallery = document.querySelector('[data-drop2-gallery]');
 
@@ -994,18 +995,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDrop2LaunchState() {
     const parts = getCountdownParts(drop2LaunchTarget);
     const live = parts.distance <= 0;
+    const endParts = getCountdownParts(drop2EndTarget);
     if (drop2TabCountdown) {
-      drop2TabCountdown.textContent = live ? formatCompactCountdown(getCountdownParts(drop2TabCountdownTarget)) : '29 MAY · 12:00';
+      drop2TabCountdown.textContent = live ? 'Live' : '29 MAY · 00:00';
     }
     drop2CountdownNodes.forEach(node => {
       node.textContent = live ? 'LIVE' : formatCompactCountdown(parts);
     });
     if (drop2HeroCountdown) {
-      if (live) {
-        drop2HeroCountdown.textContent = 'AL GOLPITO';
-      } else {
-        drop2HeroCountdown.innerHTML = formatSegmentedCountdown(parts);
-      }
+      drop2HeroCountdown.innerHTML = formatSegmentedCountdown(live ? endParts : parts);
     }
     if (drop2Locked) drop2Locked.hidden = live;
     if (drop2Gallery) drop2Gallery.hidden = !live;
@@ -3088,13 +3086,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function syncDropCollectionUi(activeButton) {
     const isDrop01 = activeButton?.id === 'dropTab01';
-    if (dropUrgencyLine) dropUrgencyLine.hidden = !isDrop01;
+    if (dropUrgencyLine) {
+      dropUrgencyLine.hidden = false;
+      dropUrgencyLine.classList.toggle('drop__urgency--yellow', !isDrop01);
+    }
     if (dropTitleCode && activeButton?.dataset.dropCode) dropTitleCode.textContent = activeButton.dataset.dropCode;
     if (dropTitleStatus && activeButton?.dataset.dropStatus) {
       const drop01SoldOut = Date.now() >= dropDeadlineTarget;
       dropTitleStatus.textContent = isDrop01 && drop01SoldOut ? 'Sold out' : activeButton.dataset.dropStatus;
     }
     if (dropNarrative && activeButton?.dataset.dropCopy) dropNarrative.textContent = activeButton.dataset.dropCopy;
+    if (dropCollectionCountdown) {
+      dropCollectionCountdown.innerHTML = formatSegmentedCountdown(getCountdownParts(isDrop01 ? dropDeadlineTarget : drop2EndTarget));
+    }
   }
 
   dropTabButtons.forEach(button => {
@@ -3114,6 +3118,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   syncDropCollectionUi(dropTabButtons.find(button => button.classList.contains('is-active')));
+  window.setInterval(() => {
+    syncDropCollectionUi(dropTabButtons.find(button => button.classList.contains('is-active')));
+  }, 1000);
 
   const lightbox = document.getElementById('imageLightbox');
   const lightboxStage = lightbox?.querySelector('.image-lightbox__stage');
