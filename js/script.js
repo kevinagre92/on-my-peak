@@ -712,8 +712,9 @@ document.addEventListener('DOMContentLoaded', () => {
     [DROP_02]: {
       Oversized: [
         { name: 'Blanco', hex: '#fafafa' },
-        { name: 'Azul zen', hex: '#5c5ba1' },
-        { name: 'Arena', hex: '#d8c5ae' }
+        { name: 'Azul zen', hex: '#b8bfcc' },
+        { name: 'Arena', hex: '#d8c5ae' },
+        { name: 'Negro', hex: '#101010' }
       ],
       'Crop top': [
         { name: 'Negro', hex: '#101010' }
