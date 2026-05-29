@@ -693,12 +693,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropCards = {
     [DROP_01]: {
       name: DROP_01,
-      image: 'assets/drops/drop-01-back.jpg',
+      image: 'assets/products/oversized.jpg',
       meta: 'Prórroga hasta el domingo 31'
     },
     [DROP_02]: {
       name: DROP_02,
-      image: 'assets/products/drop-02-tee.jpg',
+      image: 'assets/products/drop-02-oversized.jpg',
       meta: 'Live · Oversized negro'
     }
   };
