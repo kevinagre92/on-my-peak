@@ -1070,6 +1070,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 60000);
   }
 
+  document.querySelectorAll('[data-select-drop]').forEach(link => {
+    link.addEventListener('click', () => {
+      if (!dropSelect) return;
+      syncSelectedDrop(link.dataset.selectDrop);
+      syncSelectedModel('');
+      window.setTimeout(() => {
+        document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 0);
+    });
+  });
+
   if (modelSelect) {
     renderModelButtons();
     syncSelectedModel('');
@@ -1078,7 +1089,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Next Drop Countdown --- */
   const drop2LaunchTarget = new Date('2026-05-29T00:00:00+01:00').getTime();
-  const drop2EndTarget = new Date('2027-04-30T23:59:00+01:00').getTime();
+  const drop2EndTarget = new Date('2026-06-30T23:59:00+01:00').getTime();
   const countdownTarget = drop2LaunchTarget;
   const countdownParts = {
     days: document.getElementById('countDays'),
