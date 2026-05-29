@@ -647,7 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const colorsByModel = {
     Oversized: [
       { name: 'Jade', hex: '#12b3a1' },
-      { name: 'Azul zen', hex: '#5c5ba1' },
+      { name: 'Azul zen', hex: '#b8bfcc' },
       { name: 'Blanco', hex: '#fafafa' },
       { name: 'Negro', hex: '#101010' },
       { name: 'Naranja', hex: '#f23624' },
@@ -717,11 +717,11 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Negro', hex: '#101010' }
       ],
       'Crop top': [
-        { name: 'Negro', hex: '#101010' }
+        { name: 'Blanco', hex: '#fafafa' },
+        { name: 'Negro', hex: '#101010' },
+        { name: 'Turquesa', hex: '#75adba' }
       ],
-      Hoodie: [
-        { name: 'Negra', hex: '#101010' }
-      ]
+      Hoodie: colorsByModel.Hoodie
     }
   };
 
@@ -1120,14 +1120,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.querySelectorAll('[data-select-drop]').forEach(link => {
-    link.addEventListener('click', () => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
       if (!dropSelect) return;
       syncSelectedDrop(link.dataset.selectDrop);
       syncSelectedModel('');
       window.setTimeout(() => {
-        modelPickerToggle?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const scrollToPicker = (behavior = 'smooth') => {
+          const target = form || modelPickerToggle;
+          if (!target) return;
+          const top = target.getBoundingClientRect().top + window.scrollY - 88;
+          window.scrollTo({ top: Math.max(top, 0), behavior });
+        };
         showModelOptions();
         modelPickerToggle?.focus({ preventScroll: true });
+        scrollToPicker();
+        window.setTimeout(scrollToPicker, 220);
+        window.setTimeout(() => scrollToPicker('auto'), 900);
       }, 0);
     });
   });
@@ -3510,6 +3520,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Smooth Scroll for anchor links --- */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
+      if (anchor.matches('[data-select-drop]')) return;
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
         e.preventDefault();
