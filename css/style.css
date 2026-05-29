@@ -3976,6 +3976,20 @@ select:focus-visible {
 
 .peak-community__approved:empty { display: none; }
 
+.peak-community__empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
 .peak-community__approved article {
   position: relative;
   overflow: hidden;

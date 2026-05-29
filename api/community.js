@@ -3,7 +3,7 @@ const LEGACY_COMMUNITY_JSONBLOB_URL = 'https://jsonblob.com/api/jsonBlob/019e597
 const COMMUNITY_KEY = 'omp:community:v1';
 const MAX_SUBMISSIONS = 120;
 const MAX_LEADS = 1000;
-const MAX_PHOTO_LENGTH = 3600000;
+const MAX_PHOTO_LENGTH = 1400000;
 
 function json(res, status, body) {
   res.statusCode = status;

@@ -711,6 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'GALVAN10',
     'GAROLI10',
     'DOMPU10',
+    'MARQUITOS10',
     'SALAN10'
   ]);
   const DISCOUNT_RATE = 0.10;
@@ -1321,14 +1322,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderApprovedCommunity(submissions = []) {
     if (!approvedCommunityGrid) return;
     const approved = submissions.filter(item => item.photo).slice(0, 6);
-    const fallbackCommunity = [
-      { name: 'OMP community', photo: 'assets/collection/drop-current/thumbs/drop-current-01.jpg' },
-      { name: 'OMP community', photo: 'assets/collection/drop-current/thumbs/drop-current-06.jpg' },
-      { name: 'OMP community', photo: 'assets/collection/drop-current/thumbs/drop-current-08.jpg' }
-    ];
-    const items = approved.length ? approved : fallbackCommunity;
-    approvedCommunityGrid.dataset.source = approved.length ? 'approved' : 'fallback';
-    approvedCommunityGrid.innerHTML = items.map(item => `
+    approvedCommunityGrid.dataset.source = approved.length ? 'approved' : 'empty';
+    if (!approved.length) {
+      approvedCommunityGrid.innerHTML = '<p class="peak-community__empty">Las fotos de clientes aparecerán aquí cuando estén aprobadas.</p>';
+      return;
+    }
+    approvedCommunityGrid.innerHTML = approved.map(item => `
       <article>
         <img src="${escapeHtml(item.photo)}" alt="Foto aprobada de la comunidad OMP subida por ${escapeHtml(item.name || item.handle || 'cliente')}" loading="lazy" decoding="async">
         <span>${escapeHtml(item.handle || item.name || 'OMP')}</span>
@@ -2739,9 +2738,9 @@ document.addEventListener('DOMContentLoaded', () => {
       image.onerror = reject;
       image.src = source;
     });
-    const maxPayloadLength = 2900000;
-    let maxSide = 2200;
-    let quality = 0.88;
+    const maxPayloadLength = 950000;
+    let maxSide = 1800;
+    let quality = 0.84;
     let output = '';
 
     for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -2753,11 +2752,11 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       output = canvas.toDataURL('image/jpeg', quality);
       if (output.length <= maxPayloadLength) return output;
-      quality = Math.max(0.56, quality - 0.07);
-      maxSide = Math.max(980, Math.round(maxSide * 0.86));
+      quality = Math.max(0.5, quality - 0.08);
+      maxSide = Math.max(900, Math.round(maxSide * 0.84));
     }
 
-    if (output && output.length <= 3400000) return output;
+    if (output && output.length <= 1200000) return output;
     throw new Error('image_too_large_after_compression');
   }
 
