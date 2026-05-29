@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇪🇸',
       navCta: 'Consigue tu Drop',
       heroCta: 'consiguelo ya',
-      availableUntil: 'disponible durante',
+      availableUntil: 'se termina en',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifiesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Colecciones',
       dropText: 'Drop 1, nuestra base, "No one is coming", nadie va a venir a hacerlo por ti, te va a tocar currártelo.',
       dropHint: '<span>←→</span> Desliza lateralmente para ver más',
-      dropUrgency: 'Disponible durante',
+      dropUrgency: 'Se termina en',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Alcanza tu Peak',
       waitlistSubtitle: 'Elige tu drop.<br>Selecciona modelo, color y talla.',
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇬🇧',
       navCta: 'Get your Drop',
       heroCta: 'Get it now',
-      availableUntil: 'available during',
+      availableUntil: 'ends in',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Collections',
       dropText: 'Drop 1, our foundation, "No one is coming": nobody is coming to do it for you, you will have to earn it.',
       dropHint: '<span>←→</span> Scroll sideways to see more',
-      dropUrgency: 'Available during',
+      dropUrgency: 'Ends in',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Waitlist',
       waitlistSubtitle: 'Choose your drop.<br>Choose model, color and size.',
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       flag: '🇵🇹',
       navCta: 'Garante o teu Drop',
       heroCta: 'Garante já',
-      availableUntil: 'disponível durante',
+      availableUntil: 'termina em',
       heroClaim: 'Nothing given. Everything earned.',
       manifestoLabel: 'Manifesto',
       manifestoTitle: 'THIS IS NOT<br>FOR EVERYONE',
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       collectionLabel: 'Coleções',
       dropText: 'Drop 1, a nossa base, "No one is coming": ninguém vai vir fazer isto por ti, vais ter de trabalhar por isso.',
       dropHint: '<span>←→</span> Desliza para o lado para ver mais',
-      dropUrgency: 'Disponível durante',
+      dropUrgency: 'Termina em',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Lista de espera',
       waitlistSubtitle: 'Escolhe o teu drop.<br>Escolhe modelo, cor e tamanho.',
@@ -1078,7 +1078,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --- Next Drop Countdown --- */
   const drop2LaunchTarget = new Date('2026-05-29T00:00:00+01:00').getTime();
-  const drop2EndTarget = new Date('2026-05-31T23:59:00+01:00').getTime();
+  const drop2EndTarget = new Date('2027-04-30T23:59:00+01:00').getTime();
   const countdownTarget = drop2LaunchTarget;
   const countdownParts = {
     days: document.getElementById('countDays'),
