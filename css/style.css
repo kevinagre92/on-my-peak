@@ -3020,6 +3020,10 @@ select:focus-visible {
   box-shadow: 0 18px 54px rgba(0,0,0,0.34);
 }
 
+.drop-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .model-options--visible {
   display: grid;
 }
@@ -3050,6 +3054,11 @@ select:focus-visible {
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: #f5f5f5;
+}
+
+.drop-option__media {
+  aspect-ratio: 16 / 9;
+  background: #0d0d0d;
 }
 
 .model-option__media img {
@@ -5673,6 +5682,10 @@ select:focus-visible {
     max-width: 100%;
     max-height: min(62svh, 540px);
     overflow-y: auto;
+  }
+
+  .drop-options {
+    grid-template-columns: 1fr;
   }
 
   .model-option {

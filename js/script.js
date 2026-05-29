@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropUrgency: 'Disponible durante',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Alcanza tu Peak',
-      waitlistSubtitle: 'Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.',
+      waitlistSubtitle: 'Elige tu drop.<br>Selecciona modelo, color y talla.',
       nameLabel: 'Nombre completo',
       emailLabel: 'Correo',
       phoneLabel: 'Teléfono',
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropUrgency: 'Available during',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Waitlist',
-      waitlistSubtitle: 'Reserve your DROP 01/XX piece.<br>Choose model, color and size.',
+      waitlistSubtitle: 'Choose your drop.<br>Choose model, color and size.',
       nameLabel: 'Full name',
       emailLabel: 'Email',
       phoneLabel: 'Phone',
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropUrgency: 'Disponível durante',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Lista de espera',
-      waitlistSubtitle: 'Reserva a tua peça do DROP 01/XX.<br>Escolhe modelo, cor e tamanho.',
+      waitlistSubtitle: 'Escolhe o teu drop.<br>Escolhe modelo, cor e tamanho.',
       nameLabel: 'Nome completo',
       emailLabel: 'Email',
       phoneLabel: 'Telefone',
@@ -594,6 +594,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const success = document.getElementById('waitlistSuccess');
   const summary = document.getElementById('waitlistSummary');
   const orderPreview = document.getElementById('orderPreview');
+  const dropSelect = document.getElementById('orderDrop');
+  const dropOptions = document.getElementById('dropOptions');
+  const dropPickerToggle = document.getElementById('dropPickerToggle');
+  const selectedDropLabel = document.getElementById('selectedDropLabel');
+  const selectedDropMeta = document.getElementById('selectedDropMeta');
   const modelSelect = document.getElementById('orderModel');
   const modelOptions = document.getElementById('modelOptions');
   const modelPickerToggle = document.getElementById('modelPickerToggle');
@@ -635,6 +640,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartCustomerEmail = document.getElementById('cartCustomerEmail');
   const cartCustomerPhone = document.getElementById('cartCustomerPhone');
   const IGIC_RATE = 0.07;
+  const DROP_01_PURCHASE_CUTOFF = new Date('2026-05-31T23:59:00+01:00').getTime();
+  const DROP_01 = 'DROP 01/XX';
+  const DROP_02 = 'DROP 02/XX';
 
   const colorsByModel = {
     Oversized: [
@@ -682,21 +690,47 @@ document.addEventListener('DOMContentLoaded', () => {
     Otto: 19
   };
 
+  const dropCards = {
+    [DROP_01]: {
+      name: DROP_01,
+      image: 'assets/drops/drop-01-back.jpg',
+      meta: 'Prórroga hasta el domingo 31'
+    },
+    [DROP_02]: {
+      name: DROP_02,
+      image: 'assets/products/drop-02-tee.jpg',
+      meta: 'Live · Oversized negro'
+    }
+  };
+
+  const modelsByDrop = {
+    [DROP_01]: ['Oversized', 'Crop top', 'Hoodie'],
+    [DROP_02]: ['Oversized']
+  };
+
+  const colorsByDropModel = {
+    [DROP_02]: {
+      Oversized: [
+        { name: 'Negro', hex: '#101010' }
+      ]
+    }
+  };
+
   const modelCards = {
     Oversized: {
       name: 'Oversized',
       image: 'assets/products/oversized.jpg',
-      meta: 'Corte amplio · Drop 01/XX'
+      meta: 'Corte amplio'
     },
     'Crop top': {
       name: 'Crop top',
       image: 'assets/products/crop-top.jpg',
-      meta: 'Fit corto · Drop 01/XX'
+      meta: 'Fit corto'
     },
     Hoodie: {
       name: 'Hoodie',
       image: 'assets/products/hoodie.jpg',
-      meta: 'Capucha premium · Drop 01/XX'
+      meta: 'Capucha premium'
     }
   };
 
@@ -732,9 +766,30 @@ document.addEventListener('DOMContentLoaded', () => {
     return `<span class="currency-amount">${amount}</span> <span class="currency-symbol" aria-label="euros">&euro;</span>`;
   }
 
+  function normalizeDrop(drop) {
+    return drop === DROP_02 ? DROP_02 : DROP_01;
+  }
+
+  function getAvailableDrops() {
+    return Date.now() <= DROP_01_PURCHASE_CUTOFF ? [DROP_01, DROP_02] : [DROP_02];
+  }
+
+  function getSelectedDrop() {
+    return dropSelect?.value || '';
+  }
+
+  function getModelNamesForDrop(drop = getSelectedDrop()) {
+    return modelsByDrop[normalizeDrop(drop)] || modelsByDrop[DROP_01];
+  }
+
+  function getColorsForSelection(model = modelSelect?.value, drop = getSelectedDrop()) {
+    const dropColors = colorsByDropModel[normalizeDrop(drop)]?.[model];
+    return dropColors || colorsByModel[model] || [];
+  }
+
   function updateColorOptions() {
     if (!modelSelect || !colorSelect) return;
-    const colors = colorsByModel[modelSelect.value] || [];
+    const colors = getColorsForSelection(modelSelect.value);
     if (!modelSelect.value) {
       colorSelect.innerHTML = '<option value="">Elige color</option>';
       renderColorButtons([]);
@@ -746,6 +801,67 @@ document.addEventListener('DOMContentLoaded', () => {
       .join('');
     renderColorButtons(colors);
     syncSelectedColor(colors[0]?.name);
+  }
+
+  function showDropOptions() {
+    dropOptions?.classList.add('model-options--visible');
+    dropPickerToggle?.setAttribute('aria-expanded', 'true');
+  }
+
+  function hideDropOptions() {
+    dropOptions?.classList.remove('model-options--visible');
+    dropPickerToggle?.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleDropOptions() {
+    if (dropOptions?.classList.contains('model-options--visible')) {
+      hideDropOptions();
+    } else {
+      showDropOptions();
+    }
+  }
+
+  function renderDropButtons() {
+    if (!dropOptions) return;
+    const drops = getAvailableDrops();
+    dropOptions.innerHTML = drops.map(dropName => {
+      const drop = dropCards[dropName];
+      const isActive = dropSelect?.value === dropName;
+      return `
+        <button class="model-option drop-option${isActive ? ' active' : ''}" type="button" role="option" data-drop="${escapeHtml(dropName)}" aria-label="Elegir ${escapeHtml(drop.name)}" aria-selected="${isActive ? 'true' : 'false'}">
+          <span class="model-option__media drop-option__media"><img src="${escapeHtml(drop.image)}" width="1200" height="746" alt="${escapeHtml(drop.name)}" loading="lazy" decoding="async"></span>
+          <span class="model-option__copy">
+            <strong>${escapeHtml(drop.name)}</strong>
+            <small>${escapeHtml(drop.meta)}</small>
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function syncSelectedDrop(dropName = dropSelect?.value) {
+    if (!dropSelect) return;
+    const availableDrops = getAvailableDrops();
+    const nextDrop = availableDrops.includes(dropName) ? dropName : (availableDrops.length === 1 ? availableDrops[0] : '');
+    dropSelect.value = nextDrop;
+
+    if (!nextDrop) {
+      if (selectedDropLabel) selectedDropLabel.textContent = availableDrops.join(' · ');
+      if (selectedDropMeta) selectedDropMeta.textContent = 'Elige el drop que quieres comprar';
+    } else {
+      const drop = dropCards[nextDrop];
+      if (selectedDropLabel) selectedDropLabel.textContent = drop.name;
+      if (selectedDropMeta) selectedDropMeta.textContent = drop.meta;
+    }
+
+    renderDropButtons();
+    const allowedModels = nextDrop ? getModelNamesForDrop(nextDrop) : Object.keys(modelCards);
+    if (modelSelect?.value && !allowedModels.includes(modelSelect.value)) {
+      syncSelectedModel('');
+    } else {
+      renderModelButtons();
+      updateColorOptions();
+    }
   }
 
   function showModelOptions() {
@@ -796,7 +912,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderModelButtons() {
     if (!modelOptions) return;
-    const models = Object.keys(modelCards);
+    const models = getSelectedDrop() ? getModelNamesForDrop() : Object.keys(modelCards);
     modelOptions.innerHTML = models.map((modelName, index) => {
       const model = modelCards[modelName];
       const price = formatCurrencyHtml(pricesByModel[modelName] || 0);
@@ -844,7 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     colorSelect.value = colorName;
-    const colors = colorsByModel[modelSelect?.value] || [];
+    const colors = getColorsForSelection(modelSelect?.value);
     const color = colors.find(item => item.name === colorName) || colors[0];
     if (selectedColorSwatch && color) {
       selectedColorSwatch.style.setProperty('--swatch', color.hex);
@@ -879,6 +995,14 @@ document.addEventListener('DOMContentLoaded', () => {
     hideModelOptions();
   });
 
+  dropOptions?.addEventListener('click', (e) => {
+    const button = e.target.closest('[data-drop]');
+    if (!button || !dropSelect) return;
+    syncSelectedDrop(button.dataset.drop);
+    syncSelectedModel('');
+    hideDropOptions();
+  });
+
   colorOptions?.addEventListener('click', (e) => {
     const button = e.target.closest('[data-color]');
     if (!button || !colorSelect) return;
@@ -907,7 +1031,20 @@ document.addEventListener('DOMContentLoaded', () => {
       showModelOptions();
     }
   });
+  dropPickerToggle?.addEventListener('click', toggleDropOptions);
+  dropPickerToggle?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideDropOptions();
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      showDropOptions();
+    }
+  });
   document.addEventListener('click', (e) => {
+    if (dropOptions?.classList.contains('model-options--visible')) {
+      if (!e.target.closest('#dropPickerToggle') && !e.target.closest('#dropOptions')) {
+        hideDropOptions();
+      }
+    }
     if (modelOptions?.classList.contains('model-options--visible')) {
       if (!e.target.closest('#modelPickerToggle') && !e.target.closest('#modelOptions')) {
         hideModelOptions();
@@ -917,6 +1054,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target.closest('#colorPickerToggle') || e.target.closest('#colorOptions')) return;
     hideColorOptions();
   });
+
+  if (dropSelect) {
+    syncSelectedDrop('');
+    dropSelect.addEventListener('change', () => {
+      syncSelectedDrop();
+      syncSelectedModel('');
+    });
+    window.setInterval(() => {
+      const previous = dropSelect.value;
+      syncSelectedDrop(previous);
+      if (previous && !getAvailableDrops().includes(previous)) {
+        syncSelectedModel('');
+      }
+    }, 60000);
+  }
 
   if (modelSelect) {
     renderModelButtons();
@@ -1882,7 +2034,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return ({
       id: `${saleId}-${index}`,
       orderId: saleId,
-      drop: 'DROP 01/XX',
+      drop: normalizeDrop(item.drop),
       createdAt: now,
       model: item.model,
       color: item.color,
@@ -2255,7 +2407,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const customer = readCustomerDetails();
       const customerReady = isCustomerReady();
       const orderLines = cart.map(item => {
-        return `Drop 01/XX - ${item.model} - ${item.color} - talla ${item.size} - ${formatCurrency(item.price)} x ${item.quantity}`;
+        return `${normalizeDrop(item.drop)} - ${item.model} - ${item.color} - talla ${item.size} - ${formatCurrency(item.price)} x ${item.quantity}`;
       });
       const messageText = cart.length
         ? `Hola OMP, quiero confirmar mi pedido:\nNombre: ${customer.name}\nEmail: ${customer.email}\nTelefono: ${customer.phone}\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nTotal de la compra: ${formatCurrency(total)}`
@@ -2288,7 +2440,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="cart-item__title">${escapeHtml(item.model)}</span>
           <span class="cart-item__price">${formatCurrencyHtml(getLineSubtotal(item) - getLineDiscount(item))}</span>
         </div>
-        <p class="cart-item__meta">${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
+        <p class="cart-item__meta">${escapeHtml(normalizeDrop(item.drop))} · ${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
         ${cartDiscountCode ? `<p class="cart-item__discount ${hasValidCartDiscount ? 'cart-item__discount--valid' : ''}">Código carrito: ${escapeHtml(cartDiscountCode)}${hasValidCartDiscount ? ' · -10%' : ' · no aplicado'}</p>` : ''}
         <div class="cart-item__bottom">
           <span class="cart-item__meta">Precio unidad: ${formatCurrencyHtml(item.price)}</span>
@@ -2326,7 +2478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <article class="waitlist-order-preview__item">
           <div>
             <strong><i class="order-color-chip" style="--swatch:${escapeHtml(getCartItemColor(item))}"></i>${escapeHtml(item.model)}</strong>
-            <span>${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · ${formatCurrencyHtml(item.price)}</span>
+            <span>${escapeHtml(normalizeDrop(item.drop))} · ${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · ${formatCurrencyHtml(item.price)}</span>
           </div>
           ${renderQuantityStepper(index, item.quantity)}
         </article>
@@ -2372,7 +2524,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addToCart(order) {
     const cart = readCart();
+    const orderDrop = normalizeDrop(order.drop);
     const existing = cart.find(item =>
+      normalizeDrop(item.drop) === orderDrop &&
       item.model === order.model &&
       item.color === order.color &&
       item.size === order.size
@@ -2383,6 +2537,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       cart.push({
         ...order,
+        drop: orderDrop,
         quantity: 1,
         price: pricesByModel[order.model] || 0
       });
@@ -2853,6 +3008,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function getShopDropFromCard(card) {
+    const dropPanel = card?.closest('#dropPanel02, #dropPanel01');
+    return dropPanel?.id === 'dropPanel02' ? DROP_02 : DROP_01;
+  }
+
   document.addEventListener('click', (e) => {
     const sizeButton = e.target.closest('[data-shop-size]');
     if (sizeButton) {
@@ -2866,6 +3026,7 @@ document.addEventListener('DOMContentLoaded', () => {
         name: '',
         email: '',
         phone: '',
+        drop: getShopDropFromCard(card),
         model: tag.dataset.shopModel,
         color: tag.dataset.shopColor,
         size: sizeButton.dataset.shopSize,
@@ -3035,13 +3196,24 @@ document.addEventListener('DOMContentLoaded', () => {
         name: '',
         email: '',
         phone: '',
+        drop: dropSelect.value,
         model: modelSelect.value,
         color: colorSelect.value,
         size: sizeSelect.value,
         createdAt: new Date().toISOString()
       };
 
-      if (!order.model || !order.color || !order.size) return;
+      if (!order.drop) {
+        showDropOptions();
+        dropPickerToggle?.focus();
+        return;
+      }
+      if (!order.model) {
+        showModelOptions();
+        modelPickerToggle?.focus();
+        return;
+      }
+      if (!order.color || !order.size) return;
 
       addToCart(order);
       resetProductFields();

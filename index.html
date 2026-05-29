@@ -618,11 +618,27 @@
       <p class="section-label reveal" data-i18n="waitlistLabel">Alcanza tu Peak</p>
       <h2 class="section-title reveal reveal-delay-1">NO ONE IS COMING</h2>
       <p class="section-subtitle waitlist__subtitle reveal reveal-delay-2" data-i18n="waitlistSubtitle">
-        Pide tu camiseta del DROP 01/XX.<br>Selecciona modelo, color y talla.
+        Elige tu drop.<br>Selecciona modelo, color y talla.
       </p>
 
       <form class="waitlist__form reveal reveal-delay-3" id="waitlistForm">
-        <label class="waitlist__field">
+        <label class="waitlist__field waitlist__field--full">
+          <span>Drop</span>
+          <button class="waitlist__input model-picker drop-picker" type="button" id="dropPickerToggle" aria-haspopup="listbox" aria-expanded="false">
+            <span class="model-picker__text">
+              <strong id="selectedDropLabel">DROP 01/XX · DROP 02/XX</strong>
+              <small id="selectedDropMeta">Elige el drop que quieres comprar</small>
+            </span>
+          </button>
+          <select class="visually-hidden-select" id="orderDrop" name="drop" required aria-label="Drop para pedido">
+            <option value="" selected>Elige drop</option>
+            <option value="DROP 01/XX">DROP 01/XX</option>
+            <option value="DROP 02/XX">DROP 02/XX</option>
+          </select>
+          <div class="model-options drop-options" id="dropOptions" role="listbox" aria-label="Drops disponibles"></div>
+        </label>
+
+        <label class="waitlist__field waitlist__field--full">
           <span data-i18n="modelLabel">Modelo de pedido</span>
           <button class="waitlist__input model-picker" type="button" id="modelPickerToggle" aria-haspopup="listbox" aria-expanded="false">
             <span class="model-picker__text">
