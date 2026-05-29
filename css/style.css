@@ -3052,6 +3052,41 @@ select:focus-visible {
   transition: border-color 0.25s, transform 0.25s, background 0.25s;
 }
 
+.model-option__zoom {
+  position: absolute;
+  right: 0.72rem;
+  top: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.82rem;
+  padding: 0.34rem 0.62rem 0.32rem;
+  border: 1px solid rgba(255,255,255,0.38);
+  background: rgba(8,8,8,0.72);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.13em;
+  line-height: 1;
+  text-transform: uppercase;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.2s ease, transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.model-option:hover .model-option__zoom,
+.model-option:focus-visible .model-option__zoom,
+.model-option__zoom:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.model-option__zoom:hover,
+.model-option__zoom:focus-visible {
+  border-color: var(--accent-lava);
+  background: rgba(232,83,30,0.86);
+}
+
 .model-option:hover,
 .model-option.active {
   border-color: var(--accent-lava);
@@ -5708,6 +5743,14 @@ select:focus-visible {
     grid-template-rows: auto;
     align-items: center;
     min-height: 112px;
+  }
+
+  .model-option__zoom {
+    opacity: 1;
+    right: 0.54rem;
+    top: 0.54rem;
+    padding-inline: 0.5rem;
+    font-size: 0.42rem;
   }
 
   .model-picker,

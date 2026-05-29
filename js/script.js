@@ -705,14 +705,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const modelsByDrop = {
     [DROP_01]: ['Oversized', 'Crop top', 'Hoodie'],
-    [DROP_02]: ['Oversized']
+    [DROP_02]: ['Oversized', 'Crop top', 'Hoodie']
   };
 
   const colorsByDropModel = {
     [DROP_02]: {
       Oversized: [
         { name: 'Negro', hex: '#101010' }
+      ],
+      'Crop top': [
+        { name: 'Negro', hex: '#101010' }
+      ],
+      Hoodie: [
+        { name: 'Negra', hex: '#101010' }
       ]
+    }
+  };
+
+  const modelCardsByDrop = {
+    [DROP_02]: {
+      Oversized: {
+        name: 'Oversized',
+        image: 'assets/products/drop-02-oversized.jpg',
+        meta: 'DROP 02/XX · Fleje'
+      },
+      'Crop top': {
+        name: 'Crop top',
+        image: 'assets/products/drop-02-crop-top.jpg',
+        meta: 'DROP 02/XX · Fleje'
+      },
+      Hoodie: {
+        name: 'Hoodie',
+        image: 'assets/products/drop-02-hoodie.jpg',
+        meta: 'DROP 02/XX · Fleje'
+      }
     }
   };
 
@@ -785,6 +811,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function getColorsForSelection(model = modelSelect?.value, drop = getSelectedDrop()) {
     const dropColors = colorsByDropModel[normalizeDrop(drop)]?.[model];
     return dropColors || colorsByModel[model] || [];
+  }
+
+  function getModelCard(modelName, drop = getSelectedDrop()) {
+    return modelCardsByDrop[normalizeDrop(drop)]?.[modelName] || modelCards[modelName];
   }
 
   function updateColorOptions() {
@@ -914,16 +944,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modelOptions) return;
     const models = getSelectedDrop() ? getModelNamesForDrop() : Object.keys(modelCards);
     modelOptions.innerHTML = models.map((modelName, index) => {
-      const model = modelCards[modelName];
+      const model = getModelCard(modelName);
       const price = formatCurrencyHtml(pricesByModel[modelName] || 0);
       return `
         <button class="model-option${index === 0 ? ' active' : ''}" type="button" role="option" data-model="${escapeHtml(modelName)}" aria-label="Elegir modelo ${escapeHtml(model.name)}" aria-selected="${index === 0 ? 'true' : 'false'}">
-          <span class="model-option__media"><img src="${escapeHtml(model.image)}" width="1200" height="653" alt="${escapeHtml(model.name)}" loading="lazy" decoding="async"></span>
+          <span class="model-option__media"><img src="${escapeHtml(model.image)}" width="1400" height="870" alt="${escapeHtml(model.name)}" loading="lazy" decoding="async"></span>
           <span class="model-option__copy">
             <strong>${escapeHtml(model.name)}</strong>
             <small>${escapeHtml(model.meta)}</small>
             <em>${price}</em>
           </span>
+          <span class="model-option__zoom" role="button" tabindex="0" data-model-zoom-src="${escapeHtml(model.image)}" data-model-zoom-alt="${escapeHtml(model.name)}" aria-label="Ampliar foto de ${escapeHtml(model.name)}">Ampliar</span>
         </button>
       `;
     }).join('');
@@ -989,10 +1020,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   modelOptions?.addEventListener('click', (e) => {
+    const zoomButton = e.target.closest('[data-model-zoom-src]');
+    if (zoomButton) {
+      e.preventDefault();
+      e.stopPropagation();
+      showStandaloneLightbox(zoomButton.dataset.modelZoomSrc, zoomButton.dataset.modelZoomAlt || 'Producto OMP');
+      return;
+    }
     const button = e.target.closest('[data-model]');
     if (!button || !modelSelect) return;
     syncSelectedModel(button.dataset.model);
     hideModelOptions();
+  });
+
+  modelOptions?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const zoomButton = e.target.closest('[data-model-zoom-src]');
+    if (!zoomButton) return;
+    e.preventDefault();
+    showStandaloneLightbox(zoomButton.dataset.modelZoomSrc, zoomButton.dataset.modelZoomAlt || 'Producto OMP');
   });
 
   dropOptions?.addEventListener('click', (e) => {
@@ -3322,6 +3368,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showLightboxImage(index) {
     if (!lightbox || !lightboxImg || !lightboxItems.length) return;
+    lightbox.dataset.mode = 'gallery';
+    if (lightboxPrev) lightboxPrev.hidden = false;
+    if (lightboxNext) lightboxNext.hidden = false;
     const visibleItems = getVisibleLightboxItems();
     if (!visibleItems.length) return;
     const requestedButton = lightboxItems[index];
@@ -3347,6 +3396,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('lightbox-open');
   }
 
+  function showStandaloneLightbox(src, alt = 'Producto OMP') {
+    if (!lightbox || !lightboxImg || !src) return;
+    closeShopPanels();
+    lightbox.dataset.mode = 'single';
+    lightboxImg.src = src;
+    lightboxImg.alt = alt;
+    lightboxTags?.replaceChildren();
+    if (lightboxSizePanel) {
+      lightboxSizePanel.innerHTML = '';
+      lightboxSizePanel.setAttribute('aria-hidden', 'true');
+    }
+    if (lightboxStage) lightboxStage.classList.remove('shop-open');
+    if (lightboxPrev) lightboxPrev.hidden = true;
+    if (lightboxNext) lightboxNext.hidden = true;
+    lightbox.classList.add('active');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+  }
+
   function closeLightbox() {
     if (!lightbox || !lightboxImg) return;
     lightbox.classList.remove('active');
@@ -3355,6 +3423,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lightboxImg.alt = '';
     lightboxTags?.replaceChildren();
     if (lightboxStage) lightboxStage.classList.remove('shop-open');
+    if (lightboxPrev) lightboxPrev.hidden = false;
+    if (lightboxNext) lightboxNext.hidden = false;
+    delete lightbox.dataset.mode;
     document.body.classList.remove('lightbox-open');
   }
 
