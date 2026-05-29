@@ -711,7 +711,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const colorsByDropModel = {
     [DROP_02]: {
       Oversized: [
-        { name: 'Negro', hex: '#101010' }
+        { name: 'Blanco', hex: '#fafafa' },
+        { name: 'Azul zen', hex: '#5c5ba1' },
+        { name: 'Arena', hex: '#d8c5ae' }
       ],
       'Crop top': [
         { name: 'Negro', hex: '#101010' }
@@ -953,8 +955,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>${escapeHtml(model.name)}</strong>
             <small>${escapeHtml(model.meta)}</small>
             <em>${price}</em>
+            <span class="model-option__zoom" role="button" tabindex="0" data-model-zoom-src="${escapeHtml(model.image)}" data-model-zoom-alt="${escapeHtml(model.name)}" aria-label="Ampliar foto de ${escapeHtml(model.name)}">Ampliar foto</span>
           </span>
-          <span class="model-option__zoom" role="button" tabindex="0" data-model-zoom-src="${escapeHtml(model.image)}" data-model-zoom-alt="${escapeHtml(model.name)}" aria-label="Ampliar foto de ${escapeHtml(model.name)}">Ampliar</span>
         </button>
       `;
     }).join('');
@@ -1122,7 +1124,9 @@ document.addEventListener('DOMContentLoaded', () => {
       syncSelectedDrop(link.dataset.selectDrop);
       syncSelectedModel('');
       window.setTimeout(() => {
-        document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        modelPickerToggle?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showModelOptions();
+        modelPickerToggle?.focus({ preventScroll: true });
       }, 0);
     });
   });
