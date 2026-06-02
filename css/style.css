@@ -2692,8 +2692,8 @@ select:focus-visible {
 }
 
 .drop-calendar__details {
-  width: 100%;
-  margin: clamp(1.2rem, 3vw, 1.8rem) auto 0;
+  width: auto;
+  margin: clamp(1.2rem, 3vw, 1.8rem) calc(var(--container-pad) * -1) 0;
 }
 
 .drop-calendar__summary {
