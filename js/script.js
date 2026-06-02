@@ -1251,7 +1251,10 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Drop Calendar Month Navigation --- */
   const calendarMonthLabel = document.getElementById('calendarMonthLabel');
   const calendarYearLabel = document.getElementById('calendarYearLabel');
+  const calendarTodayLabel = document.getElementById('calendarTodayLabel');
   const calendarDays = document.getElementById('dropCalendarDays');
+  const calendarDetails = document.querySelector('.drop-calendar__details');
+  const calendarSummaryAction = document.querySelector('[data-calendar-summary-action]');
   const calendarPrev = document.querySelector('[data-calendar-prev]');
   const calendarNext = document.querySelector('[data-calendar-next]');
   const calendarMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -1259,7 +1262,8 @@ document.addEventListener('DOMContentLoaded', () => {
     { start: '2026-05-04', end: '2026-05-31', className: 'drop-day--one' },
     { start: '2026-05-29', end: '2026-06-28', className: 'drop-day--two' }
   ];
-  let visibleCalendarMonth = new Date(2026, 4, 1);
+  const today = new Date();
+  let visibleCalendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
   function formatDateId(date) {
     const year = date.getFullYear();
@@ -1291,8 +1295,10 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let day = 1; day <= daysInMonth; day += 1) {
       const date = new Date(year, month, day);
       const dateId = formatDateId(date);
-      const className = getDropClass(dateId);
-      cells.push(`<time class="${className}" datetime="${dateId}">${day}</time>`);
+      const classes = [getDropClass(dateId)].filter(Boolean);
+      const isToday = dateId === formatDateId(today);
+      if (isToday) classes.push('drop-month__day--today');
+      cells.push(`<time class="${classes.join(' ')}" datetime="${dateId}"${isToday ? ' aria-current="date"' : ''}>${day}</time>`);
     }
 
     while (cells.length % 7 !== 0) {
@@ -1301,7 +1307,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     calendarMonthLabel.textContent = calendarMonths[month];
     calendarYearLabel.textContent = year;
+    if (calendarTodayLabel) {
+      calendarTodayLabel.textContent = `${today.getDate()} ${calendarMonths[today.getMonth()].slice(0, 3).toUpperCase()} ${today.getFullYear()}`;
+    }
     calendarDays.innerHTML = cells.join('');
+  }
+
+  function updateCalendarDetailsLabel() {
+    if (!calendarSummaryAction || !calendarDetails) return;
+    calendarSummaryAction.textContent = calendarDetails.open ? 'Cerrar calendario' : 'Ver calendario';
   }
 
   calendarPrev?.addEventListener('click', () => {
@@ -1314,7 +1328,10 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDropCalendar();
   });
 
+  calendarDetails?.addEventListener('toggle', updateCalendarDetailsLabel);
+
   renderDropCalendar();
+  updateCalendarDetailsLabel();
 
   /* --- Drop 01 Deadline Countdown --- */
   const dropDeadlineTarget = new Date('2026-05-31T20:00:00+01:00').getTime();

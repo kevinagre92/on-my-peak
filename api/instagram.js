@@ -9,6 +9,11 @@ const DEFAULT_FIELDS = [
   'username'
 ].join(',');
 
+const {
+  getInstagramAccessToken,
+  refreshInstagramToken
+} = require('../lib/instagram-token');
+
 const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbnail_url,permalink}`;
 const DEFAULT_INSTAGRAM_CACHE_URL = 'https://jsonblob.com/api/jsonBlob/019e598c-d6a3-7f97-8af6-0b8cd916447a';
 
@@ -37,8 +42,7 @@ function isAllowedApiUrl(url) {
   return url.protocol === 'https:' && ALLOWED_API_HOSTS.has(url.hostname);
 }
 
-function buildInstagramUrlCandidates() {
-  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+function buildInstagramUrlCandidates(accessToken) {
   if (!accessToken) return [];
 
   if (process.env.INSTAGRAM_MEDIA_URL) {
@@ -86,8 +90,7 @@ function buildInstagramUrlCandidates() {
     });
 }
 
-function buildInstagramDiagnosticUrls() {
-  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+function buildInstagramDiagnosticUrls(accessToken) {
   if (!accessToken) return [];
 
   const provider = (process.env.INSTAGRAM_PROVIDER || '').toLowerCase();
@@ -266,12 +269,13 @@ module.exports = async function handler(request, response) {
     return response.status(405).json({ error: 'Method not allowed' });
   }
 
-  const instagramUrls = buildInstagramUrlCandidates();
+  const accessToken = await getInstagramAccessToken();
+  const instagramUrls = buildInstagramUrlCandidates(accessToken);
   if (!instagramUrls.length) {
     const webPosts = await fetchInstagramWebPosts();
     if (webPosts.length) {
       await writeCachedPosts(webPosts);
-      response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
       return response.status(200).json({
         configured: false,
         source: 'instagram-web',
@@ -280,7 +284,7 @@ module.exports = async function handler(request, response) {
       });
     }
     const fallback = await resilientPosts('fallback');
-    response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
     return response.status(200).json({
       error: 'Instagram feed is not configured',
       configured: false,
@@ -321,7 +325,7 @@ module.exports = async function handler(request, response) {
 
     if (!instagramResponse?.ok) {
       if (showDiagnostics) {
-        for (const diagnosticUrl of buildInstagramDiagnosticUrls()) {
+        for (const diagnosticUrl of buildInstagramDiagnosticUrls(accessToken)) {
           const diagnosticResponse = await fetch(diagnosticUrl, {
             headers: { Accept: 'application/json' }
           });
@@ -353,7 +357,7 @@ module.exports = async function handler(request, response) {
       const webPosts = await fetchInstagramWebPosts();
       if (webPosts.length) {
         await writeCachedPosts(webPosts);
-        response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+        response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
         return response.status(200).json({
           error: 'Instagram Graph API request failed',
           configured: true,
@@ -364,7 +368,7 @@ module.exports = async function handler(request, response) {
         });
       }
       const fallback = await resilientPosts('fallback');
-      response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
       return response.status(200).json({
         error: 'Instagram API request failed',
         configured: true,
@@ -382,7 +386,7 @@ module.exports = async function handler(request, response) {
 
     if (!posts.length) {
       const fallback = await resilientPosts('fallback');
-      response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
       return response.status(200).json({
         error: 'Instagram feed returned no media',
         configured: true,
@@ -392,8 +396,9 @@ module.exports = async function handler(request, response) {
       });
     }
 
-    response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
     await writeCachedPosts(posts);
+    await refreshInstagramToken(accessToken).catch(() => null);
     return response.status(200).json({
       configured: true,
       source: 'instagram',
@@ -402,7 +407,7 @@ module.exports = async function handler(request, response) {
     });
   } catch (error) {
     const fallback = await resilientPosts('fallback');
-    response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    response.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
     return response.status(200).json({
       error: 'Instagram feed unavailable',
       configured: true,

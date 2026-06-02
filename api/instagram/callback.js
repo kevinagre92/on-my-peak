@@ -2,6 +2,7 @@ const TOKEN_ENDPOINT = 'https://api.instagram.com/oauth/access_token';
 const LONG_LIVED_ENDPOINT = 'https://graph.instagram.com/access_token';
 const REFRESH_ENDPOINT = 'https://graph.instagram.com/refresh_access_token';
 const DEFAULT_REDIRECT_URI = 'https://onmypeak.vercel.app/api/instagram/callback';
+const { saveInstagramToken } = require('../../lib/instagram-token');
 
 function html(response, status, body) {
   response.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -131,9 +132,15 @@ module.exports = async function handler(request, response) {
       `);
     }
 
+    const savedInStore = await saveInstagramToken(result.token, {
+      expiresIn: result.expiresIn,
+      tokenType: result.tokenType,
+      source: 'instagram-callback'
+    }).catch(() => false);
+
     return html(response, 200, `
       <h1><span class="ok">Instagram conectado</span></h1>
-      <p>Copia este token y guárdalo en Vercel como <code>INSTAGRAM_ACCESS_TOKEN</code>.</p>
+      <p>${savedInStore ? 'Token guardado automáticamente en Vercel KV. La web lo usará y lo renovará cuando Meta lo permita.' : 'Copia este token y guárdalo en Vercel como <code>INSTAGRAM_ACCESS_TOKEN</code>.'}</p>
       <textarea readonly>${result.token}</textarea>
       <p>Duración aproximada: ${Math.round((result.expiresIn || 0) / 86400)} días.</p>
       <p>También guarda <code>INSTAGRAM_PROVIDER=instagram</code>.</p>

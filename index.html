@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260602-drop02live">
+  <link rel="stylesheet" href="css/style.css?v=20260602-insta-calendar">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -586,17 +586,26 @@
         </figure>
       </div>
 
-      <div class="drop-calendar__month-shell reveal reveal-delay-3" aria-label="Calendario de drops 2026">
-        <article class="drop-month">
-          <header>
-            <button class="drop-month__nav" type="button" data-calendar-prev aria-label="Mes anterior">‹</button>
-            <div><span id="calendarMonthLabel">Mayo</span><strong id="calendarYearLabel">2026</strong></div>
-            <button class="drop-month__nav" type="button" data-calendar-next aria-label="Mes siguiente">›</button>
-          </header>
-          <div class="drop-month__weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-          <div class="drop-month__days" id="dropCalendarDays"></div>
-        </article>
-      </div>
+      <details class="drop-calendar__details reveal reveal-delay-3">
+        <summary class="drop-calendar__summary">
+          <span>
+            <strong>Hoy</strong>
+            <small id="calendarTodayLabel">Calendario de drops</small>
+          </span>
+          <em data-calendar-summary-action>Ver calendario</em>
+        </summary>
+        <div class="drop-calendar__month-shell" aria-label="Calendario de drops 2026">
+          <article class="drop-month">
+            <header>
+              <button class="drop-month__nav" type="button" data-calendar-prev aria-label="Mes anterior">‹</button>
+              <div><span id="calendarMonthLabel">Mayo</span><strong id="calendarYearLabel">2026</strong></div>
+              <button class="drop-month__nav" type="button" data-calendar-next aria-label="Mes siguiente">›</button>
+            </header>
+            <div class="drop-month__weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+            <div class="drop-month__days" id="dropCalendarDays"></div>
+          </article>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -944,6 +953,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260602-drop02live" defer></script>
+  <script src="js/script.js?v=20260602-insta-calendar" defer></script>
 </body>
 </html>
