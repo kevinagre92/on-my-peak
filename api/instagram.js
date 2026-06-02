@@ -13,15 +13,15 @@ const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbna
 const DEFAULT_INSTAGRAM_CACHE_URL = 'https://jsonblob.com/api/jsonBlob/019e598c-d6a3-7f97-8af6-0b8cd916447a';
 
 const FALLBACK_IMAGES = [
+  '/assets/collection/drop-02/thumbs/drop-02-05.jpg',
+  '/assets/collection/drop-02/thumbs/drop-02-04.jpg',
+  '/assets/collection/drop-02/thumbs/drop-02-03.jpg',
+  '/assets/collection/drop-02/thumbs/drop-02-02.jpg',
+  '/assets/collection/drop-02/thumbs/drop-02-01.jpg',
   '/assets/instagram/post-omp1-31.jpg',
   '/assets/instagram/post-omp1-30.jpg',
   '/assets/instagram/post-omp1-29.jpg',
-  '/assets/instagram/post-omp1-28.jpg',
-  '/assets/instagram/post-omp1-27.jpg',
-  '/assets/instagram/post-omp1-26.jpg',
-  '/assets/instagram/post-omp1-25.jpg',
-  '/assets/instagram/post-omp1-24.jpg',
-  '/assets/instagram/post-omp1-23.jpg'
+  '/assets/instagram/post-omp1-28.jpg'
 ];
 
 const ALLOWED_API_HOSTS = new Set([
@@ -58,6 +58,11 @@ function buildInstagramUrlCandidates() {
   const urls = [];
 
   if (useInstagramLogin) {
+    const extendedUrl = new URL(`${base.replace(/\/$/, '')}/${userId}/media`);
+    extendedUrl.searchParams.set('fields', EXTENDED_FIELDS);
+    extendedUrl.searchParams.set('limit', limit);
+    extendedUrl.searchParams.set('access_token', accessToken);
+    urls.push(extendedUrl);
     urls.push(new URL(`${base.replace(/\/$/, '')}/${userId}/media`));
     urls.push(new URL(`${base.replace(/\/$/, '')}/${version}/${userId}/media`));
   } else if (!process.env.INSTAGRAM_FIELDS) {
@@ -142,7 +147,7 @@ function normalizeWebPost(edge, index = 0) {
 function fallbackPosts() {
   return FALLBACK_IMAGES.map((image, index) => ({
     id: `fallback-${index + 1}`,
-    caption: 'Post reciente de On My Peak',
+    caption: index < 5 ? 'DROP 02/XX de On My Peak' : 'Post reciente de On My Peak',
     media_type: 'IMAGE',
     media_url: image,
     thumbnail_url: '',

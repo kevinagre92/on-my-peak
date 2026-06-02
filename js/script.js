@@ -877,6 +877,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const availableDrops = getAvailableDrops();
     const nextDrop = availableDrops.includes(dropName) ? dropName : (availableDrops.length === 1 ? availableDrops[0] : '');
     dropSelect.value = nextDrop;
+    const dropField = dropPickerToggle?.closest('.waitlist__field');
+    if (dropField) {
+      dropField.hidden = availableDrops.length <= 1;
+    }
+    if (availableDrops.length <= 1) hideDropOptions();
 
     if (!nextDrop) {
       if (selectedDropLabel) selectedDropLabel.textContent = availableDrops.join(' · ');

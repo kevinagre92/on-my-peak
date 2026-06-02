@@ -21,12 +21,12 @@
   <meta property="og:image" content="https://onmypeak.vercel.app/assets/optimized/og-image.jpg">
   <meta property="og:image:width" content="960">
   <meta property="og:image:height" content="1200">
-  <meta property="og:image:alt" content="On My Peak DROP 01/XX ropa deportiva de edición limitada">
+  <meta property="og:image:alt" content="On My Peak DROP 02/XX ropa deportiva de edición limitada">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="On My Peak ® | OMP">
   <meta name="twitter:description" content="Drops limitados de ropa fitness/streetwear premium desde Canarias.">
   <meta name="twitter:image" content="https://onmypeak.vercel.app/assets/optimized/og-image.jpg">
-  <meta name="twitter:image:alt" content="On My Peak DROP 01/XX">
+  <meta name="twitter:image:alt" content="On My Peak DROP 02/XX">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260529-drop02colors5">
+  <link rel="stylesheet" href="css/style.css?v=20260602-drop02live">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -70,7 +70,7 @@
           {
             "@type": "ListItem",
             "position": 2,
-            "name": "DROP 01/XX",
+            "name": "DROP 02/XX",
             "item": "https://onmypeak.vercel.app/#drop"
           },
           {
@@ -83,14 +83,14 @@
       },
       {
         "@type": "Product",
-        "@id": "https://onmypeak.vercel.app/#drop-01",
-        "name": "DROP 01/XX",
+        "@id": "https://onmypeak.vercel.app/#drop-02",
+        "name": "DROP 02/XX",
         "brand": { "@id": "https://onmypeak.vercel.app/#organization" },
-        "description": "Drop limitado de ropa deportiva On My Peak para fitness, CrossFit e Hyrox: camiseta oversized, crop top y hoodie.",
+        "description": "Drop limitado de ropa deportiva On My Peak con acento canario para fitness, CrossFit e Hyrox: camiseta oversized, crop top y hoodie.",
         "image": [
-          "https://onmypeak.vercel.app/assets/collection/thumbs/post-omp2-03.jpg",
-          "https://onmypeak.vercel.app/assets/collection/thumbs/post-omp2-05.jpg",
-          "https://onmypeak.vercel.app/assets/collection/thumbs/post-omp2-11.jpg"
+          "https://onmypeak.vercel.app/assets/collection/drop-02/thumbs/drop-02-01.jpg",
+          "https://onmypeak.vercel.app/assets/collection/drop-02/thumbs/drop-02-03.jpg",
+          "https://onmypeak.vercel.app/assets/collection/drop-02/thumbs/drop-02-05.jpg"
         ],
         "offers": {
           "@type": "AggregateOffer",
@@ -115,10 +115,10 @@
           },
           {
             "@type": "Question",
-            "name": "¿Qué productos incluye DROP 01/XX?",
+            "name": "¿Qué productos incluye DROP 02/XX?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "DROP 01/XX incluye prendas On My Peak de edición limitada como oversized, crop top y hoodie."
+              "text": "DROP 02/XX incluye prendas On My Peak de edición limitada como oversized, crop top y hoodie."
             }
           },
           {
@@ -180,9 +180,9 @@
     </div>
   </nav>
 
-  <aside class="buy-rail" id="buyRail" aria-label="Compra rápida DROP 01/XX">
-    <a class="buy-rail__main" href="#waitlist">
-      <span>DROP 01/XX</span>
+  <aside class="buy-rail" id="buyRail" aria-label="Compra rápida DROP 02/XX">
+    <a class="buy-rail__main" href="#waitlist" data-select-drop="DROP 02/XX">
+      <span>DROP 02/XX</span>
       <strong>Alcanza tu Peak</strong>
     </a>
     <button class="buy-rail__cart" type="button" id="buyRailCart" aria-label="Abrir carrito desde compra rápida">
@@ -204,19 +204,7 @@
         OM<span class="paren">(</span><span class="fucking" data-typewriter-words="fucking,next,gymnastic,fleje">fucking</span><span class="paren">)</span>P
       </h1>
       <p class="hero__claim" data-i18n="heroClaim">Nothing given. Everything earned.</p>
-      <div class="hero__drops" aria-label="Drops activos">
-        <div class="hero__drop-mark" aria-label="Drop 01/XX prórroga">
-          <span class="hero__drop-title">DROP</span>
-          <span class="hero__drop-code">01/XX</span>
-          <span class="hero__drop-live" data-drop01-status>prórroga</span>
-          <a href="#waitlist" class="hero__drop-cta hero__drop-cta--orange" data-select-drop="DROP 01/XX">
-            <span data-i18n="heroCta">consiguelo ya</span>
-            <small>
-              <span data-i18n="availableUntil">se termina en</span>
-              <strong class="deadline-countdown" data-drop-deadline-countdown>00D 00H 00M 00S</strong>
-            </small>
-          </a>
-        </div>
+      <div class="hero__drops hero__drops--single" aria-label="Drop activo">
         <div class="hero__drop-mark hero__drop-mark--next" aria-label="Drop 02/XX live">
           <span class="hero__drop-title">DROP</span>
           <span class="hero__drop-code">02/XX</span>
@@ -626,14 +614,12 @@
           <span>Drop</span>
           <button class="waitlist__input model-picker drop-picker" type="button" id="dropPickerToggle" aria-haspopup="listbox" aria-expanded="false">
             <span class="model-picker__text">
-              <strong id="selectedDropLabel">DROP 01/XX · DROP 02/XX</strong>
-              <small id="selectedDropMeta">Elige el drop que quieres comprar</small>
+              <strong id="selectedDropLabel">DROP 02/XX</strong>
+              <small id="selectedDropMeta">Live · Oversized negro</small>
             </span>
           </button>
           <select class="visually-hidden-select" id="orderDrop" name="drop" required aria-label="Drop para pedido">
-            <option value="" selected>Elige drop</option>
-            <option value="DROP 01/XX">DROP 01/XX</option>
-            <option value="DROP 02/XX">DROP 02/XX</option>
+            <option value="DROP 02/XX" selected>DROP 02/XX</option>
           </select>
           <div class="model-options drop-options" id="dropOptions" role="listbox" aria-label="Drops disponibles"></div>
         </label>
@@ -958,6 +944,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260529-drop02colors5" defer></script>
+  <script src="js/script.js?v=20260602-drop02live" defer></script>
 </body>
 </html>

@@ -735,6 +735,11 @@ select:focus-visible {
   animation: fadeInUp 1s 1.45s forwards;
 }
 
+.hero__drops--single {
+  grid-template-columns: minmax(16rem, 1fr);
+  width: min(100%, 25rem);
+}
+
 .hero__drop-mark {
   position: relative;
   display: grid;
@@ -5381,6 +5386,11 @@ select:focus-visible {
     width: min(100%, 35rem);
     margin-top: clamp(2.4rem, 8vh, 4.2rem);
     margin-bottom: clamp(1.1rem, 2.6vh, 1.8rem);
+  }
+
+  .hero__drops--single {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(100%, 20rem);
   }
 
   .hero__drop-mark--next .hero__drop-live {
