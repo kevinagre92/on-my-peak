@@ -640,9 +640,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const cartCustomerEmail = document.getElementById('cartCustomerEmail');
   const cartCustomerPhone = document.getElementById('cartCustomerPhone');
   const IGIC_RATE = 0.07;
-  const DROP_01_PURCHASE_CUTOFF = new Date('2026-05-31T23:59:00+01:00').getTime();
   const DROP_01 = 'DROP 01/XX';
   const DROP_02 = 'DROP 02/XX';
+  const DROP_03 = 'DROP 03/XX';
 
   const colorsByModel = {
     Oversized: [
@@ -694,18 +694,24 @@ document.addEventListener('DOMContentLoaded', () => {
     [DROP_01]: {
       name: DROP_01,
       image: 'assets/products/oversized.jpg',
-      meta: 'Prórroga hasta el domingo 31'
+      meta: 'Sold out'
     },
     [DROP_02]: {
       name: DROP_02,
       image: 'assets/products/drop-02-oversized.jpg',
-      meta: 'Live · Oversized negro'
+      meta: 'Sold out'
+    },
+    [DROP_03]: {
+      name: DROP_03,
+      image: 'assets/products/drop-03/oversized.jpg',
+      meta: 'Live · More Mobility'
     }
   };
 
   const modelsByDrop = {
     [DROP_01]: ['Oversized', 'Crop top', 'Hoodie'],
-    [DROP_02]: ['Oversized', 'Crop top', 'Hoodie']
+    [DROP_02]: ['Oversized', 'Crop top', 'Hoodie'],
+    [DROP_03]: ['Oversized', 'Crop top', 'Hoodie']
   };
 
   const colorsByDropModel = {
@@ -722,6 +728,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Turquesa', hex: '#75adba' }
       ],
       Hoodie: colorsByModel.Hoodie
+    },
+    [DROP_03]: {
+      Oversized: [
+        { name: 'Negro', hex: '#101010' }
+      ],
+      'Crop top': [
+        { name: 'Negro', hex: '#101010' }
+      ],
+      Hoodie: [
+        { name: 'Negra', hex: '#101010' }
+      ]
     }
   };
 
@@ -741,6 +758,23 @@ document.addEventListener('DOMContentLoaded', () => {
         name: 'Hoodie',
         image: 'assets/products/drop-02-hoodie.jpg',
         meta: 'DROP 02/XX · Fleje'
+      }
+    },
+    [DROP_03]: {
+      Oversized: {
+        name: 'Oversized',
+        image: 'assets/products/drop-03/oversized.jpg',
+        meta: 'DROP 03/XX · More Mobility'
+      },
+      'Crop top': {
+        name: 'Crop top',
+        image: 'assets/products/drop-03/crop-top.jpg',
+        meta: 'DROP 03/XX · More Mobility'
+      },
+      Hoodie: {
+        name: 'Hoodie',
+        image: 'assets/products/drop-03/hoodie.jpg',
+        meta: 'DROP 03/XX · More Mobility'
       }
     }
   };
@@ -800,7 +834,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getAvailableDrops() {
-    return Date.now() <= DROP_01_PURCHASE_CUTOFF ? [DROP_01, DROP_02] : [DROP_02];
+    return [DROP_03];
   }
 
   function getSelectedDrop() {
@@ -1156,7 +1190,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Next Drop Countdown --- */
   const drop2LaunchTarget = new Date('2026-05-29T00:00:00+01:00').getTime();
   const drop2EndTarget = new Date('2026-06-30T23:59:00+01:00').getTime();
-  const countdownTarget = drop2LaunchTarget;
+  const drop3EndTarget = new Date('2026-08-31T23:59:00+01:00').getTime();
+  const countdownTarget = drop3EndTarget;
   const countdownParts = {
     days: document.getElementById('countDays'),
     hours: document.getElementById('countHours'),
@@ -1189,6 +1224,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const drop2TabCountdown = document.querySelector('[data-drop2-tab-countdown]');
   const drop2CountdownNodes = document.querySelectorAll('[data-drop2-countdown]');
   const drop2HeroCountdown = document.querySelector('[data-drop2-hero-countdown]');
+  const drop3HeroCountdown = document.querySelector('[data-drop3-hero-countdown]');
   const dropCollectionCountdown = document.querySelector('[data-drop-collection-countdown]');
   const drop2Locked = document.querySelector('[data-drop2-locked]');
   const drop2Gallery = document.querySelector('[data-drop2-gallery]');
@@ -1234,6 +1270,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (drop2HeroCountdown) {
       drop2HeroCountdown.innerHTML = formatSegmentedCountdown(live ? endParts : parts);
     }
+    if (drop3HeroCountdown) {
+      drop3HeroCountdown.innerHTML = formatSegmentedCountdown(getCountdownParts(drop3EndTarget));
+    }
     if (drop2Locked) drop2Locked.hidden = live;
     if (drop2Gallery) drop2Gallery.hidden = !live;
     document.querySelectorAll('[data-unlock-at]').forEach(card => {
@@ -1260,7 +1299,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const calendarMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const dropRanges = [
     { start: '2026-05-04', end: '2026-05-31', className: 'drop-day--one' },
-    { start: '2026-05-29', end: '2026-06-28', className: 'drop-day--two' }
+    { start: '2026-05-29', end: '2026-06-28', className: 'drop-day--two' },
+    { start: '2026-07-20', end: '2026-08-31', className: 'drop-day--three' }
   ];
   const today = new Date();
   let visibleCalendarMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -3103,8 +3143,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function getShopDropFromCard(card) {
-    const dropPanel = card?.closest('#dropPanel02, #dropPanel01');
-    return dropPanel?.id === 'dropPanel02' ? DROP_02 : DROP_01;
+    const activeTag = card?.querySelector('.shop-tag.is-active');
+    if (activeTag?.dataset.shopDrop) return normalizeDrop(activeTag.dataset.shopDrop);
+    const dropPanel = card?.closest('#dropPanel03, #dropPanel02, #dropPanel01');
+    if (dropPanel?.id === 'dropPanel03') return DROP_03;
+    if (dropPanel?.id === 'dropPanel02') return DROP_02;
+    return DROP_01;
   }
 
   document.addEventListener('click', (e) => {
@@ -3352,18 +3396,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function syncDropCollectionUi(activeButton) {
     const isDrop01 = activeButton?.id === 'dropTab01';
+    const isDrop03 = activeButton?.id === 'dropTab03';
     if (dropUrgencyLine) {
-      dropUrgencyLine.hidden = false;
-      dropUrgencyLine.classList.toggle('drop__urgency--yellow', !isDrop01);
+      dropUrgencyLine.hidden = !isDrop03;
+      dropUrgencyLine.classList.toggle('drop__urgency--yellow', false);
+      dropUrgencyLine.classList.toggle('drop__urgency--turquoise', isDrop03);
     }
     if (dropTitleCode && activeButton?.dataset.dropCode) dropTitleCode.textContent = activeButton.dataset.dropCode;
     if (dropTitleStatus && activeButton?.dataset.dropStatus) {
-      const drop01SoldOut = Date.now() >= dropDeadlineTarget;
-      dropTitleStatus.textContent = isDrop01 && drop01SoldOut ? 'Sold out' : activeButton.dataset.dropStatus;
+      dropTitleStatus.textContent = activeButton.dataset.dropStatus;
     }
     if (dropNarrative && activeButton?.dataset.dropCopy) dropNarrative.textContent = activeButton.dataset.dropCopy;
     if (dropCollectionCountdown) {
-      dropCollectionCountdown.innerHTML = formatSegmentedCountdown(getCountdownParts(isDrop01 ? dropDeadlineTarget : drop2EndTarget));
+      dropCollectionCountdown.innerHTML = formatSegmentedCountdown(getCountdownParts(isDrop03 ? drop3EndTarget : (isDrop01 ? dropDeadlineTarget : drop2EndTarget)));
     }
   }
 

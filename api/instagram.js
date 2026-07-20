@@ -18,15 +18,15 @@ const EXTENDED_FIELDS = `${DEFAULT_FIELDS},children{media_type,media_url,thumbna
 const DEFAULT_INSTAGRAM_CACHE_URL = 'https://jsonblob.com/api/jsonBlob/019e598c-d6a3-7f97-8af6-0b8cd916447a';
 
 const FALLBACK_IMAGES = [
-  '/assets/collection/drop-02/thumbs/drop-02-05.jpg',
-  '/assets/collection/drop-02/thumbs/drop-02-04.jpg',
-  '/assets/collection/drop-02/thumbs/drop-02-03.jpg',
-  '/assets/collection/drop-02/thumbs/drop-02-02.jpg',
-  '/assets/collection/drop-02/thumbs/drop-02-01.jpg',
-  '/assets/instagram/post-omp1-31.jpg',
-  '/assets/instagram/post-omp1-30.jpg',
-  '/assets/instagram/post-omp1-29.jpg',
-  '/assets/instagram/post-omp1-28.jpg'
+  '/assets/collection/drop-03/thumbs/drop-03-01.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-02.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-03.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-04.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-05.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-06.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-07.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-08.jpg',
+  '/assets/collection/drop-03/thumbs/drop-03-01.jpg'
 ];
 
 const ALLOWED_API_HOSTS = new Set([
@@ -150,7 +150,7 @@ function normalizeWebPost(edge, index = 0) {
 function fallbackPosts() {
   return FALLBACK_IMAGES.map((image, index) => ({
     id: `fallback-${index + 1}`,
-    caption: index < 5 ? 'DROP 02/XX de On My Peak' : 'Post reciente de On My Peak',
+    caption: index < 8 ? 'DROP 03/XX de On My Peak' : 'Post reciente de On My Peak',
     media_type: 'IMAGE',
     media_url: image,
     thumbnail_url: '',

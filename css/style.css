@@ -802,6 +802,11 @@ select:focus-visible {
   color: var(--bg-primary);
 }
 
+.hero__drop-live--turquoise {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
 .hero__drop-countdown {
   display: grid;
   grid-template-columns: repeat(4, 3.55rem);
@@ -918,16 +923,26 @@ select:focus-visible {
   box-shadow: 0 0 0 rgba(255,211,42,0);
 }
 
-.hero__drop-cta--yellow .hero__drop-countdown span {
+.hero__drop-cta--turquoise {
+  background: #25d7cf;
+  color: #050505;
+  border-color: #25d7cf;
+  box-shadow: 0 0 0 rgba(37,215,207,0);
+}
+
+.hero__drop-cta--yellow .hero__drop-countdown span,
+.hero__drop-cta--turquoise .hero__drop-countdown span {
   border-color: rgba(0,0,0,0.24);
   background: rgba(0,0,0,0.075);
 }
 
-.hero__drop-cta--yellow .hero__drop-countdown b {
+.hero__drop-cta--yellow .hero__drop-countdown b,
+.hero__drop-cta--turquoise .hero__drop-countdown b {
   color: #050505;
 }
 
-.hero__drop-cta--yellow .hero__drop-countdown small {
+.hero__drop-cta--yellow .hero__drop-countdown small,
+.hero__drop-cta--turquoise .hero__drop-countdown small {
   color: rgba(0,0,0,0.58);
 }
 
@@ -945,6 +960,11 @@ select:focus-visible {
 .hero__drop-cta--yellow:hover,
 .hero__drop-cta--yellow:focus-visible {
   box-shadow: 0 0 34px rgba(255,211,42,0.2);
+}
+
+.hero__drop-cta--turquoise:hover,
+.hero__drop-cta--turquoise:focus-visible {
+  box-shadow: 0 0 34px rgba(37,215,207,0.22);
 }
 
 .hero__logo {
@@ -1691,6 +1711,28 @@ select:focus-visible {
   color: rgba(255,211,42,0.72);
 }
 
+.drop__urgency--turquoise {
+  border-color: rgba(37,215,207,0.48);
+  background: rgba(37,215,207,0.12);
+}
+
+.drop__urgency--turquoise strong {
+  color: #25d7cf;
+}
+
+.drop__urgency--turquoise .deadline-countdown span {
+  border-color: rgba(37,215,207,0.42);
+  background: rgba(37,215,207,0.1);
+}
+
+.drop__urgency--turquoise .deadline-countdown b {
+  color: #25d7cf;
+}
+
+.drop__urgency--turquoise .deadline-countdown small {
+  color: rgba(37,215,207,0.72);
+}
+
 .drop-tabs {
   display: inline-flex;
   align-items: flex-end;
@@ -1752,6 +1794,13 @@ select:focus-visible {
 .drop-tabs__button.is-active span,
 .drop-tabs__button.is-active small {
   color: var(--text-primary);
+}
+
+.drop-tabs__button--turquoise.is-active {
+  border-color: rgba(37,215,207,0.56);
+  background:
+    linear-gradient(180deg, rgba(37,215,207,0.12), rgba(255,255,255,0.035)),
+    var(--bg-secondary);
 }
 
 .drop-panel[hidden] {
@@ -2894,6 +2943,11 @@ select:focus-visible {
 .drop-day--two {
   background: rgba(255,211,42,0.86) !important;
   color: #090909 !important;
+}
+
+.drop-day--three {
+  background: rgba(37,215,207,0.82) !important;
+  color: #050505 !important;
 }
 
 .drop-day--start,
