@@ -1381,10 +1381,6 @@ select:focus-visible {
   overflow: hidden;
 }
 
-.manifesto--menu-only:not(.manifesto--open) {
-  display: none;
-}
-
 .manifesto__bg {
   position: absolute;
   right: -5%;
@@ -1455,6 +1451,81 @@ select:focus-visible {
 .manifesto__instagram-head a {
   color: var(--accent-lava);
   white-space: nowrap;
+}
+
+.manifesto-page {
+  background: var(--bg-primary);
+}
+
+.manifesto-page .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.nav--simple {
+  position: fixed;
+}
+
+.nav__logo--link {
+  text-decoration: none;
+}
+
+.manifesto--page {
+  min-height: 100svh;
+  padding-top: 7rem;
+}
+
+.manifesto__layout--page {
+  grid-template-columns: minmax(0, 0.9fr) minmax(260px, 0.65fr);
+}
+
+.manifesto-page__proof {
+  justify-self: end;
+  width: min(100%, 420px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.04);
+}
+
+.manifesto-page__proof img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.manifesto-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2.2rem;
+}
+
+.manifesto-page__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.8rem 1.05rem;
+  border: 1px solid rgba(255,255,255,0.28);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color 0.22s ease, background 0.22s ease;
+}
+
+.manifesto-page__actions a:first-child {
+  border-color: var(--accent-lava);
+  background: var(--accent-lava);
+}
+
+.manifesto-page__actions a:hover {
+  border-color: var(--text-primary);
+  background: rgba(255,255,255,0.08);
 }
 
 .instagram-preview__grid {

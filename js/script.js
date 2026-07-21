@@ -215,15 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', closeNavMenu);
   });
 
-  const manifestoSection = document.getElementById('manifesto');
-  function openManifestoSection() {
-    manifestoSection?.classList.add('manifesto--open');
-  }
-
-  if (window.location.hash === '#manifesto') {
-    openManifestoSection();
-  }
-
   document.addEventListener('click', (e) => {
     if (e.target.closest('#navLogo') || e.target.closest('#navMenu')) return;
     closeNavMenu();
@@ -3728,7 +3719,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
       if (anchor.matches('[data-select-drop]')) return;
-      if (anchor.getAttribute('href') === '#manifesto') openManifestoSection();
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
         e.preventDefault();
