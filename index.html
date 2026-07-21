@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260720-drop03">
+  <link rel="stylesheet" href="css/style.css?v=20260721-sleeves">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -207,7 +207,7 @@
       <div class="hero__drops hero__drops--single" aria-label="Drop activo">
         <div class="hero__drop-mark hero__drop-mark--next hero__drop-mark--turquoise" aria-label="Drop 03/XX activo">
           <span class="hero__drop-title">DROP</span>
-          <span class="hero__drop-code">03/XX</span>
+          <span class="hero__drop-code"><span class="hero__drop-code-main">03/</span><span class="hero__drop-code-xx" aria-label="XX">xx</span></span>
           <span class="hero__drop-live hero__drop-live--turquoise">live</span>
           <a href="#waitlist" class="hero__drop-cta hero__drop-cta--turquoise" data-select-drop="DROP 03/XX">
             <span>consiguelo ya</span>
@@ -743,6 +743,15 @@
           <div class="model-options" id="modelOptions" role="listbox" aria-label="Modelos disponibles"></div>
         </label>
 
+        <label class="waitlist__field waitlist__field--full waitlist__field--sleeves" id="sleeveField" hidden>
+          <span>Acabado oversized</span>
+          <select class="waitlist__input waitlist__select" id="orderSleeves" name="sleeves" aria-label="Acabado de la oversized">
+            <option value="" selected>Elige acabado</option>
+            <option value="Con mangas">Con mangas</option>
+            <option value="Sin mangas">Sin mangas</option>
+          </select>
+        </label>
+
         <label class="waitlist__field">
           <span data-i18n="colorLabel">Color</span>
           <button class="waitlist__input color-picker" type="button" id="colorPickerToggle" aria-haspopup="listbox" aria-expanded="false">
@@ -1046,6 +1055,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260720-drop03" defer></script>
+  <script src="js/script.js?v=20260721-sleeves" defer></script>
 </body>
 </html>

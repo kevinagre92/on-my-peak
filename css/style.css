@@ -753,6 +753,10 @@ select:focus-visible {
   color: var(--text-primary);
 }
 
+.hero__drop-mark--turquoise {
+  width: min(100%, 23.5rem);
+}
+
 .hero__drop-title,
 .hero__drop-code {
   display: block;
@@ -770,11 +774,32 @@ select:focus-visible {
 }
 
 .hero__drop-code {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.18em;
+  width: 100%;
   font-size: clamp(1.35rem, 3.9vw, 3.15rem);
   margin-top: 0.08em;
-  letter-spacing: 0.36em;
+  letter-spacing: 0;
   -webkit-text-stroke: 0;
   opacity: 0.92;
+}
+
+.hero__drop-code-main {
+  letter-spacing: 0.28em;
+}
+
+.hero__drop-code-xx {
+  color: #e6b3e7;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.18em;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.08em;
+  line-height: 0.78;
+  text-transform: lowercase;
+  transform: translateY(0.03em);
 }
 
 .hero__drop-live {
@@ -928,6 +953,7 @@ select:focus-visible {
   color: #050505;
   border-color: #25d7cf;
   box-shadow: 0 0 0 rgba(37,215,207,0);
+  width: 21rem;
 }
 
 .hero__drop-cta--yellow .hero__drop-countdown span,
@@ -2210,6 +2236,10 @@ select:focus-visible {
   gap: 0.35rem;
 }
 
+.product-card__size-grid--sleeves {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .product-card__size-grid button {
   min-height: 38px;
   border: 1px solid rgba(255,255,255,0.22);
@@ -2222,11 +2252,16 @@ select:focus-visible {
 }
 
 .product-card__size-grid button:hover,
-.product-card__size-grid button:focus-visible {
+.product-card__size-grid button:focus-visible,
+.product-card__size-grid button.is-selected {
   border-color: var(--accent-lava);
   background: var(--accent-lava);
   color: #fff;
   transform: translateY(-1px);
+}
+
+.product-card__size-panel--attention {
+  animation: formAttention 0.7s ease;
 }
 
 .image-lightbox {

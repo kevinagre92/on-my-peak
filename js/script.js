@@ -610,6 +610,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectedColorSwatch = document.getElementById('selectedColorSwatch');
   const selectedColorLabel = document.getElementById('selectedColorLabel');
   const sizeSelect = document.getElementById('orderSize');
+  const sleeveField = document.getElementById('sleeveField');
+  const sleeveSelect = document.getElementById('orderSleeves');
   const discountInput = document.getElementById('discountCode');
   const discountApply = document.getElementById('discountApply');
   const discountMessage = document.getElementById('discountMessage');
@@ -830,7 +832,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function normalizeDrop(drop) {
-    return drop === DROP_02 ? DROP_02 : DROP_01;
+    if (drop === DROP_03) return DROP_03;
+    if (drop === DROP_02) return DROP_02;
+    return DROP_01;
+  }
+
+  function updateSleeveOptions() {
+    const needsSleeves = modelSelect?.value === 'Oversized';
+    if (sleeveField) sleeveField.hidden = !needsSleeves;
+    if (sleeveSelect) {
+      sleeveSelect.required = needsSleeves;
+      if (!needsSleeves) sleeveSelect.value = '';
+    }
   }
 
   function getAvailableDrops() {
@@ -964,6 +977,7 @@ document.addEventListener('DOMContentLoaded', () => {
         option.classList.remove('active');
         option.setAttribute('aria-selected', 'false');
       });
+      updateSleeveOptions();
       updateColorOptions();
       return;
     }
@@ -979,6 +993,7 @@ document.addEventListener('DOMContentLoaded', () => {
       option.classList.toggle('active', option.dataset.model === modelSelect.value);
       option.setAttribute('aria-selected', option.dataset.model === modelSelect.value ? 'true' : 'false');
     });
+    updateSleeveOptions();
     updateColorOptions();
   }
 
@@ -2135,6 +2150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return JSON.stringify({
       cart: cart.map(item => ({
         model: item.model,
+        sleeves: item.sleeves || '',
         color: item.color,
         size: item.size,
         quantity: Number(item.quantity || 1),
@@ -2171,6 +2187,7 @@ document.addEventListener('DOMContentLoaded', () => {
       drop: normalizeDrop(item.drop),
       createdAt: now,
       model: item.model,
+      sleeves: item.sleeves || '',
       color: item.color,
       size: item.size,
       quantity: Number(item.quantity || 1),
@@ -2541,7 +2558,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const customer = readCustomerDetails();
       const customerReady = isCustomerReady();
       const orderLines = cart.map(item => {
-        return `${normalizeDrop(item.drop)} - ${item.model} - ${item.color} - talla ${item.size} - ${formatCurrency(item.price)} x ${item.quantity}`;
+        const sleeveText = item.sleeves ? ` - ${item.sleeves}` : '';
+        return `${normalizeDrop(item.drop)} - ${item.model}${sleeveText} - ${item.color} - talla ${item.size} - ${formatCurrency(item.price)} x ${item.quantity}`;
       });
       const messageText = cart.length
         ? `Hola OMP, quiero confirmar mi pedido:\nNombre: ${customer.name}\nEmail: ${customer.email}\nTelefono: ${customer.phone}\n${orderLines.join('\n')}${hasValidCartDiscount ? `\nCodigo descuento: ${cartDiscountCode} (-10%)` : cartDiscountCode ? `\nCodigo descuento: ${cartDiscountCode} (pendiente de validar)` : ''}\nTotal de la compra: ${formatCurrency(total)}`
@@ -2574,7 +2592,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="cart-item__title">${escapeHtml(item.model)}</span>
           <span class="cart-item__price">${formatCurrencyHtml(getLineSubtotal(item) - getLineDiscount(item))}</span>
         </div>
-        <p class="cart-item__meta">${escapeHtml(normalizeDrop(item.drop))} · ${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
+        <p class="cart-item__meta">${escapeHtml(normalizeDrop(item.drop))} · ${item.sleeves ? `${escapeHtml(item.sleeves)} · ` : ''}${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · cantidad ${item.quantity}</p>
         ${cartDiscountCode ? `<p class="cart-item__discount ${hasValidCartDiscount ? 'cart-item__discount--valid' : ''}">Código carrito: ${escapeHtml(cartDiscountCode)}${hasValidCartDiscount ? ' · -10%' : ' · no aplicado'}</p>` : ''}
         <div class="cart-item__bottom">
           <span class="cart-item__meta">Precio unidad: ${formatCurrencyHtml(item.price)}</span>
@@ -2612,7 +2630,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <article class="waitlist-order-preview__item">
           <div>
             <strong><i class="order-color-chip" style="--swatch:${escapeHtml(getCartItemColor(item))}"></i>${escapeHtml(item.model)}</strong>
-            <span>${escapeHtml(normalizeDrop(item.drop))} · ${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · ${formatCurrencyHtml(item.price)}</span>
+            <span>${escapeHtml(normalizeDrop(item.drop))} · ${item.sleeves ? `${escapeHtml(item.sleeves)} · ` : ''}${escapeHtml(item.color)} · talla ${escapeHtml(item.size)} · ${formatCurrencyHtml(item.price)}</span>
           </div>
           ${renderQuantityStepper(index, item.quantity)}
         </article>
@@ -2641,6 +2659,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetProductFields() {
     syncSelectedModel('');
     if (sizeSelect) sizeSelect.value = '';
+    if (sleeveSelect) sleeveSelect.value = '';
+    updateSleeveOptions();
     hideModelOptions();
     hideColorOptions();
   }
@@ -2662,6 +2682,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const existing = cart.find(item =>
       normalizeDrop(item.drop) === orderDrop &&
       item.model === order.model &&
+      (item.sleeves || '') === (order.sleeves || '') &&
       item.color === order.color &&
       item.size === order.size
     );
@@ -3125,8 +3146,15 @@ document.addEventListener('DOMContentLoaded', () => {
     card.classList.add('shop-open');
     tag.classList.add('is-active');
     panel.setAttribute('aria-hidden', 'false');
+    panel.dataset.shopSleeves = '';
     panel.innerHTML = `
       <span class="product-card__size-title">${escapeHtml(model)} · ${escapeHtml(color)} · elige talla</span>
+      ${model === 'Oversized' ? `
+        <div class="product-card__size-grid product-card__size-grid--sleeves" aria-label="Acabado oversized">
+          <button type="button" data-shop-sleeves="Con mangas">Con mangas</button>
+          <button type="button" data-shop-sleeves="Sin mangas">Sin mangas</button>
+        </div>
+      ` : ''}
       <div class="product-card__size-grid">
         ${shopSizes.map(size => `<button type="button" data-shop-size="${size}">${size}</button>`).join('')}
       </div>
@@ -3152,6 +3180,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('click', (e) => {
+    const sleeveButton = e.target.closest('[data-shop-sleeves]');
+    if (sleeveButton) {
+      e.preventDefault();
+      e.stopPropagation();
+      const panel = sleeveButton.closest('.product-card__size-panel');
+      if (!panel) return;
+      panel.dataset.shopSleeves = sleeveButton.dataset.shopSleeves || '';
+      panel.querySelectorAll('[data-shop-sleeves]').forEach(button => {
+        button.classList.toggle('is-selected', button === sleeveButton);
+      });
+      return;
+    }
+
     const sizeButton = e.target.closest('[data-shop-size]');
     if (sizeButton) {
       e.preventDefault();
@@ -3159,6 +3200,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = sizeButton.closest('.product-card, .image-lightbox__stage');
       const tag = card?.querySelector('.shop-tag.is-active');
       if (!tag) return;
+      const panel = card?.querySelector('.product-card__size-panel');
+      const sleeves = tag.dataset.shopModel === 'Oversized' ? panel?.dataset.shopSleeves : '';
+      if (tag.dataset.shopModel === 'Oversized' && !sleeves) {
+        panel?.classList.add('product-card__size-panel--attention');
+        window.setTimeout(() => panel?.classList.remove('product-card__size-panel--attention'), 700);
+        panel?.querySelector('[data-shop-sleeves]')?.focus();
+        return;
+      }
 
       addToCart({
         name: '',
@@ -3166,6 +3215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         phone: '',
         drop: getShopDropFromCard(card),
         model: tag.dataset.shopModel,
+        sleeves,
         color: tag.dataset.shopColor,
         size: sizeButton.dataset.shopSize,
         createdAt: new Date().toISOString()
@@ -3336,6 +3386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         phone: '',
         drop: dropSelect.value,
         model: modelSelect.value,
+        sleeves: modelSelect.value === 'Oversized' ? sleeveSelect?.value : '',
         color: colorSelect.value,
         size: sizeSelect.value,
         createdAt: new Date().toISOString()
@@ -3349,6 +3400,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!order.model) {
         showModelOptions();
         modelPickerToggle?.focus();
+        return;
+      }
+      if (order.model === 'Oversized' && !order.sleeves) {
+        sleeveSelect?.focus();
         return;
       }
       if (!order.color || !order.size) return;
