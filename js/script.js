@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const translations = {
     es: {
       flag: '🇪🇸',
-      navCta: 'Consigue tu Drop',
+      navCta: 'Comprar ahora',
       heroCta: 'consiguelo ya',
       availableUntil: 'se termina en',
       heroClaim: 'Nothing given. Everything earned.',
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     en: {
       flag: '🇬🇧',
-      navCta: 'Get your Drop',
+      navCta: 'Buy now',
       heroCta: 'Get it now',
       availableUntil: 'ends in',
       heroClaim: 'Nothing given. Everything earned.',
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     pt: {
       flag: '🇵🇹',
-      navCta: 'Garante o teu Drop',
+      navCta: 'Comprar agora',
       heroCta: 'Garante já',
       availableUntil: 'termina em',
       heroClaim: 'Nothing given. Everything earned.',
@@ -214,6 +214,15 @@ document.addEventListener('DOMContentLoaded', () => {
   navMenuLinks.forEach(link => {
     link.addEventListener('click', closeNavMenu);
   });
+
+  const manifestoSection = document.getElementById('manifesto');
+  function openManifestoSection() {
+    manifestoSection?.classList.add('manifesto--open');
+  }
+
+  if (window.location.hash === '#manifesto') {
+    openManifestoSection();
+  }
 
   document.addEventListener('click', (e) => {
     if (e.target.closest('#navLogo') || e.target.closest('#navMenu')) return;
@@ -3645,6 +3654,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
       if (anchor.matches('[data-select-drop]')) return;
+      if (anchor.getAttribute('href') === '#manifesto') openManifestoSection();
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
         e.preventDefault();

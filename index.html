@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260721-simplebuy">
+  <link rel="stylesheet" href="css/style.css?v=20260721-simplecheckout">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -164,11 +164,10 @@
       <a href="#drop">Drop 03</a>
       <a href="#calendario">Calendario</a>
       <a href="#waitlist">Alcanza tu Peak</a>
-      <a href="#peak-community">Únete al movimiento</a>
     </div>
     <div class="nav__actions">
       <a href="#waitlist" class="nav__cta">
-        <span data-i18n="navCta">Consigue tu Drop</span>
+        <span data-i18n="navCta">Comprar ahora</span>
       </a>
       <button class="cart-toggle" type="button" id="cartToggle" aria-label="Abrir carrito" aria-expanded="false">
         <svg class="cart-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -220,7 +219,7 @@
       </div>
       <div class="hero__actions" aria-label="Acciones principales">
         <a href="#drop">VIEW COLLECTION</a>
-        <a href="#peak-community">ÚNETE AL MOVIMIENTO</a>
+        <a href="#waitlist">COMPRAR AHORA</a>
       </div>
     </div>
     <div class="hero__scroll">
@@ -250,7 +249,7 @@
   </div>
 
   <!-- Manifesto -->
-  <section class="section manifesto" id="manifesto">
+  <section class="section manifesto manifesto--menu-only" id="manifesto">
     <div class="manifesto__bg"></div>
     <div class="container">
       <div class="manifesto__layout">
@@ -626,82 +625,6 @@
     </div>
   </section>
 
-  <!-- Calendario -->
-  <section class="section drop-calendar" id="calendario">
-    <div class="container">
-      <p class="section-label reveal">Calendario</p>
-      <div class="drop-calendar__head reveal reveal-delay-1">
-        <h2 class="section-title">DROP<br>CALENDAR</h2>
-      </div>
-
-      <div class="drop-calendar__drops reveal reveal-delay-2" aria-label="Portadas de drops">
-        <figure class="drop-calendar__card drop-calendar__card--one" data-flip-card>
-          <button class="drop-calendar__flip" type="button" aria-label="Girar portada DROP 01/XX">
-            <span class="drop-calendar__flip-inner">
-              <span class="drop-calendar__face drop-calendar__face--front">
-                <img src="assets/drops/drop-01.jpg" width="1119" height="1400" alt="DROP 01/XX — No one is coming" loading="lazy" decoding="async">
-              </span>
-              <span class="drop-calendar__face drop-calendar__face--back">
-                <img src="assets/drops/drop-01-back.jpg" width="833" height="1043" alt="Prendas DROP 01/XX de On My Peak" loading="lazy" decoding="async">
-              </span>
-            </span>
-            <span class="drop-calendar__hint">pulsa y descúbrela</span>
-          </button>
-          <figcaption>DROP 01/XX · 04 MAY - 31 MAY</figcaption>
-        </figure>
-        <figure class="drop-calendar__card drop-calendar__card--two is-unlocked" data-flip-card data-unlock-at="2026-05-29T00:00:00+01:00">
-          <button class="drop-calendar__flip" type="button" aria-label="Girar portada DROP 02/XX">
-            <span class="drop-calendar__flip-inner">
-              <span class="drop-calendar__face drop-calendar__face--front">
-                <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
-              </span>
-              <span class="drop-calendar__face drop-calendar__face--back">
-                <img src="assets/drops/drop-02-back.jpg" width="833" height="1043" alt="Prendas DROP 02/XX de On My Peak con La Piña" loading="lazy" decoding="async">
-              </span>
-            </span>
-            <span class="drop-calendar__hint">pulsa y descúbrela</span>
-          </button>
-          <figcaption>DROP 02/XX · 29 MAY - 28 JUN</figcaption>
-        </figure>
-        <figure class="drop-calendar__card drop-calendar__card--three" data-flip-card>
-          <button class="drop-calendar__flip" type="button" aria-label="Girar portada DROP 03/XX">
-            <span class="drop-calendar__flip-inner">
-              <span class="drop-calendar__face drop-calendar__face--front">
-                <img src="assets/calendar/drop-03-cover.jpg" width="1280" height="1600" alt="Portada DROP 03/XX — Menos es mas" loading="lazy" decoding="async">
-              </span>
-              <span class="drop-calendar__face drop-calendar__face--back">
-                <img src="assets/collection/drop-03/drop-03-05.jpg" width="1280" height="1600" alt="DROP 03/XX — camiseta More Mobility" loading="lazy" decoding="async">
-              </span>
-            </span>
-            <span class="drop-calendar__hint">pulsa y descúbrela</span>
-          </button>
-          <figcaption>DROP 03/XX · hasta 31 AGO</figcaption>
-        </figure>
-      </div>
-
-      <details class="drop-calendar__details reveal reveal-delay-3">
-        <summary class="drop-calendar__summary">
-          <span>
-            <strong>Hoy</strong>
-            <small id="calendarTodayLabel">Calendario de drops</small>
-          </span>
-          <em data-calendar-summary-action>Ver calendario</em>
-        </summary>
-        <div class="drop-calendar__month-shell" aria-label="Calendario de drops 2026">
-          <article class="drop-month">
-            <header>
-              <button class="drop-month__nav" type="button" data-calendar-prev aria-label="Mes anterior">‹</button>
-              <div><span id="calendarMonthLabel">Mayo</span><strong id="calendarYearLabel">2026</strong></div>
-              <button class="drop-month__nav" type="button" data-calendar-next aria-label="Mes siguiente">›</button>
-            </header>
-            <div class="drop-month__weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-            <div class="drop-month__days" id="dropCalendarDays"></div>
-          </article>
-        </div>
-      </details>
-    </div>
-  </section>
-
   <!-- Waitlist -->
   <section class="section waitlist" id="waitlist">
     <div class="container">
@@ -807,54 +730,79 @@
     </div>
   </section>
 
-  <section class="section peak-community" id="peak-community" aria-labelledby="peakCommunityTitle">
-    <div class="container peak-community__grid">
-      <div class="peak-community__copy reveal">
-        <p class="section-label">Comunidad</p>
-        <h2 class="section-title" id="peakCommunityTitle">ÚNETE<br>AL PEAK</h2>
-        <p>Recibe avisos de drops, acceso anticipado y contenido privado por WhatsApp o correo. Sin ruido. Solo lo que importa.</p>
-        <div class="peak-community__approved" id="approvedCommunityGrid" aria-live="polite"></div>
+  <!-- Calendario -->
+  <section class="section drop-calendar" id="calendario">
+    <div class="container">
+      <p class="section-label reveal">Calendario</p>
+      <div class="drop-calendar__head reveal reveal-delay-1">
+        <h2 class="section-title">DROP<br>CALENDAR</h2>
       </div>
-      <div class="peak-community__forms reveal reveal-delay-2">
-        <form class="peak-form" id="peakLeadForm">
-          <h3>Recibir info</h3>
-          <label>
-            <span>Nombre</span>
-            <input type="text" name="name" autocomplete="name" required>
-          </label>
-          <label>
-            <span>Correo</span>
-            <input type="email" name="email" autocomplete="email">
-          </label>
-          <label>
-            <span>WhatsApp</span>
-            <input type="tel" name="phone" autocomplete="tel">
-          </label>
-          <div class="peak-form__channels" aria-label="Canales">
-            <label><input type="checkbox" name="channels" value="whatsapp" checked> WhatsApp</label>
-            <label><input type="checkbox" name="channels" value="email" checked> Correo</label>
-          </div>
-          <button type="submit">QUIERO ENTRAR</button>
-          <p class="peak-form__message" id="peakLeadMessage" aria-live="polite"></p>
-        </form>
-        <form class="peak-form peak-form--photo" id="peakPhotoForm">
-          <h3>Sube tu foto OMP</h3>
-          <label>
-            <span>Nombre / @Instagram</span>
-            <input type="text" name="name" autocomplete="name" required>
-          </label>
-          <label>
-            <span>Foto con la prenda</span>
-            <input type="file" name="photo" accept="image/*" required>
-          </label>
-          <label class="peak-form__consent">
-            <input type="checkbox" name="consent" required>
-            <span>Autorizo a OMP a revisar y publicar esta foto en la web si es aprobada.</span>
-          </label>
-          <button type="submit">SUBIR PARA APROBACIÓN</button>
-          <p class="peak-form__message" id="peakPhotoMessage" aria-live="polite"></p>
-        </form>
+
+      <div class="drop-calendar__drops reveal reveal-delay-2" aria-label="Portadas de drops">
+        <figure class="drop-calendar__card drop-calendar__card--one" data-flip-card>
+          <button class="drop-calendar__flip" type="button" aria-label="Girar portada DROP 01/XX">
+            <span class="drop-calendar__flip-inner">
+              <span class="drop-calendar__face drop-calendar__face--front">
+                <img src="assets/drops/drop-01.jpg" width="1119" height="1400" alt="DROP 01/XX — No one is coming" loading="lazy" decoding="async">
+              </span>
+              <span class="drop-calendar__face drop-calendar__face--back">
+                <img src="assets/drops/drop-01-back.jpg" width="833" height="1043" alt="Prendas DROP 01/XX de On My Peak" loading="lazy" decoding="async">
+              </span>
+            </span>
+            <span class="drop-calendar__hint">pulsa y descúbrela</span>
+          </button>
+          <figcaption>DROP 01/XX · 04 MAY - 31 MAY</figcaption>
+        </figure>
+        <figure class="drop-calendar__card drop-calendar__card--two is-unlocked" data-flip-card data-unlock-at="2026-05-29T00:00:00+01:00">
+          <button class="drop-calendar__flip" type="button" aria-label="Girar portada DROP 02/XX">
+            <span class="drop-calendar__flip-inner">
+              <span class="drop-calendar__face drop-calendar__face--front">
+                <img src="assets/drops/drop-02.jpg" width="1119" height="1400" alt="DROP 02/XX — próximo drop OMP" loading="lazy" decoding="async">
+              </span>
+              <span class="drop-calendar__face drop-calendar__face--back">
+                <img src="assets/drops/drop-02-back.jpg" width="833" height="1043" alt="Prendas DROP 02/XX de On My Peak con La Piña" loading="lazy" decoding="async">
+              </span>
+            </span>
+            <span class="drop-calendar__hint">pulsa y descúbrela</span>
+          </button>
+          <figcaption>DROP 02/XX · 29 MAY - 28 JUN</figcaption>
+        </figure>
+        <figure class="drop-calendar__card drop-calendar__card--three" data-flip-card>
+          <button class="drop-calendar__flip" type="button" aria-label="Girar portada DROP 03/XX">
+            <span class="drop-calendar__flip-inner">
+              <span class="drop-calendar__face drop-calendar__face--front">
+                <img src="assets/calendar/drop-03-cover.jpg" width="1280" height="1600" alt="Portada DROP 03/XX — Menos es mas" loading="lazy" decoding="async">
+              </span>
+              <span class="drop-calendar__face drop-calendar__face--back">
+                <img src="assets/collection/drop-03/drop-03-05.jpg" width="1280" height="1600" alt="DROP 03/XX — camiseta More Mobility" loading="lazy" decoding="async">
+              </span>
+            </span>
+            <span class="drop-calendar__hint">pulsa y descúbrela</span>
+          </button>
+          <figcaption>DROP 03/XX · hasta 31 AGO</figcaption>
+        </figure>
       </div>
+
+      <details class="drop-calendar__details reveal reveal-delay-3">
+        <summary class="drop-calendar__summary">
+          <span>
+            <strong>Hoy</strong>
+            <small id="calendarTodayLabel">Calendario de drops</small>
+          </span>
+          <em data-calendar-summary-action>Ver calendario</em>
+        </summary>
+        <div class="drop-calendar__month-shell" aria-label="Calendario de drops 2026">
+          <article class="drop-month">
+            <header>
+              <button class="drop-month__nav" type="button" data-calendar-prev aria-label="Mes anterior">‹</button>
+              <div><span id="calendarMonthLabel">Mayo</span><strong id="calendarYearLabel">2026</strong></div>
+              <button class="drop-month__nav" type="button" data-calendar-next aria-label="Mes siguiente">›</button>
+            </header>
+            <div class="drop-month__weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+            <div class="drop-month__days" id="dropCalendarDays"></div>
+          </article>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -1062,6 +1010,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260721-simplebuy" defer></script>
+  <script src="js/script.js?v=20260721-simplecheckout" defer></script>
 </body>
 </html>

@@ -793,13 +793,13 @@ select:focus-visible {
 .hero__drop-code-xx {
   color: #e6b3e7;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.18em;
+  font-size: 1.42em;
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.08em;
-  line-height: 0.78;
+  line-height: 0.7;
   text-transform: lowercase;
-  transform: translateY(0.03em);
+  transform: translateY(0.06em);
 }
 
 .hero__drop-live {
@@ -1379,6 +1379,10 @@ select:focus-visible {
   background: var(--bg-primary);
   position: relative;
   overflow: hidden;
+}
+
+.manifesto--menu-only:not(.manifesto--open) {
+  display: none;
 }
 
 .manifesto__bg {
