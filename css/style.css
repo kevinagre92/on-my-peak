@@ -3293,6 +3293,17 @@ select:focus-visible {
   display: grid;
 }
 
+.sleeve-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.7rem;
+}
+
+.waitlist__field--sleeves .waitlist__select {
+  display: none;
+}
+
 .model-option {
   position: relative;
   display: grid;
@@ -3337,6 +3348,71 @@ select:focus-visible {
 .model-option__zoom:focus-visible {
   border-color: var(--accent-lava);
   background: rgba(232,83,30,0.86);
+}
+
+.sleeve-option {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.62rem;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+
+.sleeve-option:hover,
+.sleeve-option.active {
+  border-color: var(--accent-lava);
+  background: rgba(232,83,30,0.09);
+}
+
+.sleeve-option:focus-visible {
+  outline: 2px solid var(--accent-lava);
+  outline-offset: 3px;
+}
+
+.sleeve-option__media {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+}
+
+.sleeve-option__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.sleeve-option__copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.sleeve-option__copy strong {
+  font-size: clamp(0.88rem, 1.8vw, 1rem);
+  line-height: 1.1;
+}
+
+.sleeve-option__zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.62rem;
+  padding: 0.28rem 0.5rem 0.24rem;
+  border: 1px solid rgba(255,255,255,0.34);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.46rem;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .model-option:hover,
@@ -6102,6 +6178,26 @@ select:focus-visible {
   .model-option__zoom {
     padding-inline: 0.5rem;
     font-size: 0.42rem;
+  }
+
+  .sleeve-options {
+    grid-template-columns: 1fr;
+  }
+
+  .sleeve-option {
+    grid-template-columns: 116px minmax(0, 1fr);
+    align-items: center;
+    min-height: 112px;
+  }
+
+  .sleeve-option__media {
+    aspect-ratio: 1.28 / 1;
+  }
+
+  .sleeve-option__copy {
+    display: grid;
+    align-content: center;
+    justify-content: stretch;
   }
 
   .model-picker,

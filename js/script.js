@@ -621,6 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sizeSelect = document.getElementById('orderSize');
   const sleeveField = document.getElementById('sleeveField');
   const sleeveSelect = document.getElementById('orderSleeves');
+  const sleeveOptions = document.getElementById('sleeveOptions');
   const discountInput = document.getElementById('discountCode');
   const discountApply = document.getElementById('discountApply');
   const discountMessage = document.getElementById('discountMessage');
@@ -790,6 +791,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const sleeveCardsByDrop = {
+    [DROP_03]: {
+      'Con mangas': {
+        image: 'assets/products/drop-03/oversized-con-mangas.jpg',
+        label: 'Con mangas'
+      },
+      'Sin mangas': {
+        image: 'assets/products/drop-03/oversized-sin-mangas.jpg',
+        label: 'Sin mangas'
+      }
+    }
+  };
+
   const modelCards = {
     Oversized: {
       name: 'Oversized',
@@ -850,9 +864,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const needsSleeves = modelSelect?.value === 'Oversized';
     if (sleeveField) sleeveField.hidden = !needsSleeves;
     if (sleeveSelect) {
-      sleeveSelect.required = needsSleeves;
+      sleeveSelect.required = false;
       if (!needsSleeves) sleeveSelect.value = '';
     }
+    renderSleeveButtons();
   }
 
   function getAvailableDrops() {
@@ -874,6 +889,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getModelCard(modelName, drop = getSelectedDrop()) {
     return modelCardsByDrop[normalizeDrop(drop)]?.[modelName] || modelCards[modelName];
+  }
+
+  function getSleeveCards(drop = getSelectedDrop()) {
+    return sleeveCardsByDrop[normalizeDrop(drop)] || {};
+  }
+
+  function renderSleeveButtons() {
+    if (!sleeveOptions) return;
+    const needsSleeves = modelSelect?.value === 'Oversized';
+    const cards = getSleeveCards();
+    if (!needsSleeves || !Object.keys(cards).length) {
+      sleeveOptions.innerHTML = '';
+      return;
+    }
+    sleeveOptions.innerHTML = Object.entries(cards).map(([value, card]) => {
+      const isActive = sleeveSelect?.value === value;
+      return `
+        <button class="sleeve-option${isActive ? ' active' : ''}" type="button" data-sleeve-value="${escapeHtml(value)}" aria-pressed="${isActive ? 'true' : 'false'}">
+          <span class="sleeve-option__media"><img src="${escapeHtml(card.image)}" width="1400" height="800" alt="Oversized ${escapeHtml(card.label)} DROP 03/XX" loading="lazy" decoding="async"></span>
+          <span class="sleeve-option__copy">
+            <strong>${escapeHtml(card.label)}</strong>
+            <span class="sleeve-option__zoom" role="button" tabindex="0" data-model-zoom-src="${escapeHtml(card.image)}" data-model-zoom-alt="Oversized ${escapeHtml(card.label)} DROP 03/XX">Ampliar foto</span>
+          </span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function syncSelectedSleeves(value = sleeveSelect?.value) {
+    if (!sleeveSelect) return;
+    sleeveSelect.value = value || '';
+    sleeveOptions?.querySelectorAll('.sleeve-option').forEach(option => {
+      const isActive = option.dataset.sleeveValue === sleeveSelect.value;
+      option.classList.toggle('active', isActive);
+      option.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
   }
 
   function updateColorOptions() {
@@ -1107,6 +1158,29 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     showStandaloneLightbox(zoomButton.dataset.modelZoomSrc, zoomButton.dataset.modelZoomAlt || 'Producto OMP');
   });
+
+  sleeveOptions?.addEventListener('click', (e) => {
+    const zoomButton = e.target.closest('[data-model-zoom-src]');
+    if (zoomButton) {
+      e.preventDefault();
+      e.stopPropagation();
+      showStandaloneLightbox(zoomButton.dataset.modelZoomSrc, zoomButton.dataset.modelZoomAlt || 'Producto OMP');
+      return;
+    }
+    const button = e.target.closest('[data-sleeve-value]');
+    if (!button) return;
+    syncSelectedSleeves(button.dataset.sleeveValue);
+  });
+
+  sleeveOptions?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const zoomButton = e.target.closest('[data-model-zoom-src]');
+    if (!zoomButton) return;
+    e.preventDefault();
+    showStandaloneLightbox(zoomButton.dataset.modelZoomSrc, zoomButton.dataset.modelZoomAlt || 'Producto OMP');
+  });
+
+  sleeveSelect?.addEventListener('change', () => syncSelectedSleeves());
 
   dropOptions?.addEventListener('click', (e) => {
     const button = e.target.closest('[data-drop]');
@@ -3414,7 +3488,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       if (order.model === 'Oversized' && !order.sleeves) {
-        sleeveSelect?.focus();
+        sleeveOptions?.querySelector('.sleeve-option')?.focus();
         return;
       }
       if (!order.color || !order.size) return;
