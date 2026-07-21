@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropUrgency: 'Se termina en',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Alcanza tu Peak',
-      waitlistSubtitle: 'Elige tu drop.<br>Selecciona modelo, color y talla.',
+      waitlistSubtitle: 'Elige prenda, talla y confirma por WhatsApp. Sin registros. Sin líos.',
       nameLabel: 'Nombre completo',
       emailLabel: 'Correo',
       phoneLabel: 'Teléfono',
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropUrgency: 'Ends in',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Waitlist',
-      waitlistSubtitle: 'Choose your drop.<br>Choose model, color and size.',
+      waitlistSubtitle: 'Choose your piece, size and confirm on WhatsApp. No accounts. No friction.',
       nameLabel: 'Full name',
       emailLabel: 'Email',
       phoneLabel: 'Phone',
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dropUrgency: 'Termina em',
       lookbookLabel: 'NEXT DROP',
       waitlistLabel: 'Lista de espera',
-      waitlistSubtitle: 'Escolhe o teu drop.<br>Escolhe modelo, cor e tamanho.',
+      waitlistSubtitle: 'Escolhe a peça, tamanho e confirma no WhatsApp. Sem registos. Sem confusão.',
       nameLabel: 'Nome completo',
       emailLabel: 'Email',
       phoneLabel: 'Telefone',
@@ -1003,8 +1003,9 @@ document.addEventListener('DOMContentLoaded', () => {
     modelOptions.innerHTML = models.map((modelName, index) => {
       const model = getModelCard(modelName);
       const price = formatCurrencyHtml(pricesByModel[modelName] || 0);
+      const isActive = modelSelect?.value === modelName;
       return `
-        <button class="model-option${index === 0 ? ' active' : ''}" type="button" role="option" data-model="${escapeHtml(modelName)}" aria-label="Elegir modelo ${escapeHtml(model.name)}" aria-selected="${index === 0 ? 'true' : 'false'}">
+        <button class="model-option${isActive ? ' active' : ''}" type="button" role="option" data-model="${escapeHtml(modelName)}" aria-label="Elegir modelo ${escapeHtml(model.name)}" aria-selected="${isActive ? 'true' : 'false'}">
           <span class="model-option__media"><img src="${escapeHtml(model.image)}" width="1400" height="870" alt="${escapeHtml(model.name)}" loading="lazy" decoding="async"></span>
           <span class="model-option__copy">
             <strong>${escapeHtml(model.name)}</strong>
@@ -2701,6 +2702,7 @@ document.addEventListener('DOMContentLoaded', () => {
     writeCart(cart);
     renderCart();
     showCartToast();
+    openCart();
     cartToggle?.classList.add('cart-toggle--pop');
     window.setTimeout(() => cartToggle?.classList.remove('cart-toggle--pop'), 420);
   }

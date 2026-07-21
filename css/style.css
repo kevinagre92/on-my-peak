@@ -3018,6 +3018,44 @@ select:focus-visible {
   margin: 0 auto;
 }
 
+.waitlist__steps {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+  width: min(100%, 720px);
+  margin-top: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.waitlist__steps span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-height: 2.35rem;
+  padding: 0 0.75rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.026);
+  white-space: nowrap;
+}
+
+.waitlist__steps b {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  background: var(--accent-lava);
+  color: #fff;
+  font-family: var(--font-logo);
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
 .waitlist__form {
   margin-top: 1.8rem;
   display: grid;
@@ -3030,6 +3068,12 @@ select:focus-visible {
   border: 1px solid rgba(255,255,255,0.055);
   background: linear-gradient(180deg, rgba(255,255,255,0.026), rgba(255,255,255,0.008));
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+.waitlist__form--simple {
+  max-width: 820px;
+  gap: 1rem;
+  padding: clamp(0.9rem, 2vw, 1.15rem);
 }
 
 .waitlist__field {
@@ -3047,6 +3091,15 @@ select:focus-visible {
 
 .waitlist__field--full {
   grid-column: 1 / -1;
+}
+
+.waitlist__field--models #modelPickerToggle {
+  display: none;
+}
+
+.waitlist__field--models #modelOptions {
+  display: grid;
+  margin-top: 0;
 }
 
 .waitlist__field span {
@@ -3221,6 +3274,13 @@ select:focus-visible {
   box-shadow: 0 18px 54px rgba(0,0,0,0.34);
 }
 
+.waitlist__form--simple .model-options {
+  border-color: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.018);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
 .drop-options {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -3242,6 +3302,11 @@ select:focus-visible {
   cursor: pointer;
   text-align: left;
   transition: border-color 0.25s, transform 0.25s, background 0.25s;
+}
+
+.waitlist__form--simple .model-option {
+  padding: 0.62rem;
+  background: rgba(255,255,255,0.035);
 }
 
 .model-option__zoom {
@@ -3275,6 +3340,20 @@ select:focus-visible {
   border-color: var(--accent-lava);
   background: rgba(232,83,30,0.09);
   transform: translateY(-1px);
+}
+
+.model-option.active::after {
+  content: 'Elegido';
+  position: absolute;
+  top: 0.48rem;
+  right: 0.48rem;
+  padding: 0.22rem 0.44rem;
+  background: var(--accent-lava);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.43rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .model-option__media {
@@ -3410,6 +3489,43 @@ select:focus-visible {
   padding: 0.85rem;
   border: 1px solid rgba(255,255,255,0.08);
   background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+}
+
+.discount-redeem summary {
+  grid-column: 1 / -1;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.discount-redeem summary::-webkit-details-marker {
+  display: none;
+}
+
+.discount-redeem summary::before {
+  content: '+';
+  display: inline-block;
+  margin-right: 0.45rem;
+  color: var(--accent-lava);
+}
+
+.discount-redeem[open] summary::before {
+  content: '-';
+}
+
+.discount-redeem:not([open]) {
+  display: block;
+  padding: 0.82rem 0.9rem;
+}
+
+.discount-redeem:not([open]) .discount-redeem__field,
+.discount-redeem:not([open]) .discount-redeem__button,
+.discount-redeem:not([open]) .discount-redeem__message {
+  display: none;
 }
 
 .discount-redeem__field {
@@ -4223,6 +4339,22 @@ select:focus-visible {
 
 .waitlist__success-sub:empty {
   display: none;
+}
+
+.waitlist__form--simple {
+  max-width: 820px;
+  padding: clamp(0.9rem, 2vw, 1.15rem);
+  border: 1px solid rgba(255,255,255,0.055);
+  background: linear-gradient(180deg, rgba(255,255,255,0.026), rgba(255,255,255,0.008));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+}
+
+.waitlist__field--models #modelPickerToggle {
+  display: none;
+}
+
+.waitlist__field--models #modelOptions {
+  display: grid;
 }
 
 /* --- Peak Community --- */
@@ -5902,6 +6034,26 @@ select:focus-visible {
     max-width: 28rem;
   }
 
+  .waitlist__steps {
+    justify-content: flex-start;
+    margin-inline: calc(var(--container-pad) * -1);
+    padding-inline: var(--container-pad);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .waitlist__steps::-webkit-scrollbar {
+    display: none;
+  }
+
+  .waitlist__steps span {
+    flex: 0 0 auto;
+    min-height: 2.2rem;
+    padding-inline: 0.62rem;
+    font-size: 0.48rem;
+    letter-spacing: 0.08em;
+  }
+
   .waitlist__form {
     grid-template-columns: 1fr;
     width: 100%;
@@ -5913,12 +6065,22 @@ select:focus-visible {
     box-shadow: none;
   }
 
+  .waitlist__form--simple {
+    gap: 0.85rem;
+  }
+
   .model-options {
     grid-template-columns: 1fr;
     width: 100%;
     max-width: 100%;
     max-height: min(62svh, 540px);
     overflow-y: auto;
+  }
+
+  .waitlist__field--models #modelOptions {
+    max-height: none;
+    overflow: visible;
+    padding: 0.62rem;
   }
 
   .drop-options {

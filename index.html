@@ -34,7 +34,7 @@
   <link rel="preload" href="assets/optimized/hero-poster.jpg" as="image" fetchpriority="high">
   <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=20260721-sleeves">
+  <link rel="stylesheet" href="css/style.css?v=20260721-simplebuy">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -210,7 +210,7 @@
           <span class="hero__drop-code"><span class="hero__drop-code-main">03/</span><span class="hero__drop-code-xx" aria-label="XX">xx</span></span>
           <span class="hero__drop-live hero__drop-live--turquoise">live</span>
           <a href="#waitlist" class="hero__drop-cta hero__drop-cta--turquoise" data-select-drop="DROP 03/XX">
-            <span>consiguelo ya</span>
+            <span>comprar ahora</span>
             <small>
               <span>se termina en</span>
               <strong class="hero__drop-countdown hero__drop-countdown--turquoise" data-drop3-hero-countdown>00D 00H 00M 00S</strong>
@@ -706,12 +706,18 @@
   <section class="section waitlist" id="waitlist">
     <div class="container">
       <p class="section-label reveal" data-i18n="waitlistLabel">Alcanza tu Peak</p>
-      <h2 class="section-title reveal reveal-delay-1">NO ONE IS COMING</h2>
+      <h2 class="section-title reveal reveal-delay-1">COMPRA DROP 03</h2>
       <p class="section-subtitle waitlist__subtitle reveal reveal-delay-2" data-i18n="waitlistSubtitle">
-        Elige tu drop.<br>Selecciona modelo, color y talla.
+        Elige prenda, talla y confirma por WhatsApp. Sin registros. Sin líos.
       </p>
 
-      <form class="waitlist__form reveal reveal-delay-3" id="waitlistForm">
+      <div class="waitlist__steps reveal reveal-delay-2" aria-label="Pasos de compra">
+        <span><b>1</b> Elige prenda</span>
+        <span><b>2</b> Añade al carrito</span>
+        <span><b>3</b> Confirma por WhatsApp</span>
+      </div>
+
+      <form class="waitlist__form waitlist__form--simple reveal reveal-delay-3" id="waitlistForm">
         <label class="waitlist__field waitlist__field--full">
           <span>Drop</span>
           <button class="waitlist__input model-picker drop-picker" type="button" id="dropPickerToggle" aria-haspopup="listbox" aria-expanded="false">
@@ -726,7 +732,7 @@
           <div class="model-options drop-options" id="dropOptions" role="listbox" aria-label="Drops disponibles"></div>
         </label>
 
-        <label class="waitlist__field waitlist__field--full">
+        <label class="waitlist__field waitlist__field--full waitlist__field--models">
           <span data-i18n="modelLabel">Modelo de pedido</span>
           <button class="waitlist__input model-picker" type="button" id="modelPickerToggle" aria-haspopup="listbox" aria-expanded="false">
             <span class="model-picker__text">
@@ -776,14 +782,15 @@
         </label>
 
         <button class="waitlist__submit" type="submit" data-i18n="submitOrder">Añadir al carrito</button>
-        <div class="discount-redeem" id="discountRedeem">
+        <details class="discount-redeem" id="discountRedeem">
+          <summary>Tengo código de descuento</summary>
           <label class="discount-redeem__field">
             <span data-i18n="discountLabel">Código de descuento</span>
             <input class="waitlist__input" type="text" id="discountCode" name="discount" placeholder="Código opcional" autocomplete="off" aria-label="Código de descuento">
           </label>
           <button class="discount-redeem__button" type="button" id="discountApply">Canjear</button>
           <p class="discount-redeem__message" id="discountMessage" aria-live="polite"></p>
-        </div>
+        </details>
         <div class="waitlist-order-preview" id="orderPreview" aria-live="polite"></div>
       </form>
 
@@ -792,7 +799,7 @@
         <p class="waitlist__success-sub" id="waitlistSummary"></p>
       </div>
 
-      <div class="waitlist__perks reveal reveal-delay-4">
+      <div class="waitlist__perks waitlist__perks--compact reveal reveal-delay-4">
         <span class="waitlist__perk" data-i18n="perk1">Acceso anticipado a drops</span>
         <span class="waitlist__perk" data-i18n="perk2">Contenido exclusivo</span>
         <span class="waitlist__perk" data-i18n="perk3">Ediciones limitadas</span>
@@ -1055,6 +1062,6 @@
     </div>
   </div>
 
-  <script src="js/script.js?v=20260721-sleeves" defer></script>
+  <script src="js/script.js?v=20260721-simplebuy" defer></script>
 </body>
 </html>
